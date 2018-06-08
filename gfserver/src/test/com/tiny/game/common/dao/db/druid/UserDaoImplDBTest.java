@@ -6,6 +6,7 @@ import java.util.Calendar;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.tiny.game.common.dao.DaoFactory;
 import com.tiny.game.common.dao.db.druid.UserDaoImplDB;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
@@ -45,7 +46,27 @@ public class UserDaoImplDBTest extends BaseDaoDBTest {
 		return bean;
 	}
 	
-//	@Ignore
+	@Ignore
+	@Test
+	public void testDaoFactory() {
+		UserOnlineInfo bean = buildUserOnlineInfo();
+		
+		DaoFactory.getInstance().getUserDao().createUserOnlineInfo(bean);
+		
+		bean = DaoFactory.getInstance().getUserDao().getUserOnlineInfo("1");
+		assert("1".equals(bean.getUserId()));
+		
+		bean.setLoginServerId("gs2");
+		DaoFactory.getInstance().getUserDao().updateUserOnlineInfo(bean);
+		bean = DaoFactory.getInstance().getUserDao().getUserOnlineInfo("1");
+		assert("gs2".equals(bean.getLoginServerId()));
+		
+		DaoFactory.getInstance().getUserDao().deleteUserOnlineInfo("1");
+		bean = DaoFactory.getInstance().getUserDao().getUserOnlineInfo("1");
+		assert(bean==null);
+	}	
+	
+	@Ignore
 	@Test
 	public void testUserOnlineInfo() {
 		UserOnlineInfo bean = buildUserOnlineInfo();

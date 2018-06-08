@@ -1,6 +1,7 @@
 package com.tiny.game.common.dao.impl;
 
 import com.tiny.game.common.dao.UserDao;
+import com.tiny.game.common.dao.db.druid.UserDaoImplDB;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
@@ -9,62 +10,52 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public void createUser(User user) {
-		// TODO Auto-generated method stub
-		
+		UserDaoImplDB.getInstance().createUser(user);
 	}
 
 	@Override
 	public void updateUser(User user) {
-		// TODO Auto-generated method stub
-		
+		UserDaoImplDB.getInstance().updateUser(user);
 	}
 
 	@Override
 	public User getUserById(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return UserDaoImplDB.getInstance().getUserById(userId);
 	}
 
 	@Override
 	public void createUserAcctBindInfo(UserAcctBindInfo info) {
-		// TODO Auto-generated method stub
-		
+		UserDaoImplDB.getInstance().createUserAcctBindInfo(info);
 	}
 
 	@Override
 	public void deleteUserAcctBindInfo(UserAcctBindInfo info) {
-		// TODO Auto-generated method stub
-		
+		UserDaoImplDB.getInstance().deleteUserAcctBindInfo(info);
 	}
 
 	@Override
 	public UserAcctBindInfo getUserAcctBindInfo(String acctBindId) {
-		// TODO Auto-generated method stub
-		return null;
+		return UserDaoImplDB.getInstance().getUserAcctBindInfo(acctBindId);
 	}
 
 	@Override
 	public void createUserOnlineInfo(UserOnlineInfo info) {
-		// TODO Auto-generated method stub
-		
+		UserDaoImplDB.getInstance().createUserOnlineInfo(info);
 	}
 
 	@Override
 	public void updateUserOnlineInfo(UserOnlineInfo info) {
-		// TODO Auto-generated method stub
-		
+		UserDaoImplDB.getInstance().updateUserOnlineInfo(info);
 	}
 
 	@Override
 	public void deleteUserOnlineInfo(String userId) {
-		// TODO Auto-generated method stub
-		
+		UserDaoImplDB.getInstance().deleteUserOnlineInfo(userId);
 	}
 
 	@Override
 	public UserOnlineInfo getUserOnlineInfo(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return UserDaoImplDB.getInstance().getUserOnlineInfo(userId);
 	}
 
 }
