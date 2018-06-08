@@ -1,9 +1,16 @@
 package com.tiny.game.common.server.main.cmd.processor;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiny.game.common.dao.DaoFactory;
 import com.tiny.game.common.domain.role.RoleBean;
+import com.tiny.game.common.domain.role.User;
+import com.tiny.game.common.domain.role.UserAcctBindInfo;
+import com.tiny.game.common.domain.role.UserOnlineInfo;
 import com.tiny.game.common.error.ErrorCode;
 import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.net.NetLayerManager;
@@ -27,21 +34,56 @@ public class C_RoleLoginProcessor extends NetCmdProcessor {
 
 	private static final Logger logger = LoggerFactory.getLogger(C_RoleLoginProcessor.class);
 
+	private User createUser(NetSession session, C_RoleLogin req) {
+		User bean = new User();
+		bean.setUserId("1"); // TODO: 
+		bean.setLoginAccountId(req.getLoginAccountId());
+		bean.setLoginDeviceId(req.getDeviceId());
+		bean.setLoginIp(session.getRemoteAddress());
+		bean.setChannel(req.getChannel()+"");
+		bean.setPlatform(req.getPlatform());
+		bean.setPlatformAccountId(req.getAccount());
+		bean.setPlatformAccountPassword(req.getToken());
+		Date time = Calendar.getInstance().getTime();
+		bean.setCreateTime(time);
+		bean.setLastUpdateTime(time);
+		bean.setLoginDeviceInfo(req.getDeviceInfo());
+		DaoFactory.getInstance().getUserDao().createUser(bean);
+		return bean;
+	}
+	
 	@Override
 	public void process(NetSession session, NetMessage msg) {
 		C_RoleLogin req = NetUtil.getNetProtocolObject(C_RoleLogin.PARSER, msg);
 		
-		String acctBindId = req.getDeviceId(); // TODO: put other one
-		RoleBean role = null;
-		// find role by unique acct bind id
-		if(role==null) {
-			// create role
+		UserAcctBindInfo acctBindInfo = DaoFactory.getInstance().getUserDao().getUserAcctBindInfo(req.getLoginAccountId());
+		if(acctBindInfo==null && !req.getLoginAccountId().equals(req.getDeviceId())) {
+			acctBindInfo = DaoFactory.getInstance().getUserDao().getUserAcctBindInfo(req.getDeviceId());
+		}
+		User user = null;
+		if(acctBindInfo==null) {
+			logger.info("Try to create user because not found user by: " + req.getLoginAccountId() + "/" + req.getDeviceId());
+			user = createUser(session, req);
 		} else {
-			String roleOnlineServer = ""; // TODO: get this
-			if(roleOnlineServer!=null && roleOnlineServer.trim().length() > 1) {
+			user = DaoFactory.getInstance().getUserDao().getUserById(acctBindInfo.getUserId());
+		}
+		
+		// check user online info
+		String currentLoginServerId = "gs1"; // TODO: 
+		UserOnlineInfo userOnlineInfo = DaoFactory.getInstance().getUserDao().getUserOnlineInfo(user.getUserId());
+		if(userOnlineInfo==null) {
+			userOnlineInfo = new UserOnlineInfo();
+			userOnlineInfo.setUserId(user.getUserId());
+			userOnlineInfo.setLoginServerId(currentLoginServerId); 
+			userOnlineInfo.setLastUpdateTime(Calendar.getInstance().getTime());
+			DaoFactory.getInstance().getUserDao().createUserOnlineInfo(userOnlineInfo);
+		} else {
+			if(!currentLoginServerId.equals(userOnlineInfo.getLoginServerId())) {
 				// TODO: broadcast kickoff cmd
-				
-			}
+			} 
+			userOnlineInfo.setLoginServerId(currentLoginServerId); 
+			userOnlineInfo.setLastUpdateTime(Calendar.getInstance().getTime());
+			DaoFactory.getInstance().getUserDao().updateUserOnlineInfo(userOnlineInfo);
 		}
 		
 		// sync user data to client
@@ -67,5 +109,8 @@ public class C_RoleLoginProcessor extends NetCmdProcessor {
 //		NetLayerManager.getInstance().asyncSendOutboundMessage(session, response.build());
 //		System.out.println("Send main server info to client: " + response.build());
 	}
+	
+	
+	
 	
 }
