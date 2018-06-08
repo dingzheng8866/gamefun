@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.net.netty.NetChannelInitializer;
+import com.tiny.game.common.server.ContextParameter;
+import com.tiny.game.common.server.ServerContext;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -39,13 +41,18 @@ public class NetServer {
 	
 	public void start() throws Exception {
 		Class sc = EpollServerSocketChannel.class;
+		int workerThreads = ServerContext.getInstance().getPropertyInt(ContextParameter.NET_SERVER_INBOUND_WORKER_THREADS, "8");
+		int coreNumber = Runtime.getRuntime().availableProcessors();
+		if(workerThreads < coreNumber) {
+			workerThreads = coreNumber;
+		}
 		if (SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_MAC) { 
 			sc = NioServerSocketChannel.class;
 			bossGroup = new NioEventLoopGroup(2);
-			workerGroup = new NioEventLoopGroup();
+			workerGroup = new NioEventLoopGroup(workerThreads);
 		} else {
 			bossGroup = new EpollEventLoopGroup(2);
-			workerGroup = new EpollEventLoopGroup();
+			workerGroup = new EpollEventLoopGroup(workerThreads);
 		}
 		
 		bootstrap.group(bossGroup, workerGroup).channel(sc)
