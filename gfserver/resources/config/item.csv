@@ -1,0 +1,13 @@
+编号;物品类型;物品名称;等级;素材编号
+id;type;name;level;avatarID
+100000;systemDonateGold;赠送的金币;;
+100001;buyGold;购买的金币;;
+100002;systemDonateDiamond;赠送的宝石;;
+100003;buyDiamond;购买的宝石;;
+100004;exp;经验;;
+100005;mainBase;主基地;;
+100006;defenseTower;防御塔;;
+100007;monthCard;月卡;;
+100008;seasonCard;季卡;;
+100008;yearCard;年卡;;
+100008;permanentCard;永久卡;;

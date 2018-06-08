@@ -1,0 +1,8 @@
+商店位置;出售宝石;充值价格;赠送价格;物品描述;谷歌ID;苹果ID
+position;gold;money;gift;string;googleId;appleId
+1;80;6;20;一小堆宝石;kcg_80;com.xxkcj.AppStore_60
+2;500;30;200;一大堆宝石;kcg_500;com.xxkcj.AppStore_300
+3;1200;68;520;一袋宝石;kcg_1200;com.xxkcj.AppStore_680
+4;2500;128;1220;两袋宝石;kcg_2500;com.xxkcj.AppStore_1280
+5;6500;328;3220;一箱宝石;kcg_6500;com.xxkcj.AppStore_3280
+6;14000;648;7520;一保险柜宝石;kcg_14000;com.xxkcj.AppStore_6480

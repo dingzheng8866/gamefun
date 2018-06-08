@@ -1,0 +1,14 @@
+drop table user;
+drop table role_base;
+drop table role_card;
+drop table role_soldier;
+drop table role_chest;
+drop table role_shop;
+drop table role_task;
+drop table role_mail;
+drop table role_dungeon;
+drop table role_statistic;
+drop table role_sign;
+drop table role_reinforce;
+drop table role_friend;
+drop table role_invite;

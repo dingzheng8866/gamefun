@@ -1,0 +1,17 @@
+CentOS 7.0环境部署
+# sudo yum install vim lrzsz unzip java-1.8.0-openjdk mariadb-server redis nodejs
+# sudo service mariadb start
+
+Mysql环境配置
+# mysql -u root
+# use mysql
+# delete from user where User="";
+# update user set password=PASSWORD("hechuan1215") where User="root";
+# flush privileges;
+# mysql -u root -p
+# source init_table.sql
+
+redis环境配置
+# redis-cli
+# auth passwd
+# set RoleId 10000

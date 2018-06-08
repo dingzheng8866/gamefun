@@ -1,0 +1,49 @@
+option java_package = "game.protocol.protobuf";
+option java_outer_classname = "GameProtocol";
+option optimize_for = SPEED;
+
+message S_CReqCmd_Ack{
+	required string cmd    = 1;
+}
+
+message C_RegisterClient{
+	required string clientType    = 1;
+	optional string tag     	  = 2;
+	optional string parameter1    = 3;
+	optional string parameter2    = 4;
+	optional string parameter3    = 5;
+}
+
+message C_GetLoginServerInfo{
+}
+
+message S_LoginServerInfo{
+	required string ipAddress = 1;
+	required int32 port = 2;
+}
+
+message C_RoleLogin{
+	required string device_id = 1;   // 设备mac地址
+	required string platform = 2;    // 渠道名称
+	optional int32 channel = 3;      // 所在平台: 0.android 1.ios
+	optional string account = 4;     // 用户账号
+	optional string token = 5;       // 登录令牌
+	optional string reserve = 6;     // 预留字段，用于应用宝等特殊登录
+	optional string device_info = 7; // 设备信息 
+	optional string sdk_info = 8;    // 渠道sdk信息
+}
+
+message C_Heartbeat{
+}
+
+message S_ErrorInfo{
+	required int32 errorCode = 1;
+	optional string parameter = 2; 
+}
+
+message S_HintInfo{
+	optional int32 hintCode = 1;
+	optional string parameter = 2; 
+}
+
+
