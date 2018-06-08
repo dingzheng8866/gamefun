@@ -1,0 +1,10 @@
+gfserver/logs
+gfserver/target
+gfserver/.settings
+gfserver/src/game/protocol/protobuf
+gfserver/logstat
+.vscode
+.vs
+.idea
+*.iml
+gfclient/protobufgen/Packets.bin
