@@ -6,7 +6,7 @@ import com.tiny.game.common.net.client.NetClientManager;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.AbstractGameServer;
-import com.tiny.game.common.server.gamemain.GameServer;
+import com.tiny.game.common.server.main.MainGameServer;
 
 import game.protocol.protobuf.GameProtocol.C_Heartbeat;
 
@@ -20,7 +20,7 @@ public class GateServer extends AbstractGameServer {
 		
 		Thread.currentThread().sleep(10000);
 		
-		NetSession session = NetSessionManager.getInstance().getSession(GameServer.class.getSimpleName());
+		NetSession session = NetSessionManager.getInstance().getSession(MainGameServer.class.getSimpleName());
 		if(session!=null) {
 			NetCmd msg = new NetCmd(C_Heartbeat.newBuilder().build());
 			NetLayerManager.getInstance().asyncSendOutboundMessage(session, msg);

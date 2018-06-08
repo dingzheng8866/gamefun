@@ -3,15 +3,13 @@ package com.tiny.game.common.domain.role;
 import java.util.Date;
 import java.util.List;
 
-public class UserBean {
+public class User {
 
 	private String userId;
 
-	private List<String> bindedAccountIds; // email, apple id, android device id, etc
+//	private List<String> bindedAccountIds; // email, apple id, android device id, etc
 	
-	private boolean online;
-	
-	private String loginAccountId;
+	private String loginAccountId; // binded id
 	private String loginDeviceId;
 	private String loginDeviceInfo;
 	private String loginIp;
@@ -23,11 +21,11 @@ public class UserBean {
 	private Date createTime;
 	private Date lastUpdateTime;
 	
-	public void addBindedAccountId(String bindedAcctId) {
-		if(!bindedAccountIds.contains(bindedAcctId)) {
-			bindedAccountIds.add(bindedAcctId);
-		}
-	}
+//	public void addBindedAccountId(String bindedAcctId) {
+//		if(!bindedAccountIds.contains(bindedAcctId)) {
+//			bindedAccountIds.add(bindedAcctId);
+//		}
+//	}
 	
 	public String getUserId() {
 		return userId;
@@ -35,18 +33,12 @@ public class UserBean {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public List<String> getBindedAccountIds() {
-		return bindedAccountIds;
-	}
-	public void setBindedAccountIds(List<String> bindedAccountIds) {
-		this.bindedAccountIds = bindedAccountIds;
-	}
-	public boolean isOnline() {
-		return online;
-	}
-	public void setOnline(boolean online) {
-		this.online = online;
-	}
+//	public List<String> getBindedAccountIds() {
+//		return bindedAccountIds;
+//	}
+//	public void setBindedAccountIds(List<String> bindedAccountIds) {
+//		this.bindedAccountIds = bindedAccountIds;
+//	}
 	public String getLoginAccountId() {
 		return loginAccountId;
 	}
@@ -108,5 +100,19 @@ public class UserBean {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
-	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("User: " + userId);
+		sb.append(",loginAccountId" + loginAccountId);
+		sb.append(",loginDeviceId" + loginDeviceId);
+		sb.append(",loginIp" + loginIp);
+		sb.append(",channel" + channel);
+		sb.append(",platform" + platform);
+		sb.append(",platformAccountId" + platformAccountId);
+		sb.append(",platformAccountPassword" + platformAccountPassword);
+		sb.append(",createTime" + createTime);
+		sb.append(",lastUpdateTime" + lastUpdateTime);
+		sb.append(",loginDeviceInfo" + loginDeviceInfo);
+		return sb.toString();
+	}
 }

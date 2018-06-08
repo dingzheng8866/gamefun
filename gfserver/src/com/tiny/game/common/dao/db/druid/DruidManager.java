@@ -1,4 +1,4 @@
-package com.tiny.game.common.dao.druid;
+package com.tiny.game.common.dao.db.druid;
 
 import java.util.HashMap;
 import java.util.Map;

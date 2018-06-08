@@ -14,7 +14,7 @@ import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdFactory;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
-import com.tiny.game.common.server.gamemain.GameServer;
+import com.tiny.game.common.server.main.MainGameServer;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
 import game.protocol.protobuf.GameProtocol.C_RegisterClient;
@@ -32,7 +32,7 @@ public class C_GetLoginServerInfoProcessor extends NetCmdProcessor {
 		
 //		NetSessionManager.getInstance().addSession(req.getClientType(), session);
 //		logger.info("C_RegisterClient: type: "+req.toString());
-		NetSession gameServerSession = NetSessionManager.getInstance().getSession(GameServer.class.getSimpleName());
+		NetSession gameServerSession = NetSessionManager.getInstance().getSession(MainGameServer.class.getSimpleName());
 		if(gameServerSession==null) {
 			logger.error("No active game server found for user: " + session.getRemoteAddress());
 			NetLayerManager.getInstance().asyncSendOutboundMessage(session, NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_NoActiveGameServer.getValue(), ""));

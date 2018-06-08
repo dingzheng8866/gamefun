@@ -11,20 +11,20 @@ import org.slf4j.LoggerFactory;
 import com.tiny.game.common.exception.InternalBugException;
 
 
-public class ConfManager {
-	private static final Logger logger = LoggerFactory.getLogger(ConfManager.class);
+public class LocalConfManager {
+	private static final Logger logger = LoggerFactory.getLogger(LocalConfManager.class);
 	
 	protected Map<String, ConfReader> confReaders = new ConcurrentHashMap<String, ConfReader>();
 	
 	private static class SingletonHolder {
-		private static ConfManager instance = new ConfManager();
+		private static LocalConfManager instance = new LocalConfManager();
 	}
 
-	public static ConfManager getInstance() {
+	public static LocalConfManager getInstance() {
 		return SingletonHolder.instance;
 	}
 	
-	private ConfManager() {
+	private LocalConfManager() {
 		initConfReaders(null);
 	}
 
@@ -46,7 +46,7 @@ public class ConfManager {
 	
 	private void initConfReaders(String path) {
 		if(path==null || path.trim().length() < 1) {
-			path = ConfManager.class.getPackage().getName();
+			path = LocalConfManager.class.getPackage().getName();
 			System.out.println(path);
 		}
 		Reflections reflections = new Reflections(path);

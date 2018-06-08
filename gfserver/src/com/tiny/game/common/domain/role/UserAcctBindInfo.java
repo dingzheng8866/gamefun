@@ -1,10 +1,8 @@
 package com.tiny.game.common.domain.role;
 
-public class UserAccountBindBean {
+public class UserAcctBindInfo {
 
 	private String userId;
-	
-	private String roleId;
 	
 	private String bindedAccountId;
 
@@ -16,20 +14,16 @@ public class UserAccountBindBean {
 		this.userId = userId;
 	}
 
-	public String getRoleId() {
-		return roleId;
-	}
-
-	public void setRoleId(String roleId) {
-		this.roleId = roleId;
-	}
-
 	public String getBindedAccountId() {
 		return bindedAccountId;
 	}
 
 	public void setBindedAccountId(String bindedAccountId) {
 		this.bindedAccountId = bindedAccountId;
+	}
+	
+	public String toString() {
+		return "UserAcctBindInfo:"+userId+"-"+bindedAccountId;
 	}
 	
 }
