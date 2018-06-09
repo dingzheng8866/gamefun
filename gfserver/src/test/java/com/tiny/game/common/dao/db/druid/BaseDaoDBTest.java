@@ -10,7 +10,7 @@ public class BaseDaoDBTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		ServerContext.getInstance().load("resources/game_server.properties");
+		ServerContext.getInstance().load("resources/game_server.properties", "TestServer");
 		DruidManager.getInstance().initDB(ServerContext.getInstance());
 	}
 

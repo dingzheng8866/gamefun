@@ -10,4 +10,10 @@ public interface ContextParameter {
 
 	public static String NET_SERVER_LISTEN_PORT="Net.Server.Listen.Port";
 	
+	public static String USERID_LEN="UserId.Len";
+	public static String USERNAME_LEN="Username.Len";
+	
+	public static String BATTLE_FPS="Battle.FPS";
+	
+	
 }

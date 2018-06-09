@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Properties;
 
 import com.tiny.game.common.net.NetUtil;
+import com.tiny.game.common.util.IdGenerator;
 
-public class ServerContext {
+public class ServerContext implements ContextParameter {
 	
 	private static ServerContext instance = new ServerContext();
 	
@@ -17,9 +18,13 @@ public class ServerContext {
 	
 	protected Properties properties = new Properties();
 	
-	private int fps = 20;
+	private int fightFPS = 20;
 	private String localExternalNetworkIp = null;
 	private String localInternalNetworkIp = null;
+	private int userIdLen = 12;
+	private int userNameLen = 12;
+	
+	private String serverUniqueTag = "";
 	
 	private ServerContext() {
 		List<String> ipList = NetUtil.getNetworkIpAddress();
@@ -29,6 +34,18 @@ public class ServerContext {
 	
 	public static ServerContext getInstance() {
 		return instance;
+	}
+	
+	public String getServerUniqueTag(){
+		return serverUniqueTag;
+	}
+	
+	public int getUserIdLen(){
+		return userIdLen;
+	}
+	
+	public int getUserNameLen(){
+		return userNameLen;
 	}
 	
 	public String getExternalIp(){
@@ -42,33 +59,33 @@ public class ServerContext {
 		return localInternalNetworkIp;
 	}
 	
-	private void init() {
-		String s = getProperty("Battle.FPS");
-		if(s!=null && s.trim().length() > 0) {
-			fps = Integer.parseInt(s);
-		}
+	private void init(String serverTagPrefix) {
+		fightFPS = getPropertyInt(BATTLE_FPS, "20");
+		userIdLen = getPropertyInt(USERID_LEN, "12");
+		userNameLen = getPropertyInt(USERNAME_LEN, "12");
 	}
 	
-	private void loadProp(String file) {
+	private void loadProp(String file, String serverTagPrefix) {
 		try {
 			BufferedReader propReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 			properties.load(propReader);
-			init();
+			init(serverTagPrefix);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to load prop: " + file +", error:" + e.getMessage(), e);
 		}
 	}
 	
-	public ServerContext load(String configPath) {
-		return load(configPath, true);
+	public ServerContext load(String configPath, String serverTagPrefix) {
+		return load(configPath, true, serverTagPrefix);
 	}
 	
-	public ServerContext load(String configPath, boolean loadCommonFile) {
+	public ServerContext load(String configPath, boolean loadCommonFile, String serverTagPrefix) {
 		this.configPath = configPath;
 		if(loadCommonFile) {
-			loadProp(defaultCommonConfig);
+			loadProp(defaultCommonConfig,serverTagPrefix);
 		}
-		loadProp(configPath);
+		loadProp(configPath,serverTagPrefix);
+		serverUniqueTag = IdGenerator.genServerTagUniqueId(serverTagPrefix);
 		return this;
 	}
 	
@@ -100,10 +117,8 @@ public class ServerContext {
 		return properties;
 	}
 	
-	public int getFPS() {
-		return fps;
+	public int getBattleLogicFrameFPS() {
+		return fightFPS;
 	}
-
-	
 	
 }

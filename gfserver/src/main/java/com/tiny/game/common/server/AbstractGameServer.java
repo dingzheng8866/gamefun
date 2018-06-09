@@ -18,9 +18,11 @@ public class AbstractGameServer {
 	protected String serverProp = ""; //resources/login_server.properties
 	protected boolean enableRDB = true;
 	
+	protected String serverTag = "Unknown";
+	
 	public void start() {
 		logger.info("Load server property: " + serverProp);
-		ServerContext.getInstance().load(serverProp);
+		ServerContext.getInstance().load(serverProp, serverTag);
 		
 		logger.info("Load local conf");
 		LocalConfManager.getInstance().load();
