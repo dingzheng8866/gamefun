@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.dao.DaoFactory;
-import com.tiny.game.common.domain.role.RoleBean;
+import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
@@ -21,8 +21,10 @@ import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdFactory;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
+import com.tiny.game.common.server.ServerContext;
 import com.tiny.game.common.server.gate.cmd.processor.C_GetLoginServerInfoProcessor;
 import com.tiny.game.common.server.main.MainGameServer;
+import com.tiny.game.common.util.IdGenerator;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
 import game.protocol.protobuf.GameProtocol.C_RegisterClient;
@@ -36,7 +38,7 @@ public class C_RoleLoginProcessor extends NetCmdProcessor {
 
 	private User createUser(NetSession session, C_RoleLogin req) {
 		User bean = new User();
-		bean.setUserId("1"); // TODO: 
+		bean.setUserId(IdGenerator.genUniqueUserId());
 		bean.setLoginAccountId(req.getLoginAccountId());
 		bean.setLoginDeviceId(req.getDeviceId());
 		bean.setLoginIp(session.getRemoteAddress());
@@ -69,7 +71,7 @@ public class C_RoleLoginProcessor extends NetCmdProcessor {
 		}
 		
 		// check user online info
-		String currentLoginServerId = "gs1"; // TODO: 
+		String currentLoginServerId = ServerContext.getInstance().getServerUniqueTag();
 		UserOnlineInfo userOnlineInfo = DaoFactory.getInstance().getUserDao().getUserOnlineInfo(user.getUserId());
 		if(userOnlineInfo==null) {
 			userOnlineInfo = new UserOnlineInfo();

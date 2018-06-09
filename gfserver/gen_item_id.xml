@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project name="item_id_genereate_source" basedir="./">
+	<target name="prepare">
+		<mkdir dir="target/generated-sources" />
+		<path id="proto.path">
+			<fileset dir="proto/protobuf/">
+				<include name="**/*.proto" />
+			</fileset>
+		</path>
+		<condition property="is_windows">
+			<os family="windows" />
+		</condition>
+		<pathconvert pathsep=" " property="proto.files" refid="proto.path" />
+	</target>	
+	<target name="gen_item_id" if="is_windows" depends="prepare">
+		<echo message="item_id_genereate_source bin/genitemid.bat" />
+		<exec executable="bin/genitemid.bat">
+		</exec>
+	</target>
+	
+	<target name="main" depends="gen_item_id">
+	</target>
+</project>

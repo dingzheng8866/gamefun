@@ -1,5 +1,11 @@
 package com.tiny.game.common.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,6 +34,42 @@ public class GameUtil {
 	
 	public static int randomRange(int min, int max) {
 		return (int)(min+Math.random()*max);
+	}
+	
+	public static String readFileAllContent(String fileName) {  
+        String encoding = "UTF-8";  
+        File file = new File(fileName);  
+        Long filelength = file.length();  
+        byte[] filecontent = new byte[filelength.intValue()];  
+        FileInputStream in =null;
+        try {  
+            in = new FileInputStream(file);  
+            in.read(filecontent);  
+            in.close();  
+            return new String(filecontent, encoding);  
+        } catch (Exception e) {  
+            throw new RuntimeException("Failed to read file content: " + fileName+", error: "+e.getMessage(), e);
+        } finally {
+        	if(in!=null){
+        		try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
+        }
+    } 
+	
+	public static void writeFile(String content, String file){
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new File(file));
+			pw.println(content);
+			pw.flush();
+			pw.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("Failed to write to file: " + file +", error: " + e.getMessage(), e);
+		}
 	}
 	
 }

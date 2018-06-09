@@ -173,6 +173,20 @@
             	<version>1.8</version>
             	<executions>
             		<execution>
+            			<id>gen-item-id</id>
+            			<phase>generate-sources</phase>
+            			<configuration>
+            				<target>
+            					<ant antfile="${basedir}/gen_item_id.xml">
+            						<target name="main" />
+            					</ant>
+            				</target>
+            			</configuration>
+            			<goals>
+            				<goal>run</goal>
+            			</goals>
+            		</execution>
+            		<execution>
             			<id>compile-protoc</id>
             			<phase>generate-sources</phase>
             			<configuration>
@@ -185,7 +199,7 @@
             			<goals>
             				<goal>run</goal>
             			</goals>
-            		</execution>
+            		</execution>            		
             	</executions>
             </plugin>
             <!-- junit test plugin -->

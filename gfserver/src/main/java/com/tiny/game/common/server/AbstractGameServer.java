@@ -10,15 +10,18 @@ import com.tiny.game.common.net.client.NetClientManager;
 import com.tiny.game.common.net.cmd.NetCmdProcessorFactory;
 
 
-public class AbstractGameServer {
+public abstract class AbstractGameServer {
 
 	private static Logger logger = LoggerFactory.getLogger(AbstractGameServer.class);
 	
 	protected long startTime = System.currentTimeMillis();
 	protected String serverProp = ""; //resources/login_server.properties
-	protected boolean enableRDB = true;
-	
 	protected String serverTag = "Unknown";
+	
+	public AbstractGameServer(String propPath, String serverTag){
+		this.serverProp = propPath;
+		this.serverTag = serverTag;
+	}
 	
 	public void start() {
 		logger.info("Load server property: " + serverProp);
@@ -27,14 +30,20 @@ public class AbstractGameServer {
 		logger.info("Load local conf");
 		LocalConfManager.getInstance().load();
 		
-//		if(enableRDB) {
-//			logger.info("Connect to database");
-//			DruidManager.getInstance().initDB(ServerContext.getInstance());
-//		}
+		if(ServerContext.getInstance().getPropertyBoolean(ContextParameter.DAO_ENABLE_RDB, false)) {
+			logger.info("Init RDB");
+			DruidManager.getInstance().initDB(ServerContext.getInstance());
+		}
 		
+		onStart();
+		
+		ServerContext.getInstance().setGameServer(this);
 		// put net layer init at last
 		NetLayerManager.getInstance().init(ServerContext.getInstance());
 	}
 	
+	protected void onStart(){
+		
+	}
 	
 }

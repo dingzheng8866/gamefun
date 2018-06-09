@@ -3,11 +3,11 @@ package com.tiny.game.common.domain.role;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tiny.game.common.domain.item.ItemBean;
+import com.tiny.game.common.domain.item.Item;
 
 public class RoleOwnItem {
 
-	private ItemBean item;
+	private Item item;
 	private int count;
 	
 	private Map<String, String> extendedProps = new HashMap<String, String>();
@@ -20,11 +20,11 @@ public class RoleOwnItem {
 		return item.equals(((RoleOwnItem)o).item);
 	}
 	
-	public ItemBean getItem() {
+	public Item getItem() {
 		return item;
 	}
 
-	public void setItem(ItemBean item) {
+	public void setItem(Item item) {
 		this.item = item;
 	}
 

@@ -3,25 +3,33 @@ package com.tiny.game.common.domain.item;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemBean {
+public class Item {
 
 	private int id;
+	private String typeStringValue;
+	
 	private String name;
 	private ItemType type;
 	private int avatarId;
-	private int level;
 	
 	private Map<String, String> props = new HashMap<String, String>();
 
 	
 	public boolean equals(Object o) {
-		if(o==null || !(o instanceof ItemBean)) {
+		if(o==null || !(o instanceof Item)) {
 			return false;
 		}
 		
-		return id == ((ItemBean) o).id && level==((ItemBean) o).level;
+		return id == ((Item) o).id;
 	}
 	
+	public void setTypeStringValue(String v){
+		this.typeStringValue = v;
+	}
+	
+	public String getTypeStringValue(){
+		return this.typeStringValue;
+	}
 	
 	public int getId() {
 		return id;
@@ -47,13 +55,9 @@ public class ItemBean {
 		this.avatarId = avatarId;
 	}
 
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
+//	public int getLevel() {
+//		return level;
+//	}
 
 	public Map<String, String> getProps() {
 		return props;

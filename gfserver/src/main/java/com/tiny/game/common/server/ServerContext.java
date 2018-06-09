@@ -26,6 +26,8 @@ public class ServerContext implements ContextParameter {
 	
 	private String serverUniqueTag = "";
 	
+	private AbstractGameServer gameServer = null;
+	
 	private ServerContext() {
 		List<String> ipList = NetUtil.getNetworkIpAddress();
 		localExternalNetworkIp = NetUtil.getLocalExternalNetworkAddress(ipList);
@@ -101,6 +103,10 @@ public class ServerContext implements ContextParameter {
 		return Integer.parseInt(getProperty(key, def));
 	}
 	
+	public boolean getPropertyBoolean(String key, boolean def) {
+		return Boolean.parseBoolean(getProperty(key, def?"true":"false"));
+	}
+	
 	public int getPropertyInt(String key) {
 		return Integer.parseInt(getProperty(key));
 	}
@@ -119,6 +125,14 @@ public class ServerContext implements ContextParameter {
 	
 	public int getBattleLogicFrameFPS() {
 		return fightFPS;
+	}
+
+	public AbstractGameServer getGameServer() {
+		return gameServer;
+	}
+
+	public void setGameServer(AbstractGameServer gameServer) {
+		this.gameServer = gameServer;
 	}
 	
 }

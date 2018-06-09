@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.tiny.game.common.domain.role.RoleBean;
+import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.exception.InternalBugException;
 
 
@@ -77,7 +77,7 @@ public class LeagueBean {
 		this.members = members;
 	}
 	
-	public void addMember(RoleBean role, LeagueMemberType type) {
+	public void addMember(Role role, LeagueMemberType type) {
 		if(members.containsKey(role.getRoleId())) {
 			throw new InternalBugException("Duplicate to add league member: " + role.getRoleId());
 		}

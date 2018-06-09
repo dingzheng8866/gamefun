@@ -9,5 +9,5 @@ id;type;name;level;avatarID
 100006;defenseTower;防御塔;;
 100007;monthCard;月卡;;
 100008;seasonCard;季卡;;
-100008;yearCard;年卡;;
-100008;permanentCard;永久卡;;
+100009;yearCard;年卡;;
+100010;permanentCard;永久卡;;

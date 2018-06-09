@@ -1,0 +1,16 @@
+package com.tiny.game.common.domain.item;
+
+public enum ItemId {
+
+#ENUM_VAR
+	
+	private int value = 0;
+	private ItemId(int v) {
+		this.value = v;
+		ItemIdManager.setItemId(this);
+	}
+	public int getValue() {
+		return value;
+	}
+	
+}

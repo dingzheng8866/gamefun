@@ -15,5 +15,6 @@ public interface ContextParameter {
 	
 	public static String BATTLE_FPS="Battle.FPS";
 	
+	public static String DAO_ENABLE_RDB="Dao.Enable.RDB";
 	
 }
