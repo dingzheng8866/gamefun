@@ -4,5 +4,5 @@
 cd %~sdp0
 cd ..\proto\protobuf
 for %%i in (*.proto) do (
-"..\..\bin\protoc.exe" --java_out=..\..\src %%i
+"..\..\bin\protoc.exe" --java_out=..\..\src\main\java %%i
 )

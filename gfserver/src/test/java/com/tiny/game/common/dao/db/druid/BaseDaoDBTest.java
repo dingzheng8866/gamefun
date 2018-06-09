@@ -1,4 +1,4 @@
-package test.com.tiny.game.common.dao.db.druid;
+package com.tiny.game.common.dao.db.druid;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

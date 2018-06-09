@@ -1,7 +1,7 @@
 gfserver/logs
 gfserver/target
 gfserver/.settings
-gfserver/src/game/protocol/protobuf
+gfserver/src/main/java/game/protocol/protobuf
 gfserver/logstat
 .vscode
 .vs

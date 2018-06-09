@@ -208,7 +208,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>game.gameserver.GameServer</mainClass>
+							<mainClass>com.tiny.game.common.server.main.MainGameServer</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>.</Class-Path>

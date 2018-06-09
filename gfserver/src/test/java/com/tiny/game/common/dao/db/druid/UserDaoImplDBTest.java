@@ -1,4 +1,4 @@
-package test.com.tiny.game.common.dao.db.druid;
+package com.tiny.game.common.dao.db.druid;
 
 
 import java.util.Calendar;
@@ -12,7 +12,7 @@ import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
 
-
+// Manually run this
 public class UserDaoImplDBTest extends BaseDaoDBTest {
 
 	private UserOnlineInfo buildUserOnlineInfo() {

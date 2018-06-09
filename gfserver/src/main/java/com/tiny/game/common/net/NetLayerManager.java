@@ -128,7 +128,7 @@ public class NetLayerManager {
 		}
 	}
 	
-	public void asyncSendOutboundMessage(NetSession session, NetCmd msg) {
+	public void asyncSendOutboundMessage(final NetSession session, final NetCmd msg) {
 		outboundThreadPool.execute(() -> {
 			syncSendOutboundMessage(session, msg, true);
 		});

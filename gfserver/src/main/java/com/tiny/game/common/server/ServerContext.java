@@ -3,7 +3,10 @@ package com.tiny.game.common.server;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Properties;
+
+import com.tiny.game.common.net.NetUtil;
 
 public class ServerContext {
 	
@@ -15,12 +18,28 @@ public class ServerContext {
 	protected Properties properties = new Properties();
 	
 	private int fps = 20;
+	private String localExternalNetworkIp = null;
+	private String localInternalNetworkIp = null;
 	
 	private ServerContext() {
+		List<String> ipList = NetUtil.getNetworkIpAddress();
+		localExternalNetworkIp = NetUtil.getLocalExternalNetworkAddress(ipList);
+		localInternalNetworkIp = NetUtil.getLocalInternalNetworkAddress(ipList);
 	}
 	
 	public static ServerContext getInstance() {
 		return instance;
+	}
+	
+	public String getExternalIp(){
+		return localExternalNetworkIp;
+	}
+	
+	public String getLocalAnyIp(){
+		if(localExternalNetworkIp!=null){
+			return localExternalNetworkIp;
+		}
+		return localInternalNetworkIp;
 	}
 	
 	private void init() {
