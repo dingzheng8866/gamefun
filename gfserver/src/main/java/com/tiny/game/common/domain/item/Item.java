@@ -5,11 +5,12 @@ import java.util.Map;
 
 public class Item {
 
-	private int id;
-	private String typeStringValue;
+//	private int id;
+//	private String typeStringValue;
+	private ItemId itemId;
 	
 	private String name;
-	private ItemType type;
+//	private ItemType type;
 	private int avatarId;
 	
 	private Map<String, String> props = new HashMap<String, String>();
@@ -20,23 +21,23 @@ public class Item {
 			return false;
 		}
 		
-		return id == ((Item) o).id;
+		return itemId == ((Item) o).itemId;
 	}
 	
-	public void setTypeStringValue(String v){
-		this.typeStringValue = v;
-	}
+//	public void setTypeStringValue(String v){
+//		this.typeStringValue = v;
+//	}
+//	
+//	public String getTypeStringValue(){
+//		return this.typeStringValue;
+//	}
 	
-	public String getTypeStringValue(){
-		return this.typeStringValue;
-	}
-	
-	public int getId() {
-		return id;
+	public ItemId getId() {
+		return itemId;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setId(ItemId id) {
+		this.itemId = id;
 	}
 
 	public String getName() {
@@ -67,12 +68,12 @@ public class Item {
 		this.props = props;
 	}
 
-	public ItemType getType() {
-		return type;
-	}
-
-	public void setType(ItemType type) {
-		this.type = type;
-	}
+//	public ItemType getType() {
+//		return type;
+//	}
+//
+//	public void setType(ItemType type) {
+//		this.type = type;
+//	}
 	
 }

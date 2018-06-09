@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.tiny.game.common.domain.item.ItemType;
 import com.tiny.game.common.domain.role.setting.RoleSettingBean;
 
 public class Role {
@@ -49,7 +48,7 @@ public class Role {
 		RoleOwnItem oldItem = items.get(item.getItem().getId());
 		if(oldItem==null) {
 			oldItem = item;
-			items.put(item.getItem().getId(), oldItem);
+			items.put(item.getItem().getId().getValue(), oldItem);
 		} else {
 //			oldItem.
 		}

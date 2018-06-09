@@ -16,7 +16,9 @@ fopen.close()
 
 #sb.append("    "+item.getTypeStringValue()+"("+item.getId()+")");
 #sb.append(i==list.size() - 1 ? ";" : ","+"\n");
+#		case 0: return seasonCard;
 enumvalue=''
+switchvalue=''
 allItemArray = all_items.split('\n')
 for i in range(2, len(allItemArray), 1):  
 	strArray = allItemArray[i].split(';')
@@ -26,11 +28,18 @@ for i in range(2, len(allItemArray), 1):
 		enumvalue+='('
 		enumvalue+=strArray[0]
 		enumvalue+='),\n'
+		switchvalue+='        '
+		switchvalue+='case '
+		switchvalue+=strArray[0]
+		switchvalue+=': return '
+		switchvalue+=strArray[1]
+		switchvalue+=';\n'
 
 enumvalue=enumvalue[0:len(enumvalue)-2]
 enumvalue+=";"
 
-finalContent = item_id_file_template.replace("#ENUM_VAR", enumvalue);
+item_id_file_template = item_id_file_template.replace("#ENUM_VAR", enumvalue);
+finalContent = item_id_file_template.replace("#SWITCH_VAR", switchvalue);
 
 print(finalContent)
 
