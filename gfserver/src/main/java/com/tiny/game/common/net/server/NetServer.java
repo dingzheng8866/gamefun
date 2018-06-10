@@ -15,6 +15,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -40,7 +41,7 @@ public class NetServer {
 	}
 	
 	public void start() throws Exception {
-		Class sc = EpollServerSocketChannel.class;
+		Class<? extends ServerChannel> sc = EpollServerSocketChannel.class;
 		int workerThreads = ServerContext.getInstance().getPropertyInt(ContextParameter.NET_SERVER_INBOUND_WORKER_THREADS, "8");
 		int coreNumber = Runtime.getRuntime().availableProcessors();
 		if(workerThreads < coreNumber) {

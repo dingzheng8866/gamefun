@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.CodedOutputStream;
-import com.google.protobuf.GeneratedMessage;
-import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.net.NetMessage;
 

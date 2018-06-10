@@ -7,8 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiny.game.common.conf.LocalConfManager;
+import com.tiny.game.common.conf.role.RoleExpConfReader;
 import com.tiny.game.common.dao.DaoFactory;
+import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.role.Role;
+import com.tiny.game.common.domain.role.RoleExp;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
@@ -20,6 +24,34 @@ import game.protocol.protobuf.GameProtocol.C_RoleLogin;
 public class RoleService {
 
 	private static final Logger logger = LoggerFactory.getLogger(RoleService.class);
+	
+	private static int maxConfigRoleLevel = 1;
+	public static void addMaxConfigRoleLevel(int level){
+		if(level > maxConfigRoleLevel){
+			maxConfigRoleLevel = level;
+		}
+	}
+	public static int getRoleMaxConfigLevel(){
+		return maxConfigRoleLevel;
+	}
+	
+	public static void fixupRoleExpChange(Role role){
+		int tempRoleLevel = role.getLevel();
+		if(tempRoleLevel > maxConfigRoleLevel){
+			tempRoleLevel = maxConfigRoleLevel;
+		}
+		
+		RoleExp roleExp = (RoleExp)LocalConfManager.getInstance().getConfReader(RoleExpConfReader.class).getConfBean(tempRoleLevel+"");
+		int levelMaxExp = roleExp.getExp();
+		int currentExp = role.getRoleOwnItemValue(ItemId.roleExp);
+		if(currentExp > levelMaxExp){
+			role.deleteRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, levelMaxExp)); // exp-max==>then fixup again
+			role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1)); // level+1
+			//TODO: broadcast role level up, maybe give some reward
+			logger.info("TODO: broadcast role level up, maybe give some reward to level: " + role.getLevel());
+			fixupRoleExpChange(role);
+		}
+	}
 	
 	public static User getUser(String acctBindId, String deviceId){
 		UserAcctBindInfo acctBindInfo = DaoFactory.getInstance().getUserDao().getUserAcctBindInfo(acctBindId);

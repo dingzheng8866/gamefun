@@ -1,7 +1,6 @@
 package com.tiny.game.common.domain.role;
 
 import java.util.Date;
-import java.util.List;
 
 public class User {
 

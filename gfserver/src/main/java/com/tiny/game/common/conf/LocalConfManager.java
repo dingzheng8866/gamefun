@@ -14,7 +14,7 @@ import com.tiny.game.common.exception.InternalBugException;
 public class LocalConfManager {
 	private static final Logger logger = LoggerFactory.getLogger(LocalConfManager.class);
 	
-	protected Map<String, ConfReader> confReaders = new ConcurrentHashMap<String, ConfReader>();
+	protected Map<String, ConfReader<?>> confReaders = new ConcurrentHashMap<String, ConfReader<?>>();
 	
 	private static class SingletonHolder {
 		private static LocalConfManager instance = new LocalConfManager();
@@ -29,18 +29,18 @@ public class LocalConfManager {
 	}
 
 	public void load() {
-		for(ConfReader reader : confReaders.values()) {
+		for(ConfReader<?> reader : confReaders.values()) {
 			reader.load();
 		}
 	}
 	
 	public void reload() {
-		for(ConfReader reader : confReaders.values()) {
+		for(ConfReader<?> reader : confReaders.values()) {
 			reader.reLoad();
 		}
 	}
 	
-	public ConfReader getConfReader(Class c) {
+	public ConfReader<?> getConfReader(Class<?> c) {
 		return confReaders.get(c.getSimpleName());
 	}
 	
@@ -59,7 +59,7 @@ public class LocalConfManager {
 			} catch (Exception e) {
 				throw new InternalBugException("Failed to create conf reader object: "+e.getMessage(),e);
 			}
-			Class readerClass = ann.confClass();
+			Class<?> readerClass = ann.confClass();
 			
 			if (confReaders.containsKey(readerClass.getSimpleName())) {
 				throw new InternalBugException("Duplicate conf reader: "+readerClass.getName());
@@ -73,7 +73,7 @@ public class LocalConfManager {
 			}
 			confPath = confPath.trim();
 			
-			ConfReader reader = (ConfReader)confReaderObj;
+			ConfReader<?> reader = (ConfReader<?>)confReaderObj;
 			reader.setConfigPath(confPath);
 			confReaders.put(readerClass.getSimpleName(), reader);
 			

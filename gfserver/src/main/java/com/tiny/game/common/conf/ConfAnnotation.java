@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ConfAnnotation {
 
-	public Class confClass();
+	public Class<?> confClass();
 	
 	public String path();
 	

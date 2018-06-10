@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.tiny.game.common.conf.LocalConfManager;
 import com.tiny.game.common.dao.db.druid.DruidManager;
 import com.tiny.game.common.net.NetLayerManager;
-import com.tiny.game.common.net.client.NetClientManager;
-import com.tiny.game.common.net.cmd.NetCmdProcessorFactory;
 
 
 public abstract class AbstractGameServer {
@@ -40,6 +38,7 @@ public abstract class AbstractGameServer {
 		ServerContext.getInstance().setGameServer(this);
 		// put net layer init at last
 		NetLayerManager.getInstance().init(ServerContext.getInstance());
+		logger.info("Started server: " + getClass()+"," + ServerContext.getInstance().getServerUniqueTag());
 	}
 	
 	protected void onStart(){

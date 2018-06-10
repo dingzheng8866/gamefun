@@ -72,7 +72,7 @@ public class GameUtil {
 		}
 	}
 	
-	public static String toString(Map map){
+	public static String toString(Map<?, ?> map){
 		StringBuffer sb = new StringBuffer();
 		for(Object key : map.keySet()){
 			Object value = map.get(key);

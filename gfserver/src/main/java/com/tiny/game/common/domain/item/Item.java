@@ -6,8 +6,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tiny.game.common.net.client.NetClient;
-
 public class Item {
 
 	private static Logger logger = LoggerFactory.getLogger(Item.class);

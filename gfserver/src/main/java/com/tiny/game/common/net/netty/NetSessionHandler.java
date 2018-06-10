@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.NetMessage;
-import com.tiny.game.common.net.cmd.NetCmdFactory;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 
 import io.netty.channel.Channel;

@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.GeneratedMessage;
-import com.tiny.game.common.net.client.NetClient;
-import com.tiny.game.common.net.client.NetClientManager;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.cmd.NetCmdProcessorFactory;
@@ -23,7 +21,6 @@ import com.tiny.game.common.net.netty.NetSessionManagerFilter;
 import com.tiny.game.common.net.server.NetServer;
 import com.tiny.game.common.server.ContextParameter;
 import com.tiny.game.common.server.ServerContext;
-import com.tiny.game.common.server.gate.GateServer;
 import com.tiny.game.common.util.GameUtil;
 
 import io.netty.channel.ChannelHandler;

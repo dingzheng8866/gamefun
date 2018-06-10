@@ -6,10 +6,15 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.util.IdGenerator;
 
 public class ServerContext implements ContextParameter {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ServerContext.class);
 	
 	private static ServerContext instance = new ServerContext();
 	
@@ -95,6 +100,7 @@ public class ServerContext implements ContextParameter {
 		}
 		loadProp(configPath,serverTagPrefix);
 		serverUniqueTag = IdGenerator.genServerTagUniqueId(serverTagPrefix);
+		logger.info("serverUniqueTag: "+serverUniqueTag+", localExternalNetworkIp: " + localExternalNetworkIp +", localInternalNetworkIp: " + localInternalNetworkIp);
 		return this;
 	}
 	

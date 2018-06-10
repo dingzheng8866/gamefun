@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.domain.role.Role;
-import com.tiny.game.common.server.main.cmd.processor.C_RoleLoginProcessor;
 
 public abstract class GmCmd {
 

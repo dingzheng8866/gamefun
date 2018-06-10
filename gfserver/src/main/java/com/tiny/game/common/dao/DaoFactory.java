@@ -18,7 +18,7 @@ public class DaoFactory {
 	
 	private Map<String, Object> daoMap = new ConcurrentHashMap<String, Object>();
 	
-	private Object getDao(Class daoClass) {
+	private Object getDao(Class<?> daoClass) {
 		String daoTag = daoClass.getSimpleName();
 		Object obj = daoMap.get(daoTag);
 		if(obj==null) {

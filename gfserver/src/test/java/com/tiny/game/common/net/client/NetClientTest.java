@@ -2,14 +2,6 @@ package com.tiny.game.common.net.client;
 
 import org.junit.Test;
 
-import com.tiny.game.common.server.ContextParameter;
-import com.tiny.game.common.server.ServerContext;
-import com.tiny.game.common.server.gate.GateServer;
-import com.tiny.game.common.server.main.MainGameServer;
-
-import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
-
 public class NetClientTest {
 
 	@Test

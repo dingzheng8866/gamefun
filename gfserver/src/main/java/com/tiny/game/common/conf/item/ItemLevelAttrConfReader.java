@@ -1,6 +1,5 @@
 package com.tiny.game.common.conf.item;
 
-import org.apache.commons.lang3.StringUtils;
 
 import com.tiny.game.common.conf.ConfAnnotation;
 import com.tiny.game.common.conf.ConfReader;

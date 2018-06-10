@@ -30,7 +30,7 @@ public class NetClient {
 	
 	public NetClient(List<ChannelHandler> channelHandlers) {
 		this.channelHandlers = channelHandlers;
-		Class sc = EpollSocketChannel.class;
+		Class<? extends Channel> sc = EpollSocketChannel.class;
 		if (SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_MAC) { 
 			sc = NioSocketChannel.class;
 			workerGroup = new NioEventLoopGroup(1);

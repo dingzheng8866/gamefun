@@ -4,6 +4,7 @@ import com.tiny.game.common.error.ErrorCode;
 
 public class InvalidRequestParameter extends RuntimeException {
 
+	private static final long serialVersionUID = 736910993812481568L;
 	private ErrorCode errorCode;
 	
 	public ErrorCode getErrorCode(){

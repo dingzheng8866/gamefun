@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.tiny.game.common.domain.item.Item;
+import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.exception.InternalBugException;
-import com.tiny.game.common.net.NetUtils;
+import com.tiny.game.common.server.main.bizlogic.role.RoleService;
 import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.S_RoleData;
@@ -88,6 +90,38 @@ public class Role {
 		return items.get(ownKey);
 	}
 	
+	public int getSystemDonategolds() {
+		return getRoleOwnItemValue(ItemId.systemDonateGold);
+	}
+
+	public int getBuyGolds() {
+		return getRoleOwnItemValue(ItemId.buyGold);
+	}
+	
+	public int getSystemDonateGems() {
+		return getRoleOwnItemValue(ItemId.systemDonateGem);
+	}
+
+	public int getBuyGems() {
+		return getRoleOwnItemValue(ItemId.buyGem);
+	}
+	
+	public int getAllGolds() {
+		return getSystemDonategolds()+getBuyGolds();
+	}
+	
+	public int getAllGems() {
+		return getSystemDonateGems()+getBuyGems();
+	}
+	
+	public int getLevel(){
+		return getRoleOwnItemValue(ItemId.roleLevel);
+	}
+	
+	public int getRoleOwnItemValue(ItemId itemId){
+		return getRoleOwnItem(Item.getKey(itemId)).getValue();
+	}
+	
 	public void addRoleOwnItem(OwnItem item) {
 		OwnItem oldItem = items.get(item.getKey());
 		if(oldItem==null) {
@@ -100,6 +134,11 @@ public class Role {
 				oldItem.setValue(newCount);
 				// TODO: check count < 0?
 				// TODO: how about attr?
+				
+				// handle some special logic like exp
+				if(item.getItem().getItemId() == ItemId.roleExp){
+					RoleService.fixupRoleExpChange(this);
+				} 
 			} else {
 				oldItem.setValue(item.getValue());
 			}
@@ -132,16 +171,6 @@ public class Role {
 		}
 	}
 	
-	// TODO: remove by count
-	
-//	public int getAllGolds() {
-//		return getSystemDonategolds()+getGolds();
-//	}
-//	
-//	public int getAllDiamonds() {
-//		return getSystemDonateDiamonds()+getDiamonds();
-//	}
-//	
 	public String getRoleId() {
 		return roleId;
 	}
@@ -157,70 +186,6 @@ public class Role {
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-
-//	public String getHeadIcon() {
-//		return headIcon;
-//	}
-//
-//	public void setHeadIcon(String headIcon) {
-//		this.headIcon = headIcon;
-//	}
-//
-//	public String getName() {
-//		return name;
-//	}
-//
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-
-//	public int getLevel() {
-//		return level;
-//	}
-//
-//	public void setLevel(int level) {
-//		this.level = level;
-//	}
-
-//	public int getLevelExp() {
-//		return levelExp;
-//	}
-//
-//	public void setLevelExp(int levelExp) {
-//		this.levelExp = levelExp;
-//	}
-
-//	public int getSystemDonategolds() {
-//		return systemDonategolds;
-//	}
-
-//	public void setSystemDonategolds(int systemDonategolds) {
-//		this.systemDonategolds = systemDonategolds;
-//	}
-
-//	public int getGolds() {
-//		return golds;
-//	}
-
-//	public void setGolds(int golds) {
-//		this.golds = golds;
-//	}
-
-//	public int getSystemDonateDiamonds() {
-//		return systemDonateDiamonds;
-//	}
-
-//	public void setSystemDonateDiamonds(int systemDonateDiamonds) {
-//		this.systemDonateDiamonds = systemDonateDiamonds;
-//	}
-
-//	public int getDiamonds() {
-//		return diamonds;
-//	}
-
-//	public void setDiamonds(int diamonds) {
-//		this.diamonds = diamonds;
-//	}
 
 //	public int getPoint() {
 //		return point;

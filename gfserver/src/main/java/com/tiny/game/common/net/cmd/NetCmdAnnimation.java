@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface NetCmdAnnimation {
 
-	public Class cmd();
+	public Class<?> cmd();
 	
 	public boolean enable() default true;
 	

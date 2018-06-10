@@ -135,6 +135,7 @@ public class NetUtils {
 	                ip = addresses.nextElement();  
 	                if (!ip.isLoopbackAddress() && ip.getHostAddress().indexOf(':') == -1) {  
 	                    result.add(ip.getHostAddress());  
+	                    logger.info("Local ip: " + ip.getHostAddress());
 	                }  
 	            }  
 	        }  

@@ -3,7 +3,6 @@ package com.tiny.game.common.conf.item;
 import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.tiny.game.common.conf.LocalConfManager;

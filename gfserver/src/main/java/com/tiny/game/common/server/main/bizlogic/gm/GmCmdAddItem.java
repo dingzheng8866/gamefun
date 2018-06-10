@@ -3,8 +3,6 @@ package com.tiny.game.common.server.main.bizlogic.gm;
 import java.security.InvalidParameterException;
 import java.util.Map;
 
-import com.tiny.game.common.conf.ConfAnnotation;
-import com.tiny.game.common.conf.item.ItemConfReader;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.role.OwnItem;

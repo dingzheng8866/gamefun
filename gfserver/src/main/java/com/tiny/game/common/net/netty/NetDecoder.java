@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.net.NetMessage;
-import com.tiny.game.common.net.NetUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,6 +19,7 @@ public class NetDecoder extends MessageToMessageDecoder<ByteBuf> {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf msg,
 			List<Object> out) throws Exception {
+		@SuppressWarnings("deprecation")
 		int msgNameLength = msg.order(ByteOrder.LITTLE_ENDIAN).readInt();
 		
 		logger.info("NetDecoder msg name length =>" + msgNameLength);
