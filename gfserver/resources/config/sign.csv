@@ -1,5 +1,5 @@
 编号;物品ID;物品数量;备注
-id;itemId;itemCount;ps
+day;itemId;itemCount;ps
 1;100002;100;赠送金币*100
 2;100004;20;赠送宝石*20
 3;100011;2;双倍金币*2

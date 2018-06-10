@@ -157,4 +157,8 @@ public class RoleService {
 		return bean;
 	}
 	
+	public static void recordSignDay(Role role){
+		
+	}
+	
 }
