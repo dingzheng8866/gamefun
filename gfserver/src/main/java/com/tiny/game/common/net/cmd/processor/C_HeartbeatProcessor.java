@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.net.NetMessage;
-import com.tiny.game.common.net.NetUtil;
+import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
@@ -19,7 +19,7 @@ public class C_HeartbeatProcessor extends NetCmdProcessor {
 
 	@Override
 	public void process(NetSession session, NetMessage msg) {
-		C_Heartbeat req = NetUtil.getNetProtocolObject(C_Heartbeat.PARSER, msg);
+		C_Heartbeat req = NetUtils.getNetProtocolObject(C_Heartbeat.PARSER, msg);
 		
 		logger.debug("C_Heartbeat: ", session.getRemoteAddress());
 	}

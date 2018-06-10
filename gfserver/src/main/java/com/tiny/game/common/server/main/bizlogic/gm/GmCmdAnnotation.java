@@ -1,4 +1,4 @@
-package com.tiny.game.common.conf;
+package com.tiny.game.common.server.main.bizlogic.gm;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,13 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ConfAnnotation {
+public @interface GmCmdAnnotation {
 
-	public Class confClass();
-	
-	public String path();
-	
-	public boolean enable() default true;
+	public String cmd();
 	
 }
-

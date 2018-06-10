@@ -17,4 +17,6 @@ public interface ContextParameter {
 	
 	public static String DAO_ENABLE_RDB="Dao.Enable.RDB";
 	
+	public static String GM_ENABLE="GM.Enable";
+	
 }

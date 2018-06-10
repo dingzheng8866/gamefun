@@ -8,13 +8,14 @@ import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.NetMessage;
 import com.tiny.game.common.net.NetSessionManager;
-import com.tiny.game.common.net.NetUtil;
+import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdFactory;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.main.MainGameServer;
+import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
 import game.protocol.protobuf.GameProtocol.C_RegisterClient;
@@ -43,12 +44,9 @@ public class C_GetLoginServerInfoProcessor extends NetCmdProcessor {
 			throw new InternalBugException("Bug: not set C_RegisterClient on session while init!");
 		}
 		
-		S_LoginServerInfo.Builder response = S_LoginServerInfo.newBuilder();
-		response.setIpAddress(client.getParameter1());
-		response.setPort(Integer.parseInt(client.getParameter2()));
-		
-		NetLayerManager.getInstance().asyncSendOutboundMessage(session, response.build());
-		System.out.println("Send main server info to client: " + response.build());
+		S_LoginServerInfo response = NetMessageUtil.buildS_LoginServerInfo(client.getParameter1(), Integer.parseInt(client.getParameter2()));
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, response);
+		System.out.println("Send main server info to client: " + response);
 	}
 	
 }

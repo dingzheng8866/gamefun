@@ -1,0 +1,10 @@
+option java_package = "game.protocol.protobuf";
+option java_outer_classname = "GMProtocol";
+option optimize_for = SPEED;
+
+message C_GMCmd{
+	required string roleId    = 1;
+	required string gmCmd     = 2;
+	optional string parameter = 3;
+}
+

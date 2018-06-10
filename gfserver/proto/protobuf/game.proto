@@ -6,6 +6,19 @@ message S_CReqCmd_Ack{
 	required string cmd    = 1;
 }
 
+message C_Heartbeat{
+}
+
+message S_ErrorInfo{
+	required int32 errorCode = 1;
+	optional string parameter = 2; 
+}
+
+message S_HintInfo{
+	optional int32 hintCode = 1;
+	optional string parameter = 2; 
+}
+
 message C_RegisterClient{
 	required string clientType    = 1;
 	optional string tag     	  = 2;
@@ -34,17 +47,25 @@ message C_RoleLogin{
 	optional string sdk_info = 9;    // 渠道sdk信息
 }
 
-message C_Heartbeat{
+message S_RoleData{
+	required string roleId = 1;
+	repeated S_OwnItem item = 2;
 }
 
-message S_ErrorInfo{
-	required int32 errorCode = 1;
-	optional string parameter = 2; 
+message S_OwnItem{
+	required int32 itemId = 1;
+	required int32 value = 2; 
+	optional int32 level = 3; 
+	repeated StringKeyParameter parameter = 4;
 }
 
-message S_HintInfo{
-	optional int32 hintCode = 1;
-	optional string parameter = 2; 
+message StringKeyParameter{
+	required string key = 1;
+	required string value = 2; 
 }
 
+message IntKeyParameter{
+	required int32 key = 1;
+	required string value = 2; 
+}
 

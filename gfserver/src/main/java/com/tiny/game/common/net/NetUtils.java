@@ -16,9 +16,9 @@ import com.google.protobuf.Parser;
 
 import sun.net.util.IPAddressUtil;
 
-public class NetUtil {
+public class NetUtils {
 	
-	private static Logger logger = LoggerFactory.getLogger(NetUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(NetUtils.class);
 	
 //	public static int checkCode = 0xB52713;  // 鍗忚閫氫俊鏍￠獙鐮�
 	

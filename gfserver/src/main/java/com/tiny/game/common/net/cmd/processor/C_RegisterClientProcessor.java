@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.net.NetMessage;
 import com.tiny.game.common.net.NetSessionManager;
-import com.tiny.game.common.net.NetUtil;
+import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
@@ -20,7 +20,7 @@ public class C_RegisterClientProcessor extends NetCmdProcessor {
 
 	@Override
 	public void process(NetSession session, NetMessage msg) {
-		C_RegisterClient req = NetUtil.getNetProtocolObject(C_RegisterClient.PARSER, msg);
+		C_RegisterClient req = NetUtils.getNetProtocolObject(C_RegisterClient.PARSER, msg);
 		
 		NetSessionManager.getInstance().addSession(req, session);
 		logger.info("C_RegisterClient: type: "+req.toString());

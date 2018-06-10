@@ -3,40 +3,46 @@ package com.tiny.game.common.domain.item;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.tiny.game.common.net.client.NetClient;
+
 public class Item {
 
-//	private int id;
-//	private String typeStringValue;
-	private ItemId itemId;
+	private static Logger logger = LoggerFactory.getLogger(Item.class);
 	
-	private String name;
-//	private ItemType type;
-	private int avatarId;
+	protected ItemId itemId;
+	protected String name;
+	protected String avatarId;
 	
-	private Map<String, String> props = new HashMap<String, String>();
+	protected long maxValue = -1;
+	
+	protected boolean isAccumulative = true;
+	
+	protected Map<String, String> props = new HashMap<String, String>();
 
+	public String getKey(){
+		return getKey(itemId);
+	}
+	
+	public static String getKey(ItemId itemId){
+		return itemId.getValue()+"";
+	}
 	
 	public boolean equals(Object o) {
 		if(o==null || !(o instanceof Item)) {
 			return false;
 		}
 		
-		return itemId == ((Item) o).itemId;
+		return getKey().equals(((Item) o).getKey());
 	}
 	
-//	public void setTypeStringValue(String v){
-//		this.typeStringValue = v;
-//	}
-//	
-//	public String getTypeStringValue(){
-//		return this.typeStringValue;
-//	}
-	
-	public ItemId getId() {
+	public ItemId getItemId() {
 		return itemId;
 	}
 
-	public void setId(ItemId id) {
+	public void setItemId(ItemId id) {
 		this.itemId = id;
 	}
 
@@ -48,18 +54,25 @@ public class Item {
 		this.name = name;
 	}
 
-	public int getAvatarId() {
+	public String getAvatarId() {
 		return avatarId;
 	}
 
-	public void setAvatarId(int avatarId) {
+	public void setAvatarId(String avatarId) {
 		this.avatarId = avatarId;
 	}
 
-//	public int getLevel() {
-//		return level;
-//	}
-
+	public void addAttr(String key, String value){
+		if(props.containsKey(key)){
+			logger.warn(itemId.name()+" add duplicate attr " + key +", " + getAttr(key) +"-->"+value);
+		}
+		props.put(key, value);
+	}
+	
+	public String getAttr(String key){
+		return props.get(key);
+	}
+	
 	public Map<String, String> getProps() {
 		return props;
 	}
@@ -68,12 +81,33 @@ public class Item {
 		this.props = props;
 	}
 
-//	public ItemType getType() {
-//		return type;
-//	}
-//
-//	public void setType(ItemType type) {
-//		this.type = type;
-//	}
+	public long getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(long maxValue) {
+		this.maxValue = maxValue;
+	}
+
+	public boolean isAccumulative() {
+		return isAccumulative;
+	}
+
+	public void setAccumulative(boolean isAccumulative) {
+		this.isAccumulative = isAccumulative;
+	}
+
+	protected String attrsToString(){
+		StringBuffer sb = new StringBuffer();
+		for(Map.Entry<String, String> entry : props.entrySet()){
+			sb.append(","+entry.getKey()+"=");
+			sb.append(entry.getValue());
+		}
+		return sb.toString();
+	}
+	
+	public String toString(){
+		return itemId.name()+","+avatarId+attrsToString();
+	}
 	
 }

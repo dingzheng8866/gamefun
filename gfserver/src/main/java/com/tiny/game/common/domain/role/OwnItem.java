@@ -5,19 +5,23 @@ import java.util.Map;
 
 import com.tiny.game.common.domain.item.Item;
 
-public class RoleOwnItem {
+public class OwnItem {
 
 	private Item item;
-	private int count;
+	private int value;
 	
 	private Map<String, String> extendedProps = new HashMap<String, String>();
 
+	public String getKey(){
+		return item.getKey();
+	}
+	
 	public boolean equals(Object o) {
-		if(o==null || !(o instanceof RoleOwnItem)) {
+		if(o==null || !(o instanceof OwnItem)) {
 			return false;
 		}
 		
-		return item.equals(((RoleOwnItem)o).item);
+		return item.equals(((OwnItem)o).item);
 	}
 	
 	public Item getItem() {
@@ -28,12 +32,12 @@ public class RoleOwnItem {
 		this.item = item;
 	}
 
-	public int getCount() {
-		return count;
+	public int getValue() {
+		return value;
 	}
 
-	public void setCount(int count) {
-		this.count = count;
+	public void setValue(int value) {
+		this.value = value;
 	}
 
 	public Map<String, String> getExtendedProps() {

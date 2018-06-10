@@ -1,0 +1,7 @@
+package com.tiny.game.common.domain.item;
+
+public interface ItemAttr {
+
+#ATTR_VAR
+	
+}

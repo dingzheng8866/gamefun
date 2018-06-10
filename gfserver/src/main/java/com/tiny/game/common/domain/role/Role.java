@@ -1,12 +1,22 @@
 package com.tiny.game.common.domain.role;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.tiny.game.common.domain.role.setting.RoleSettingBean;
+import com.tiny.game.common.exception.InternalBugException;
 
+/**
+ * gm:
+ * add itemkey value
+ * set itemkey value
+ * del itemkey value
+ * 
+ * user:
+ * use itemkey value (del)
+ * get itemkey value (add)
+ * setting: set itemkey value (set)
+ */
 public class Role {
 
 	private String roleId;
@@ -30,7 +40,7 @@ public class Role {
 
 //	private RoleSettingBean setting = new RoleSettingBean();
 	
-	private Map<Integer, RoleOwnItem> items = new ConcurrentHashMap<Integer, RoleOwnItem>();
+	private Map<String, OwnItem> items = new ConcurrentHashMap<String, OwnItem>();
 	
 	public boolean equals(Object o) {
 		if(o==null || !(o instanceof Role)) {
@@ -40,26 +50,57 @@ public class Role {
 		return roleId.equals(((Role) o).roleId);
 	}
 	
-	public RoleOwnItem getRoleOwnItem(int itemId) {
-		return items.get(itemId);
+	public Collection<OwnItem> getOwnItems(){
+		return items.values();
 	}
 	
-	public void addRoleOwnItem(RoleOwnItem item) {
-		RoleOwnItem oldItem = items.get(item.getItem().getId());
+	public OwnItem getRoleOwnItem(String ownKey) {
+		return items.get(ownKey);
+	}
+	
+	public void addRoleOwnItem(OwnItem item) {
+		OwnItem oldItem = items.get(item.getKey());
 		if(oldItem==null) {
 			oldItem = item;
-			items.put(item.getItem().getId().getValue(), oldItem);
+			items.put(item.getKey(), oldItem);
 		} else {
-//			oldItem.
+			boolean isAccumulative = oldItem.getItem().isAccumulative();
+			if(isAccumulative){
+				int newCount = oldItem.getValue() + item.getValue();
+				oldItem.setValue(newCount);
+				// TODO: check count < 0?
+				// TODO: how about attr?
+			} else {
+				oldItem.setValue(item.getValue());
+			}
 		}
 	}
 	
-//	public void deleteRoleOwnItem(RoleOwnItem item) {
-//		List<RoleOwnItem> list = items.get(item.getItem().getType());
-//		if(list!=null) {
-//			list.remove(item);
-//		}
-//	}
+	public void setRoleOwnItem(OwnItem item) {
+		OwnItem oldItem = items.get(item.getKey());
+		if(oldItem==null) {
+			oldItem = item;
+			items.put(item.getKey(), oldItem);
+		} else {
+			boolean isAccumulative = oldItem.getItem().isAccumulative();
+			if(isAccumulative){
+				throw new InternalBugException("Invalid method invoked, change setRoleOwnItem to addRoleOwnItem to item: " + item.getKey());
+			}
+			oldItem.setValue(item.getValue());
+		}
+	}
+	
+	public void deleteRoleOwnItem(OwnItem item) {
+		OwnItem oldItem = items.get(item.getKey());
+		if(oldItem!=null) {
+			boolean isAccumulative = oldItem.getItem().isAccumulative();
+			if(!isAccumulative){
+				throw new InternalBugException("Invalid method invoked, item is not accumulative: " + item.getKey());
+			} 
+			int newCount = oldItem.getValue() - item.getValue();
+			oldItem.setValue(newCount);
+		}
+	}
 	
 	// TODO: remove by count
 	

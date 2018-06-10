@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 
-import com.tiny.game.common.net.NetUtil;
+import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.util.IdGenerator;
 
 public class ServerContext implements ContextParameter {
@@ -28,10 +28,12 @@ public class ServerContext implements ContextParameter {
 	
 	private AbstractGameServer gameServer = null;
 	
+	private boolean gmEnable = false;
+	
 	private ServerContext() {
-		List<String> ipList = NetUtil.getNetworkIpAddress();
-		localExternalNetworkIp = NetUtil.getLocalExternalNetworkAddress(ipList);
-		localInternalNetworkIp = NetUtil.getLocalInternalNetworkAddress(ipList);
+		List<String> ipList = NetUtils.getNetworkIpAddress();
+		localExternalNetworkIp = NetUtils.getLocalExternalNetworkAddress(ipList);
+		localInternalNetworkIp = NetUtils.getLocalInternalNetworkAddress(ipList);
 	}
 	
 	public static ServerContext getInstance() {
@@ -61,10 +63,15 @@ public class ServerContext implements ContextParameter {
 		return localInternalNetworkIp;
 	}
 	
+	public boolean isGmEnable(){
+		return gmEnable;
+	}
+	
 	private void init(String serverTagPrefix) {
 		fightFPS = getPropertyInt(BATTLE_FPS, "20");
 		userIdLen = getPropertyInt(USERID_LEN, "12");
 		userNameLen = getPropertyInt(USERNAME_LEN, "12");
+		gmEnable = getPropertyBoolean(GM_ENABLE, false);
 	}
 	
 	private void loadProp(String file, String serverTagPrefix) {
