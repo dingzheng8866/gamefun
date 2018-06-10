@@ -28,7 +28,7 @@ public class UserOnlineInfo {
 	}
 	
 	public String toString() {
-		return "UserOnlineInfo:"+userId+"-"+loginServerId+","+lastUpdateTime;
+		return "UserOnlineInfo:"+userId+", online server:"+loginServerId+",update time:"+lastUpdateTime;
 	}
 	
 }

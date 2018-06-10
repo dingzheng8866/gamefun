@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.tiny.game.common.dao.UserDao;
+import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
@@ -32,12 +33,14 @@ public class UserDaoImplDB implements UserDao {
 	private UserAcctBindInfoRSH userAcctBindInfoResultSetHandler = new UserAcctBindInfoRSH();
 	private UserRSH userResultSetHandler = new UserRSH();
 	private UserOnlineInfoRSH userOnlineInfoResultSetHandler = new UserOnlineInfoRSH();
+	private RoleRSH roleResultSetHandler = new RoleRSH();
 	
 	private static class UserAcctBindInfoRSH extends AbstractResultSetHandler<UserAcctBindInfo> {
 		public UserAcctBindInfo factoryBeanObject(ResultSet rs) throws SQLException {
 			UserAcctBindInfo bean = new UserAcctBindInfo();
 			bean.setUserId(rs.getString("userId"));
 			bean.setBindedAccountId(rs.getString("bindId"));
+			bean.setLastUpdateTime(rs.getDate("lastUpdateTime"));
 			return bean;
 		}
 	}
@@ -65,6 +68,15 @@ public class UserDaoImplDB implements UserDao {
 			UserOnlineInfo bean = new UserOnlineInfo();
 			bean.setUserId(rs.getString("userId"));
 			bean.setLoginServerId(rs.getString("loginServerId"));
+			bean.setLastUpdateTime(rs.getDate("lastUpdateTime"));
+			return bean;
+		}
+	}
+	
+	private static class RoleRSH extends AbstractResultSetHandler<Role> {
+		public Role factoryBeanObject(ResultSet rs) throws SQLException {
+			Role bean = Role.toRole(rs.getString("roleData").getBytes());
+			bean.setRoleId(rs.getString("roleId"));
 			bean.setLastUpdateTime(rs.getDate("lastUpdateTime"));
 			return bean;
 		}
@@ -120,8 +132,8 @@ public class UserDaoImplDB implements UserDao {
 	public void createUserAcctBindInfo(UserAcctBindInfo info) {
 		QueryRunner runner = new QueryRunner(dataSource);
 		try {
-			runner.update("insert into user_bind(userId, bindId, lastUpdateTime) values(?, ?, NOW())",
-					info.getUserId(), info.getBindedAccountId());
+			runner.update("insert into user_bind(userId, bindId, lastUpdateTime) values(?, ?, ?)",
+					info.getUserId(), info.getBindedAccountId(), info.getLastUpdateTime());
 		} catch (SQLException e) {
 			throw new InternalRuntimeException("Failed to createUserAcctBindInfo: "+info.toString()+", error: "+e.getMessage(), e);
 		}
@@ -141,8 +153,8 @@ public class UserDaoImplDB implements UserDao {
 	public void createUserOnlineInfo(UserOnlineInfo info) {
 		QueryRunner runner = new QueryRunner(dataSource);
 		try {
-			runner.update("insert into user_online(userId, loginServerId, lastUpdateTime) values(?, ?, NOW())",
-					info.getUserId(), info.getLoginServerId());
+			runner.update("insert into user_online(userId, loginServerId, lastUpdateTime) values(?, ?, ?)",
+					info.getUserId(), info.getLoginServerId(), info.getLastUpdateTime());
 		} catch (SQLException e) {
 			throw new InternalRuntimeException("Failed to setUserOnlineInfo: "+info.toString()+", error: "+e.getMessage(), e);
 		}
@@ -181,4 +193,39 @@ public class UserDaoImplDB implements UserDao {
 		return ret;
 	}
 
+	@Override
+	public void createRole(Role role) {
+		QueryRunner runner = new QueryRunner(dataSource);
+		try {
+			runner.update("insert into role(roleId, roleData, lastUpdateTime) values(?, ?, ?)",
+					role.getRoleId(), role.toBinData(), role.getLastUpdateTime());
+		} catch (SQLException e) {
+			throw new InternalRuntimeException("Failed to createRole: "+role.toString()+", error: "+e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void updateRole(Role role) {
+		QueryRunner runner = new QueryRunner(dataSource);
+		try {
+			runner.update("update role set roleData=?, lastUpdateTime=? where roleId=?",
+					role.toBinData(), role.getLastUpdateTime(), role.getRoleId());
+		} catch (SQLException e) {
+			throw new InternalRuntimeException("Failed to updateRole: "+role.toString()+", error: "+e.getMessage(), e);
+		}
+	}
+	
+	@Override
+	public Role getRole(String roleId){
+		Role ret = null;
+		QueryRunner runner = new QueryRunner(dataSource);
+		try {
+			ret = runner.query("select * from role where roleId=?", roleResultSetHandler.singleHandler, roleId);
+		} catch (SQLException e) {
+			throw new InternalRuntimeException("Failed to getRole: "+roleId+", error: "+e.getMessage(), e);
+		}
+		return ret;
+	}
+	
+	
 }

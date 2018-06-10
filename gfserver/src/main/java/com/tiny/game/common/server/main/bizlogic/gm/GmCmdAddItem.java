@@ -9,7 +9,7 @@ import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.role.OwnItem;
 import com.tiny.game.common.domain.role.Role;
-import com.tiny.game.common.server.main.bizlogic.RoleUtil;
+import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
 
 @GmCmdAnnotation(cmd = "addItem")

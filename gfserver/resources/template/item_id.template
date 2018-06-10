@@ -19,6 +19,6 @@ public enum ItemId {
 #SWITCH_VAR
 
 		}
-		throw new InternalBugException();
+		throw new InternalBugException("Invalid item id:"+val);
 	}	
 }

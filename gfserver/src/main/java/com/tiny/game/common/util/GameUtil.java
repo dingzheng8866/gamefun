@@ -5,9 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -70,6 +70,15 @@ public class GameUtil {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("Failed to write to file: " + file +", error: " + e.getMessage(), e);
 		}
+	}
+	
+	public static String toString(Map map){
+		StringBuffer sb = new StringBuffer();
+		for(Object key : map.keySet()){
+			Object value = map.get(key);
+			sb.append(key+"="+value+",");
+		}
+		return sb.toString();
 	}
 	
 }

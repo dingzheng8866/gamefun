@@ -2,6 +2,7 @@ package com.tiny.game.common.dao.impl;
 
 import com.tiny.game.common.dao.UserDao;
 import com.tiny.game.common.dao.db.druid.UserDaoImplDB;
+import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
@@ -56,6 +57,21 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public UserOnlineInfo getUserOnlineInfo(String userId) {
 		return UserDaoImplDB.getInstance().getUserOnlineInfo(userId);
+	}
+
+	@Override
+	public void createRole(Role role) {
+		UserDaoImplDB.getInstance().createRole(role);
+	}
+
+	@Override
+	public void updateRole(Role role) {
+		UserDaoImplDB.getInstance().updateRole(role);		
+	}
+
+	@Override
+	public Role getRole(String roleId) {
+		return UserDaoImplDB.getInstance().getRole(roleId);
 	}
 
 }

@@ -1,10 +1,16 @@
 package com.tiny.game.common.domain.role;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.tiny.game.common.exception.InternalBugException;
+import com.tiny.game.common.net.NetUtils;
+import com.tiny.game.common.util.NetMessageUtil;
+
+import game.protocol.protobuf.GameProtocol.S_RoleData;
 
 /**
  * gm:
@@ -41,6 +47,30 @@ public class Role {
 //	private RoleSettingBean setting = new RoleSettingBean();
 	
 	private Map<String, OwnItem> items = new ConcurrentHashMap<String, OwnItem>();
+	
+	private Date lastUpdateTime = null;
+	
+	public byte[] toBinData(){
+		return NetMessageUtil.convertRole(this).toByteArray();
+	}
+	
+	public static Role toRole(byte[] bin){
+		try {
+			S_RoleData data = S_RoleData.PARSER.parseFrom(bin, 0, bin.length);
+			return NetMessageUtil.convertS_RoleData(data);
+		} catch (InvalidProtocolBufferException e) {
+			throw new InternalBugException("Failed to parse role bin data: " + e.getMessage(), e);
+		}
+	}
+	
+	public String toString(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("Role: " + roleId);
+		for(OwnItem item : items.values()){
+			sb.append(","+item.toString());
+		}
+		return sb.toString();
+	}
 	
 	public boolean equals(Object o) {
 		if(o==null || !(o instanceof Role)) {
@@ -118,6 +148,14 @@ public class Role {
 
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
+	}
+
+	public Date getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+	public void setLastUpdateTime(Date lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
 	}
 
 //	public String getHeadIcon() {

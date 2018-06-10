@@ -34,5 +34,13 @@ CREATE TABLE `user_online` (
   PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+  `roleId` varchar(128) NOT NULL,
+  `roleData` varchar(128) NOT NULL,
+  `lastUpdateTime` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`roleId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 

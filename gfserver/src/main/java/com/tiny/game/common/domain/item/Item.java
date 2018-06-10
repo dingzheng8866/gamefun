@@ -107,7 +107,7 @@ public class Item {
 	}
 	
 	public String toString(){
-		return itemId.name()+","+avatarId+attrsToString();
+		return itemId.name()+",avatarId:"+avatarId+",props:"+attrsToString();
 	}
 	
 }

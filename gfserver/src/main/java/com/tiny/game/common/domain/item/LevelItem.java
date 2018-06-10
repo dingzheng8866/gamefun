@@ -24,7 +24,7 @@ public class LevelItem extends Item {
 	}
 	
 	public String toString(){
-		return itemId.name()+"-"+level+","+avatarId+attrsToString();
+		return itemId.name()+"-"+level+",avatarId:"+avatarId+",props:"+attrsToString();
 	}
 	
 }

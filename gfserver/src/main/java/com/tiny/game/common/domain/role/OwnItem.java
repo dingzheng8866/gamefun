@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tiny.game.common.domain.item.Item;
+import com.tiny.game.common.util.GameUtil;
 
 public class OwnItem {
 
@@ -24,6 +25,15 @@ public class OwnItem {
 		return item.equals(((OwnItem)o).item);
 	}
 	
+	public String toString(){
+		StringBuffer sb = new StringBuffer();
+		sb.append(item.toString()+",own:"+value);
+		if(extendedProps.size() > 0){
+			sb.append(",extendProps:"+GameUtil.toString(extendedProps));
+		}
+		return sb.toString();
+	}
+	
 	public Item getItem() {
 		return item;
 	}
@@ -40,6 +50,10 @@ public class OwnItem {
 		this.value = value;
 	}
 
+	public void addExtendProp(String key, String value){
+		extendedProps.put(key, value);
+	}
+	
 	public Map<String, String> getExtendedProps() {
 		return extendedProps;
 	}

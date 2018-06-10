@@ -1,25 +1,20 @@
 package com.tiny.game.common.server.main.cmd.processor;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tiny.game.common.dao.DaoFactory;
+import com.alibaba.druid.util.StringUtils;
 import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.User;
-import com.tiny.game.common.domain.role.UserAcctBindInfo;
-import com.tiny.game.common.domain.role.UserOnlineInfo;
+import com.tiny.game.common.error.ErrorCode;
+import com.tiny.game.common.exception.InvalidRequestParameter;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.NetMessage;
 import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
-import com.tiny.game.common.server.ServerContext;
-import com.tiny.game.common.server.main.bizlogic.RoleUtil;
-import com.tiny.game.common.util.IdGenerator;
+import com.tiny.game.common.server.main.bizlogic.role.RoleService;
 import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
@@ -30,66 +25,33 @@ public class C_RoleLoginProcessor extends NetCmdProcessor {
 
 	private static final Logger logger = LoggerFactory.getLogger(C_RoleLoginProcessor.class);
 
-	private User createUser(NetSession session, C_RoleLogin req) {
-		User bean = new User();
-		bean.setUserId(IdGenerator.genUniqueUserId());
-		bean.setLoginAccountId(req.getLoginAccountId());
-		bean.setLoginDeviceId(req.getDeviceId());
-		bean.setLoginIp(session.getRemoteAddress());
-		bean.setChannel(req.getChannel()+"");
-		bean.setPlatform(req.getPlatform());
-		bean.setPlatformAccountId(req.getAccount());
-		bean.setPlatformAccountPassword(req.getToken());
-		Date time = Calendar.getInstance().getTime();
-		bean.setCreateTime(time);
-		bean.setLastUpdateTime(time);
-		bean.setLoginDeviceInfo(req.getDeviceInfo());
-		DaoFactory.getInstance().getUserDao().createUser(bean);
-		return bean;
+	private void validateReq(C_RoleLogin req){
+		if(StringUtils.isEmpty(req.getLoginAccountId()) && StringUtils.isEmpty(req.getDeviceId())){
+			throw new InvalidRequestParameter(ErrorCode.Error_InvalidRequestParameter, "empty login acct id and device id");
+		}
 	}
 	
 	@Override
 	public void process(NetSession session, NetMessage msg) {
 		C_RoleLogin req = NetUtils.getNetProtocolObject(C_RoleLogin.PARSER, msg);
-		
-		UserAcctBindInfo acctBindInfo = DaoFactory.getInstance().getUserDao().getUserAcctBindInfo(req.getLoginAccountId());
-		if(acctBindInfo==null && !req.getLoginAccountId().equals(req.getDeviceId())) {
-			acctBindInfo = DaoFactory.getInstance().getUserDao().getUserAcctBindInfo(req.getDeviceId());
+		validateReq(req);
+		String loginAcctId = req.getLoginAccountId();
+		if(StringUtils.isEmpty(loginAcctId)){
+			loginAcctId = req.getDeviceId();
 		}
-		User user = null;
 		Role role = null;
-		if(acctBindInfo==null) {
-			logger.info("Try to create user because not found user by: " + req.getLoginAccountId() + "/" + req.getDeviceId());
-			user = createUser(session, req);
-			role = RoleUtil.buildRole(user.getUserId());
+		User user = RoleService.getUser(loginAcctId, req.getDeviceId());
+		if(user==null){
+			logger.info("Try to create user for not found user by: " + loginAcctId + "," + req.getDeviceId());
+			role = RoleService.createUserAndRole(req, session.getRemoteAddress(), loginAcctId);
 		} else {
-			user = DaoFactory.getInstance().getUserDao().getUserById(acctBindInfo.getUserId());
-			// TODO: get role info
-		}
-		
-		// check user online info
-		String currentLoginServerId = ServerContext.getInstance().getServerUniqueTag();
-		UserOnlineInfo userOnlineInfo = DaoFactory.getInstance().getUserDao().getUserOnlineInfo(user.getUserId());
-		if(userOnlineInfo==null) {
-			userOnlineInfo = new UserOnlineInfo();
-			userOnlineInfo.setUserId(user.getUserId());
-			userOnlineInfo.setLoginServerId(currentLoginServerId); 
-			userOnlineInfo.setLastUpdateTime(Calendar.getInstance().getTime());
-			DaoFactory.getInstance().getUserDao().createUserOnlineInfo(userOnlineInfo);
-		} else {
-			if(!currentLoginServerId.equals(userOnlineInfo.getLoginServerId())) {
-				// TODO: broadcast kickoff cmd
-			} 
-			userOnlineInfo.setLoginServerId(currentLoginServerId); 
-			userOnlineInfo.setLastUpdateTime(Calendar.getInstance().getTime());
-			DaoFactory.getInstance().getUserDao().updateUserOnlineInfo(userOnlineInfo);
+			role = RoleService.updateUserAndRole(user, req, session.getRemoteAddress());
 		}
 		
 		// sync user data to client
 		S_RoleData roleData = NetMessageUtil.convertRole(role);
 		NetLayerManager.getInstance().asyncSendOutboundMessage(session, roleData);
 		System.out.println("Send role data: " + roleData);
-		
 	}
 	
 }

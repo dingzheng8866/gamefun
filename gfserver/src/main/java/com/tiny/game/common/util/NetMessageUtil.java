@@ -2,9 +2,11 @@ package com.tiny.game.common.util;
 
 import java.util.Map;
 
+import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.role.OwnItem;
 import com.tiny.game.common.domain.role.Role;
+import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
 import game.protocol.protobuf.GameProtocol.S_LoginServerInfo;
 import game.protocol.protobuf.GameProtocol.S_OwnItem;
@@ -20,6 +22,16 @@ public class NetMessageUtil {
 		return builder.build();
 	}
 	
+	public static Role convertS_RoleData(S_RoleData roleData){
+		Role role = new Role();
+		role.setRoleId(roleData.getRoleId());
+		for(S_OwnItem item : roleData.getItemList()){
+			role.addRoleOwnItem(convertS_OwnItem(item));
+		}
+		return role;
+	}
+	
+	
 	public static S_RoleData convertRole(Role role){
 		S_RoleData.Builder builder = S_RoleData.newBuilder();
 		builder.setRoleId(role.getRoleId());
@@ -27,6 +39,15 @@ public class NetMessageUtil {
 			builder.addItem(convertOwnItem(item));
 		}
 		return builder.build();
+	}
+	
+	private static OwnItem convertS_OwnItem(S_OwnItem item){
+		OwnItem ownItem = RoleUtil.buildOwnItem(ItemId.valueOf(item.getItemId()), item.getLevel(), item.getValue());
+		
+		for(StringKeyParameter sp : item.getParameterList()){
+			ownItem.addExtendProp(sp.getKey(), sp.getValue());
+		}
+		return ownItem;
 	}
 	
 	private static S_OwnItem convertOwnItem(OwnItem item){

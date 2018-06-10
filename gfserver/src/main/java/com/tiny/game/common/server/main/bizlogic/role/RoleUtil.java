@@ -1,4 +1,4 @@
-package com.tiny.game.common.server.main.bizlogic;
+package com.tiny.game.common.server.main.bizlogic.role;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +20,11 @@ public class RoleUtil {
 	
 	
 	public static OwnItem buildOwnItem(ItemId itemId, int level, int value){
-		Item item =  (LevelItem)LocalConfManager.getInstance().getConfReader(ItemLevelAttrConfReader.class).getConfBean(LevelItem.getKey(itemId, level));
+		Item item = null;
+		if(level > 0){
+			item =  (LevelItem)LocalConfManager.getInstance().getConfReader(ItemLevelAttrConfReader.class).getConfBean(LevelItem.getKey(itemId, level));
+		}
 		if(item == null){
-			logger.info("Not found level item, change to base item: " + itemId);
 			item = (Item)LocalConfManager.getInstance().getConfReader(ItemConfReader.class).getConfBean(Item.getKey(itemId));
 		}
 		
