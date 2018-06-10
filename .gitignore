@@ -2,6 +2,8 @@ gfserver/logs
 gfserver/target
 gfserver/.settings
 gfserver/src/main/java/game/protocol/protobuf
+gfserver/src/main/java/com/tiny/game/common/domain/item/ItemId.java
+gfserver/src/main/java/com/tiny/game/common/domain/item/ItemAttr.java
 gfserver/logstat
 .vscode
 .vs
