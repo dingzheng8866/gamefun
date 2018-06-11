@@ -42,7 +42,7 @@ public class C_GetLoginServerInfoProcessor extends NetCmdProcessor {
 			throw new InternalBugException("Bug: not set C_RegisterClient on session while init!");
 		}
 		
-		S_LoginServerInfo response = NetMessageUtil.buildS_LoginServerInfo(client.getParameter1(), Integer.parseInt(client.getParameter2()));
+		S_LoginServerInfo response = NetMessageUtil.buildS_LoginServerInfo(client.getServerIp(), Integer.parseInt(client.getServerPort()));
 		NetLayerManager.getInstance().asyncSendOutboundMessage(session, response);
 		System.out.println("Send main server info to client: " + response);
 	}

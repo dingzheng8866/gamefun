@@ -119,13 +119,6 @@ public class RoleService {
 		builder.setMsgContent(ByteString.copyFrom(errorCmd.getParameters()));
 		builder.setTargetServerTag(specifiedLoginServerId);
 		
-		
-	}
-	
-	private static S_ErrorInfo buildKickoffMessage() {
-		S_ErrorInfo.Builder builder = S_ErrorInfo.newBuilder();
-		builder.setErrorCode(ErrorCode.Error_AnotherDeviceLogin.getValue());
-		return builder.build();
 	}
 	
 	public static Role createUserAndRole(C_RoleLogin req, String userIp, String loginAcctId){

@@ -12,7 +12,7 @@ public class RoleSessionService {
 	public static void saveRoleSession(Role role, NetSession session) {
 		C_RegisterClient.Builder req = C_RegisterClient.newBuilder();
 		req.setClientType(role.getRoleId());
-		req.setTag(User.class.getSimpleName());
+		req.setClientUniqueId(role.getRoleId());
 		
 		session.setPlayerRole(role);
 		

@@ -44,13 +44,13 @@ public class NetClientManager {
 		return msgId++;
 	}
 	
-	public void addConnectTarget(String clientTag, String host, int port) {
-		List<ConnectTarget> targets = connectTargets.get(clientTag);
+	public void addConnectTarget(String targetServerTag, String host, int port) {
+		List<ConnectTarget> targets = connectTargets.get(targetServerTag);
 		if(targets==null) {
 			targets = new ArrayList<ConnectTarget>();
-			connectTargets.put(clientTag, targets);
+			connectTargets.put(targetServerTag, targets);
 		}
-		targets.add(new ConnectTarget(clientTag, host, port));
+		targets.add(new ConnectTarget(targetServerTag, host, port));
 	}
 	
 	// TODO: remove connect target
@@ -142,7 +142,7 @@ public class NetClientManager {
 	}
 	
 	static class ConnectTarget {
-		String clientTag;
+		String targetServerTag;
 		String host;
 		int port;
 		
@@ -155,8 +155,8 @@ public class NetClientManager {
 			return false;
 		}
 		
-		public ConnectTarget(String clientTag, String host, int port) {
-			this.clientTag = clientTag;
+		public ConnectTarget(String targetServerTag, String host, int port) {
+			this.targetServerTag = targetServerTag;
 			this.host = host;
 			this.port = port;
 		}
@@ -168,7 +168,7 @@ public class NetClientManager {
 			}
 			
 			ConnectTarget t = (ConnectTarget)o;
-			if(t.clientTag.equals(clientTag) && t.host.equals(host) && t.port==port) {
+			if(t.targetServerTag.equals(targetServerTag) && t.host.equals(host) && t.port==port) {
 				return true;
 			}
 			

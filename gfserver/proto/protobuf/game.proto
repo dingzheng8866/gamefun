@@ -33,11 +33,11 @@ message C_RoleBroadcastReq{
 }
 
 message C_RegisterClient{
-	required string clientType    = 1;
-	optional string tag     	  = 2;
-	optional string parameter1    = 3;
-	optional string parameter2    = 4;
-	optional string parameter3    = 5;
+	required string clientType     = 1;
+	required string clientUniqueId = 2;
+	optional string serverIp       = 3;
+	optional string serverPort     = 4;
+	optional string reserved       = 5;
 }
 
 message C_GetLoginServerInfo{
