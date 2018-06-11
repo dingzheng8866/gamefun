@@ -37,7 +37,7 @@ CREATE TABLE `user_online` (
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
   `roleId` varchar(128) NOT NULL,
-  `roleData` mediumblob NOT NULL,
+  `roleData` mediumblob NULL DEFAULT NULL,
   `lastUpdateTime` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`roleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

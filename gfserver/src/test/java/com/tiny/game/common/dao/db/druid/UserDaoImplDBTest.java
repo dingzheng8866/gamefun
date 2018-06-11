@@ -8,9 +8,12 @@ import org.junit.Test;
 
 import com.tiny.game.common.dao.DaoFactory;
 import com.tiny.game.common.dao.db.druid.UserDaoImplDB;
+import com.tiny.game.common.domain.item.ItemId;
+import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
+import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
 // Manually run this
 public class UserDaoImplDBTest extends BaseDaoDBTest {
@@ -44,6 +47,18 @@ public class UserDaoImplDBTest extends BaseDaoDBTest {
 		bean.setLastUpdateTime(Calendar.getInstance().getTime());
 		bean.setLoginDeviceInfo("device: xiaomi android9.0");
 		return bean;
+	}
+	
+	private Role buildRole(){
+		Role role = new Role();
+		role.setRoleId("123456");
+		role.setLastUpdateTime(Calendar.getInstance().getTime());
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, 0));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.mainBase, 3, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerLeft, 2, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerRight, 1, 1));
+		return role;
 	}
 	
 	@Ignore
@@ -127,4 +142,22 @@ public class UserDaoImplDBTest extends BaseDaoDBTest {
 		assert("3333".equals(bean.getLoginAccountId()));
 		
 	}
+	
+	@Test
+	public void testRole() {
+		Role role = buildRole();
+		
+		UserDaoImplDB.getInstance().createRole(role);
+		
+		role = UserDaoImplDB.getInstance().getRole("123456");
+		assert(role!=null);
+		
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.buyGem, 1, 50));
+		role.setLastUpdateTime(Calendar.getInstance().getTime());
+		UserDaoImplDB.getInstance().updateRole(role);
+		role = UserDaoImplDB.getInstance().getRole("123456");
+		assert(50==role.getOwnItemValue(ItemId.buyGem));
+		
+	}
+	
 }
