@@ -16,7 +16,9 @@ public class NetCmdFactory {
 	public static NetCmd factoryCmdS_ErrorInfo(int code, String parameter) {
 		S_ErrorInfo.Builder builder = S_ErrorInfo.newBuilder();
 		builder.setErrorCode(code);
-		builder.setParameter(parameter);
+		if(parameter!=null && parameter.trim().length() > 0) {
+			builder.setParameter(parameter.trim());
+		}
 		NetCmd cmd = new NetCmd(builder.build());
 		return cmd;
 	}

@@ -20,11 +20,16 @@ public class RoleSessionService {
 	}
 	
 	public static Role getRole(String roleId) {
-		NetSession session = NetSessionManager.getInstance().getSession(roleId);
+		NetSession session = getRoleSession(roleId);
 		if(session!=null) {
 			return session.getPlayerRole();
 		}
 		return null;
+	}
+	
+	public static NetSession getRoleSession(String roleId) {
+		NetSession session = NetSessionManager.getInstance().getSession(roleId);
+		return session;
 	}
 	
 }

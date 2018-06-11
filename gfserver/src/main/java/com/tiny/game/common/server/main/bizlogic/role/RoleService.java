@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.ByteString;
 import com.tiny.game.common.conf.LocalConfManager;
 import com.tiny.game.common.conf.role.RoleExpConfReader;
 import com.tiny.game.common.conf.role.RoleSignConfReader;
@@ -21,12 +22,18 @@ import com.tiny.game.common.domain.role.RoleSign;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
+import com.tiny.game.common.error.ErrorCode;
 import com.tiny.game.common.exception.InternalBugException;
+import com.tiny.game.common.net.cmd.NetCmd;
+import com.tiny.game.common.net.cmd.NetCmdFactory;
 import com.tiny.game.common.server.ServerContext;
+import com.tiny.game.common.server.broadcast.BroadcastService;
 import com.tiny.game.common.util.GameUtil;
 import com.tiny.game.common.util.IdGenerator;
 
+import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
+import game.protocol.protobuf.GameProtocol.S_ErrorInfo;
 
 public class RoleService {
 
@@ -103,6 +110,22 @@ public class RoleService {
 	
 	private static void kickoffUserToOffline(String userId, String specifiedLoginServerId){
 		// TODO: broadcast kickoff cmd
+//		BroadcastService.broadcast(specifiedLoginServerId, msgName, msgContent);
+		C_ProxyBroadcastReq.Builder builder = C_ProxyBroadcastReq.newBuilder();
+		builder.setFinalTargetClientType(userId);
+	
+		NetCmd errorCmd = NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_AnotherDeviceLogin.getValue(), null);
+		builder.setMsgName(errorCmd.getName());
+		builder.setMsgContent(ByteString.copyFrom(errorCmd.getParameters()));
+		builder.setTargetServerTag(specifiedLoginServerId);
+		
+		
+	}
+	
+	private static S_ErrorInfo buildKickoffMessage() {
+		S_ErrorInfo.Builder builder = S_ErrorInfo.newBuilder();
+		builder.setErrorCode(ErrorCode.Error_AnotherDeviceLogin.getValue());
+		return builder.build();
 	}
 	
 	public static Role createUserAndRole(C_RoleLogin req, String userIp, String loginAcctId){
