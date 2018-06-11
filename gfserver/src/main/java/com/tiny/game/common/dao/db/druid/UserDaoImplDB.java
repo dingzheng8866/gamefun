@@ -1,8 +1,14 @@
 package com.tiny.game.common.dao.db.druid;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +20,8 @@ import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
 import com.tiny.game.common.exception.InternalRuntimeException;
+
+import game.protocol.protobuf.GameProtocol.S_RoleData;
 
 
 public class UserDaoImplDB implements UserDao {
@@ -75,7 +83,14 @@ public class UserDaoImplDB implements UserDao {
 	
 	private static class RoleRSH extends AbstractResultSetHandler<Role> {
 		public Role factoryBeanObject(ResultSet rs) throws SQLException {
-			Role bean = Role.toRole(rs.getString("roleData").getBytes());
+			S_RoleData.Builder roleData = S_RoleData.newBuilder();
+			try {
+				roleData.mergeFrom(rs.getBinaryStream("roleData"));
+			} catch (IOException e) {
+				throw new InternalRuntimeException("Failed to factoryBeanObject, error: "+e.getMessage(), e);
+			}
+			Role bean = Role.toRole(roleData.build().toByteArray());
+			
 			bean.setRoleId(rs.getString("roleId"));
 			bean.setLastUpdateTime(rs.getDate("lastUpdateTime"));
 			return bean;
@@ -193,26 +208,48 @@ public class UserDaoImplDB implements UserDao {
 		return ret;
 	}
 
+	private void updateRoleData(Role role) {
+		InputStream inputStream = new ByteArrayInputStream(role.toBinData());
+		Connection con = null;
+		try {
+			con = dataSource.getConnection();
+			PreparedStatement pstmt = con.prepareStatement("update role set roleData = ?, lastUpdateTime=? where roleId=?");
+			pstmt.setBlob(1, inputStream);
+			pstmt.setDate(2, new java.sql.Date(role.getLastUpdateTime().getTime()));
+			pstmt.setString(3, role.getRoleId());
+			pstmt.executeUpdate();
+			pstmt.close();
+		} catch (SQLException e) {
+			throw new InternalRuntimeException("Failed to updateRoleData: "+role.getRoleId()+", error: "+e.getMessage(), e);
+		} finally {
+			if(con!=null) {
+				DbUtils.closeQuietly(con);
+			}
+		}
+	}	
+	
 	@Override
 	public void createRole(Role role) {
 		QueryRunner runner = new QueryRunner(dataSource);
 		try {
-			runner.update("insert into role(roleId, roleData, lastUpdateTime) values(?, ?, ?)",
-					role.getRoleId(), role.toBinData(), role.getLastUpdateTime());
+			runner.update("insert into role(roleId, lastUpdateTime) values(?, ?)",
+					role.getRoleId(), role.getLastUpdateTime());
 		} catch (SQLException e) {
 			throw new InternalRuntimeException("Failed to createRole: "+role.toString()+", error: "+e.getMessage(), e);
 		}
+		updateRoleData(role);
 	}
 
 	@Override
 	public void updateRole(Role role) {
-		QueryRunner runner = new QueryRunner(dataSource);
-		try {
-			runner.update("update role set roleData=?, lastUpdateTime=? where roleId=?",
-					role.toBinData(), role.getLastUpdateTime(), role.getRoleId());
-		} catch (SQLException e) {
-			throw new InternalRuntimeException("Failed to updateRole: "+role.toString()+", error: "+e.getMessage(), e);
-		}
+//		QueryRunner runner = new QueryRunner(dataSource);
+//		try {
+//			runner.update("update role set roleData=?, lastUpdateTime=? where roleId=?",
+//					role.toBinData(), role.getLastUpdateTime(), role.getRoleId());
+//		} catch (SQLException e) {
+//			throw new InternalRuntimeException("Failed to updateRole: "+role.toString()+", error: "+e.getMessage(), e);
+//		}
+		updateRoleData(role);
 	}
 	
 	@Override
