@@ -10,11 +10,13 @@ import com.tiny.game.common.error.ErrorCode;
 import com.tiny.game.common.exception.InvalidRequestParameter;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.NetMessage;
+import com.tiny.game.common.net.NetSessionManager;
 import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.main.bizlogic.role.RoleService;
+import com.tiny.game.common.server.main.bizlogic.role.RoleSessionService;
 import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
@@ -47,6 +49,9 @@ public class C_RoleLoginProcessor extends NetCmdProcessor {
 		} else {
 			role = RoleService.updateUserAndRole(user, req, session.getRemoteAddress());
 		}
+		
+		// save user session
+		RoleSessionService.saveRoleSession(role, session);
 		
 		// sync user data to client
 		S_RoleData roleData = NetMessageUtil.convertRole(role);

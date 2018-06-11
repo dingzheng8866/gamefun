@@ -3,6 +3,7 @@ package com.tiny.game.common.net.netty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.net.NetMessage;
 
 import game.protocol.protobuf.GameProtocol.C_RegisterClient;
@@ -24,6 +25,8 @@ public class NetSession {
 
 	private String deviceId;
 	private String key;
+	
+	private Role playerRole;
 	
 	private C_RegisterClient clientRegisterInfo = null;
 	
@@ -128,6 +131,14 @@ public class NetSession {
 
 	public void setLastVisitTime(long lastVisitTime) {
 		this.lastVisitTime = lastVisitTime;
+	}
+
+	public Role getPlayerRole() {
+		return playerRole;
+	}
+
+	public void setPlayerRole(Role playerRole) {
+		this.playerRole = playerRole;
 	}
 
 }
