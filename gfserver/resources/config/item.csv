@@ -21,6 +21,10 @@ id;type;name;avatarId;maxValue;accumulativeFlag
 100018;speedTimeTwelveHour;加速12小时;;;
 100019;speedTimeOneDay;加速24小时;;;
 100020;itemBox;物品箱子;;;
+100021;signTag;签到标记;;;
+100022;signFinishTag;签到完成标记;;;
+100023;signGotRewardTag;签到领取标记;;;
+100024;internalTagRoleLoginDay;内部标记登陆;;;
 200001;mainBase;主基地;;;
 200002;defenseTowerLeft;防御塔1;;;
 200003;defenseTowerRight;防御塔2;;;

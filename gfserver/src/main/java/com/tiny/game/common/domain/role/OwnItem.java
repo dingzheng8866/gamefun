@@ -50,6 +50,10 @@ public class OwnItem {
 		this.value = value;
 	}
 
+	public String getExtendProp(String key){
+		return extendedProps.get(key);
+	}
+	
 	public void addExtendProp(String key, String value){
 		extendedProps.put(key, value);
 	}

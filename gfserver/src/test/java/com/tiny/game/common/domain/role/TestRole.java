@@ -24,11 +24,11 @@ public class TestRole {
 		Role role = new Role();
 		role.setRoleId("123456");
 		role.setLastUpdateTime(Calendar.getInstance().getTime());
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1));
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, 0));
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.mainBase, 3, 1));
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerLeft, 2, 1));
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerRight, 1, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, 0));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.mainBase, 3, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerLeft, 2, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerRight, 1, 1));
 		return role;
 	}
 	
@@ -47,12 +47,12 @@ public class TestRole {
 		int level = role.getLevel();
 		
 		RoleExp roleExp = (RoleExp)LocalConfManager.getInstance().getConfReader(RoleExpConfReader.class).getConfBean(level+"");
-		int delta = roleExp.getExp() - role.getRoleOwnItemValue(ItemId.roleExp) - 1;
+		int delta = roleExp.getExp() - role.getOwnItemValue(ItemId.roleExp) - 1;
 		
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, delta));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, delta));
 		assertTrue(role.getLevel() == level);
 		
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, 10));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, 10));
 		assertTrue(role.getLevel() == level+1);
 		
 		level = role.getLevel();
@@ -62,7 +62,7 @@ public class TestRole {
 			roleExp = (RoleExp)LocalConfManager.getInstance().getConfReader(RoleExpConfReader.class).getConfBean((level+i)+"");
 			total+=roleExp.getExp();
 		}
-		role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, total));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, total));
 		assertTrue(role.getLevel() == level+addedLevel);
 		
 	}

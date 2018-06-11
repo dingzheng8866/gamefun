@@ -1,7 +1,9 @@
 package com.tiny.game.common.server.main.bizlogic.role;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -9,14 +11,19 @@ import org.slf4j.LoggerFactory;
 
 import com.tiny.game.common.conf.LocalConfManager;
 import com.tiny.game.common.conf.role.RoleExpConfReader;
+import com.tiny.game.common.conf.role.RoleSignConfReader;
 import com.tiny.game.common.dao.DaoFactory;
 import com.tiny.game.common.domain.item.ItemId;
+import com.tiny.game.common.domain.role.OwnItem;
 import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.RoleExp;
+import com.tiny.game.common.domain.role.RoleSign;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
+import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.server.ServerContext;
+import com.tiny.game.common.util.GameUtil;
 import com.tiny.game.common.util.IdGenerator;
 
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
@@ -25,7 +32,9 @@ public class RoleService {
 
 	private static final Logger logger = LoggerFactory.getLogger(RoleService.class);
 	
+	private static int maxConfigRoleSignDay = 1;
 	private static int maxConfigRoleLevel = 1;
+	
 	public static void addMaxConfigRoleLevel(int level){
 		if(level > maxConfigRoleLevel){
 			maxConfigRoleLevel = level;
@@ -33,6 +42,12 @@ public class RoleService {
 	}
 	public static int getRoleMaxConfigLevel(){
 		return maxConfigRoleLevel;
+	}
+	
+	public static void addMaxConfigRoleSignDay(int day){
+		if(day > maxConfigRoleSignDay){
+			maxConfigRoleSignDay = day;
+		}
 	}
 	
 	public static void fixupRoleExpChange(Role role){
@@ -43,10 +58,10 @@ public class RoleService {
 		
 		RoleExp roleExp = (RoleExp)LocalConfManager.getInstance().getConfReader(RoleExpConfReader.class).getConfBean(tempRoleLevel+"");
 		int levelMaxExp = roleExp.getExp();
-		int currentExp = role.getRoleOwnItemValue(ItemId.roleExp);
+		int currentExp = role.getOwnItemValue(ItemId.roleExp);
 		if(currentExp > levelMaxExp){
-			role.deleteRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, levelMaxExp)); // exp-max==>then fixup again
-			role.addRoleOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1)); // level+1
+			role.deleteOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, levelMaxExp)); // exp-max==>then fixup again
+			role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1)); // level+1
 			//TODO: broadcast role level up, maybe give some reward
 			logger.info("TODO: broadcast role level up, maybe give some reward to level: " + role.getLevel());
 			fixupRoleExpChange(role);
@@ -82,6 +97,7 @@ public class RoleService {
 			} 
 			updateUserOnlineInfo(userOnlineInfo);
 		}
+		markRoleSignTag(role);
 		return role;
 	}
 	
@@ -110,6 +126,7 @@ public class RoleService {
 		}
 		
 		createUserOnlineInfo(user.getUserId());
+		initRoleSignTag(role);
 		return role;
 	}
 	
@@ -157,8 +174,79 @@ public class RoleService {
 		return bean;
 	}
 	
-	public static void recordSignDay(Role role){
+	public static void initRoleSignTag(Role role){
+//		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signFinishTag, 0, 0));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signGotRewardTag, 0, 0));
 		
+//		OwnItem ownItem = role.getOwnItem(ItemId.signTag);
+//		ownItem.addExtendProp("firstSignDay", System.currentTimeMillis()+"");
+		markRoleSignTag(role);
+	}
+	
+	private static void markRoleSignTag(Role role){
+		int totalLoginDays = getTotalSignLoginDays(role);
+		if(totalLoginDays < maxConfigRoleSignDay){
+			// check login day changed or not
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			String loginDay = df.format(Calendar.getInstance().getTime());
+			if(!hasItemContainsSpecifiedSubExtendPropValue(role, ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay)){
+				role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signTag, 0, 1));
+				addItemSpecifiedSubExtendPropValue(role, ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay);
+			}
+		}
+	}
+	
+	private static int getTotalSignLoginDays(Role role){
+		int totalLoginDays = 0;
+		OwnItem signTag = role.getOwnItem(ItemId.signTag);
+		if(signTag!=null){
+			totalLoginDays = signTag.getValue();
+		}
+		return totalLoginDays;
+	}
+	
+	private static boolean hasItemContainsSpecifiedSubExtendPropValue(Role role, ItemId itemId, String propName, String subValue){
+		OwnItem ownItem = role.getOwnItem(itemId);
+		String itemValue = ownItem.getExtendProp(propName);
+		if(itemValue!=null){
+			List<String> list = GameUtil.splitToStringList(itemValue, ",");
+			if(list.contains(subValue)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static void addItemSpecifiedSubExtendPropValue(Role role, ItemId itemId, String propName, String subValue){
+		OwnItem ownItem = role.getOwnItem(itemId);
+		String itemValue = ownItem.getExtendProp(propName);
+		if(itemValue==null){
+			itemValue = "";
+		} else {
+			itemValue += ",";
+		}
+		itemValue += subValue;
+		ownItem.addExtendProp(propName, itemValue);
+	}
+	
+	public static void getSignReward(Role role, int day){
+		int totalDay = getTotalSignLoginDays(role);
+		if(day > totalDay){
+			throw new RuntimeException();
+		}
+		
+		if(hasItemContainsSpecifiedSubExtendPropValue(role, ItemId.signGotRewardTag, ItemId.signGotRewardTag.name(), day+"")){
+			logger.error("Role: " + role.getRoleId() + ", has already got sign reward to day: " + day);
+		} else {
+			RoleSign reward = (RoleSign)LocalConfManager.getInstance().getConfReader(RoleSignConfReader.class).getConfBean(day+"");
+			if(reward!=null){
+				role.addOwnItem(RoleUtil.buildOwnItem(reward.getItemId(), 1, reward.getItemCount()));
+				addItemSpecifiedSubExtendPropValue(role, ItemId.signGotRewardTag, ItemId.signGotRewardTag.name(), day+"");
+				logger.info("Role: " + role.getRoleId() + ", get sign reward: " + reward);
+			} else {
+				throw new InternalBugException("Not found sign reward to day: " + day);
+			}
+		}
 	}
 	
 }

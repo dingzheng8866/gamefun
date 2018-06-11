@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.tiny.game.common.domain.item.Item;
 import com.tiny.game.common.domain.item.ItemId;
+import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.server.main.bizlogic.role.RoleService;
 import com.tiny.game.common.util.NetMessageUtil;
@@ -86,24 +87,20 @@ public class Role {
 		return items.values();
 	}
 	
-	public OwnItem getRoleOwnItem(String ownKey) {
-		return items.get(ownKey);
-	}
-	
 	public int getSystemDonategolds() {
-		return getRoleOwnItemValue(ItemId.systemDonateGold);
+		return getOwnItemValue(ItemId.systemDonateGold);
 	}
 
 	public int getBuyGolds() {
-		return getRoleOwnItemValue(ItemId.buyGold);
+		return getOwnItemValue(ItemId.buyGold);
 	}
 	
 	public int getSystemDonateGems() {
-		return getRoleOwnItemValue(ItemId.systemDonateGem);
+		return getOwnItemValue(ItemId.systemDonateGem);
 	}
 
 	public int getBuyGems() {
-		return getRoleOwnItemValue(ItemId.buyGem);
+		return getOwnItemValue(ItemId.buyGem);
 	}
 	
 	public int getAllGolds() {
@@ -115,14 +112,30 @@ public class Role {
 	}
 	
 	public int getLevel(){
-		return getRoleOwnItemValue(ItemId.roleLevel);
+		return getOwnItemValue(ItemId.roleLevel);
 	}
 	
-	public int getRoleOwnItemValue(ItemId itemId){
-		return getRoleOwnItem(Item.getKey(itemId)).getValue();
+//	private OwnItem getOwnItem(String ownKey) {
+//		return items.get(ownKey);
+//	}
+	
+	public OwnItem getOwnItem(ItemId itemId) {
+		return items.get(Item.getKey(itemId));
 	}
 	
-	public void addRoleOwnItem(OwnItem item) {
+	public OwnItem getOwnItem(ItemId itemId, int level) {
+		return items.get(LevelItem.getKey(itemId, level));
+	}
+	
+	public int getOwnItemValue(ItemId itemId){
+		return getOwnItem(itemId).getValue();
+	}
+	
+	public int getOwnItemValue(ItemId itemId, int level){
+		return getOwnItem(itemId, level).getValue();
+	}
+	
+	public void addOwnItem(OwnItem item) {
 		OwnItem oldItem = items.get(item.getKey());
 		if(oldItem==null) {
 			oldItem = item;
@@ -145,7 +158,7 @@ public class Role {
 		}
 	}
 	
-	public void setRoleOwnItem(OwnItem item) {
+	public void setOwnItem(OwnItem item) {
 		OwnItem oldItem = items.get(item.getKey());
 		if(oldItem==null) {
 			oldItem = item;
@@ -159,7 +172,7 @@ public class Role {
 		}
 	}
 	
-	public void deleteRoleOwnItem(OwnItem item) {
+	public void deleteOwnItem(OwnItem item) {
 		OwnItem oldItem = items.get(item.getKey());
 		if(oldItem!=null) {
 			boolean isAccumulative = oldItem.getItem().isAccumulative();

@@ -27,8 +27,8 @@ public class RoleUtil {
 		if(item == null){
 			item = (Item)LocalConfManager.getInstance().getConfReader(ItemConfReader.class).getConfBean(Item.getKey(itemId));
 		}
-		
 		OwnItem ownItem = new OwnItem();
+		
 		ownItem.setItem(item);
 		ownItem.setValue(value);
 		return ownItem;
@@ -42,7 +42,7 @@ public class RoleUtil {
 		for(Object obj : LocalConfManager.getInstance().getConfReader(RoleInitItemConfReader.class).getAllConfBeans()){
 			RoleInitItem initItem = (RoleInitItem) obj;
 			OwnItem ownItem = buildOwnItem(initItem.getItemId(), initItem.getLevel(), initItem.getValue());
-			role.addRoleOwnItem(ownItem);
+			role.addOwnItem(ownItem);
 		}
 		
 		return role;

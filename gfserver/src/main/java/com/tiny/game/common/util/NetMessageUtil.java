@@ -26,7 +26,7 @@ public class NetMessageUtil {
 		Role role = new Role();
 		role.setRoleId(roleData.getRoleId());
 		for(S_OwnItem item : roleData.getItemList()){
-			role.addRoleOwnItem(convertS_OwnItem(item));
+			role.addOwnItem(convertS_OwnItem(item));
 		}
 		return role;
 	}

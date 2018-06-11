@@ -35,7 +35,7 @@ public class GmCmdAddItem extends GmCmd {
 			
 			ItemId itemId = ItemId.valueOf(Integer.parseInt(itemKey));
 			OwnItem ownItem = RoleUtil.buildOwnItem(itemId, level, Integer.parseInt(value));
-			role.addRoleOwnItem(ownItem);
+			role.addOwnItem(ownItem);
 			logger.info("gm add role "+role.getRoleId()+" item: "+itemId + ", value: " + value);
 		}
 	}
