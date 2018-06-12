@@ -11,6 +11,7 @@ import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.client.NetClientManager;
 import com.tiny.game.common.server.gate.GateServer;
 import com.tiny.game.common.server.main.MainGameServer;
+import com.tiny.game.common.server.proxy.ProxyServer;
 import com.tiny.game.common.util.GameUtil;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
@@ -68,7 +69,7 @@ public abstract class AbstractGameServer {
 		return builder.build();
 	}
 	
-	protected boolean initNetClientConnectTargets(String configedPropTargetServerKey, String configedPropTargetServerPortKey){
+	protected boolean initNetClientConnectTargets(String targetServerTag, String configedPropTargetServerKey, String configedPropTargetServerPortKey){
 		boolean needToStartClient = false;
 		String gateServers = ServerContext.getInstance().getProperty(configedPropTargetServerKey);
 		if(gateServers!=null && gateServers.trim().length() > 0){
@@ -76,7 +77,7 @@ public abstract class AbstractGameServer {
 			List<String> gateServerList = GameUtil.splitToStringList(gateServers, ",");
 			int gateServerPort = ServerContext.getInstance().getPropertyInt(configedPropTargetServerPortKey);
 			for(String serverIp : gateServerList){
-				NetClientManager.getInstance().addConnectTarget(GateServer.class.getSimpleName(), serverIp, gateServerPort);
+				NetClientManager.getInstance().addConnectTarget(targetServerTag, serverIp, gateServerPort);
 				needToStartClient = true;
 			}
 		}
@@ -86,10 +87,10 @@ public abstract class AbstractGameServer {
 	protected void startNetClients(){
 		boolean needToStartClient = false;
 		if(isNeedToRegisterToGateServer) {
-			needToStartClient = initNetClientConnectTargets("gateserver.hosts", "gateserver.port");
+			needToStartClient = initNetClientConnectTargets(GateServer.class.getSimpleName(), "gateserver.hosts", "gateserver.port");
 		}
 		if(isNeedToRegisterToProxyServer) {
-			boolean flag = initNetClientConnectTargets("proxyserver.hosts", "proxyserver.port");
+			boolean flag = initNetClientConnectTargets(ProxyServer.class.getSimpleName(), "proxyserver.hosts", "proxyserver.port");
 			if(!needToStartClient && flag) {
 				needToStartClient = flag;
 			}

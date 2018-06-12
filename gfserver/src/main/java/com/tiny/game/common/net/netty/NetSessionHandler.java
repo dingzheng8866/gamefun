@@ -74,23 +74,6 @@ public class NetSessionHandler {
 			return;
 		}
 		session.setLastVisitTime(System.currentTimeMillis());
-		
-		String msgName = msg.getName();
-		
-		NetCmdProcessor processor = NetLayerManager.getInstance().getNetCmdProcessor(msgName); 
-		if (processor == null) {
-			logger.error("Not found net message processor of msg {}", msgName);
-			return;
-		}
-		
-		if (!processor.isEnable()) {
-			logger.error("Message processor {} is disabled!", msgName);
-			return;
-		} else {
-			// before process, send back ack
-			// TODO: fix it later about drop/reconnect
-//			NetCmdFactory.factoryCmdAck(msgName).syncExecuteOnRouter(session, false);
-			processor.process(session, msg);
-		} 
+		NetLayerManager.getInstance().processNetMessage(session, msg);
 	}
 }

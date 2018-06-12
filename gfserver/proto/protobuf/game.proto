@@ -26,12 +26,6 @@ message C_ProxyBroadcastReq{
 	required string targetServerTag = 4;
 }
 
-message C_RoleBroadcastReq{
-	required string roleId        = 1;
-	required string msgName    	  = 2;
-	required bytes  msgContent    = 3;
-}
-
 message C_RegisterClient{
 	required string clientType     = 1;
 	required string clientUniqueId = 2;

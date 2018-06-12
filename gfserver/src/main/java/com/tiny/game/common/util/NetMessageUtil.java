@@ -2,18 +2,29 @@ package com.tiny.game.common.util;
 
 import java.util.Map;
 
+import com.google.protobuf.ByteString;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.role.OwnItem;
 import com.tiny.game.common.domain.role.Role;
+import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
-import game.protocol.protobuf.GameProtocol.S_LoginServerInfo;
+import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
 import game.protocol.protobuf.GameProtocol.S_OwnItem;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
 import game.protocol.protobuf.GameProtocol.StringKeyParameter;
 
 public class NetMessageUtil {
+	
+	public static C_ProxyBroadcastReq buildRouteMessage(NetCmd msg, String routeToTargetServerTag, String finalClientTag){
+		C_ProxyBroadcastReq.Builder proxy = C_ProxyBroadcastReq.newBuilder();
+		proxy.setMsgName(msg.getName());
+		proxy.setMsgContent(ByteString.copyFrom(msg.getParameters()));
+		proxy.setTargetServerTag(routeToTargetServerTag);
+		proxy.setFinalTargetClientType(finalClientTag);
+		return proxy.build();
+	}
 	
 	public static Role convertS_RoleData(S_RoleData roleData){
 		Role role = new Role();

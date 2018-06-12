@@ -27,9 +27,10 @@ import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.cmd.NetCmdFactory;
 import com.tiny.game.common.server.ServerContext;
-import com.tiny.game.common.server.broadcast.BroadcastService;
+import com.tiny.game.common.server.broadcast.RouterService;
 import com.tiny.game.common.util.GameUtil;
 import com.tiny.game.common.util.IdGenerator;
+import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
@@ -109,16 +110,9 @@ public class RoleService {
 	}
 	
 	private static void kickoffUserToOffline(String userId, String specifiedLoginServerId){
-		// TODO: broadcast kickoff cmd
-//		BroadcastService.broadcast(specifiedLoginServerId, msgName, msgContent);
-		C_ProxyBroadcastReq.Builder builder = C_ProxyBroadcastReq.newBuilder();
-		builder.setFinalTargetClientType(userId);
-	
 		NetCmd errorCmd = NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_AnotherDeviceLogin.getValue(), null);
-		builder.setMsgName(errorCmd.getName());
-		builder.setMsgContent(ByteString.copyFrom(errorCmd.getParameters()));
-		builder.setTargetServerTag(specifiedLoginServerId);
-		
+		C_ProxyBroadcastReq req = NetMessageUtil.buildRouteMessage(errorCmd, specifiedLoginServerId, userId);
+		RouterService.routeToTarget(req);
 	}
 	
 	public static Role createUserAndRole(C_RoleLogin req, String userIp, String loginAcctId){
