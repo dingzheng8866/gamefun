@@ -10,6 +10,7 @@ import com.tiny.game.common.net.NetSessionManager;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.main.bizlogic.role.RoleSessionService;
+import com.tiny.game.common.server.proxy.ProxyServer;
 
 import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
 
@@ -30,7 +31,7 @@ public class BroadcastService {
 	}
 	
 	public static void broadcastToProxyServer(C_ProxyBroadcastReq req) {
-		NetSession proxyServerSession = NetSessionManager.getInstance().getSession(""); // TODO: FINISH ME
+		NetSession proxyServerSession = NetSessionManager.getInstance().getRandomSessionByPeerType(ProxyServer.class.getSimpleName());
 		if(proxyServerSession!=null) {
 			NetLayerManager.getInstance().asyncSendOutboundMessage(proxyServerSession, req);
 			logger.info("Proxy message: " + req.getMsgName() + " to " + req.getFinalTargetClientType());

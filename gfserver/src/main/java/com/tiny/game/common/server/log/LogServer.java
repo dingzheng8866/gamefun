@@ -6,6 +6,8 @@ public class LogServer extends AbstractGameServer {
 
 	public LogServer(String propPath, String serverTag){
 		super(propPath, serverTag);
+		isNeedToRegisterToProxyServer = true;
+		isNeedToRegisterToGateServer = false;		
 	}
 	
 	public static void main(String[] args) throws Exception {

@@ -23,8 +23,7 @@ public class NetSession {
 	
 	private String clientType="";
 
-	private String deviceId;
-	private String key;
+	private String peerUniqueId;
 	
 	private Role playerRole;
 	
@@ -32,19 +31,27 @@ public class NetSession {
 	
 	public NetSession(Channel channel) {
 		this.setChannel(channel);
-		this.key = channel.id().asLongText();
 	}
 
+	public boolean equals(Object o) {
+		if(o==null || !(o instanceof NetSession)) {
+			return false;
+		}
+		
+		return channel.id().equals(((NetSession) o).channel.id());
+	}
+	
 	public C_RegisterClient getClientRegisterInfo() {
 		return clientRegisterInfo;
 	}
 
 	public void setClientRegisterInfo(C_RegisterClient clientRegisterInfo) {
 		this.clientRegisterInfo = clientRegisterInfo;
+		this.peerUniqueId = clientRegisterInfo.getClientUniqueId();
 	}
 
-	public String getKey() {
-		return key;
+	public String getPeerUniqueId() {
+		return peerUniqueId;
 	}
 	
 	public String getCientType() {
@@ -53,14 +60,6 @@ public class NetSession {
 
 	public void setClientType(String clientType) {
 		this.clientType = clientType;
-	}
-
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
-	}
-
-	public String getDeviceId() {
-		return deviceId;
 	}
 
 	public String getRemoteAddress() {

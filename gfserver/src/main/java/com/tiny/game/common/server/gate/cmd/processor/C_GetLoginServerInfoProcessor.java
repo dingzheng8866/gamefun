@@ -13,7 +13,6 @@ import com.tiny.game.common.net.cmd.NetCmdFactory;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.main.MainGameServer;
-import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
 import game.protocol.protobuf.GameProtocol.C_RegisterClient;
@@ -27,11 +26,7 @@ public class C_GetLoginServerInfoProcessor extends NetCmdProcessor {
 
 	@Override
 	public void process(NetSession session, NetMessage msg) {
-//		C_GetLoginServerInfo req = NetUtil.getNetProtocolObject(C_GetLoginServerInfo.PARSER, msg);
-		
-//		NetSessionManager.getInstance().addSession(req.getClientType(), session);
-//		logger.info("C_RegisterClient: type: "+req.toString());
-		NetSession gameServerSession = NetSessionManager.getInstance().getSession(MainGameServer.class.getSimpleName());
+		NetSession gameServerSession = NetSessionManager.getInstance().getRandomSessionByPeerType(MainGameServer.class.getSimpleName());
 		if(gameServerSession==null) {
 			logger.error("No active game server found for user: " + session.getRemoteAddress());
 			NetLayerManager.getInstance().asyncSendOutboundMessage(session, NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_NoActiveGameServer.getValue(), ""));
@@ -42,9 +37,16 @@ public class C_GetLoginServerInfoProcessor extends NetCmdProcessor {
 			throw new InternalBugException("Bug: not set C_RegisterClient on session while init!");
 		}
 		
-		S_LoginServerInfo response = NetMessageUtil.buildS_LoginServerInfo(client.getServerIp(), Integer.parseInt(client.getServerPort()));
+		S_LoginServerInfo response = buildS_LoginServerInfo(client.getServerIp(), Integer.parseInt(client.getServerPort()));
 		NetLayerManager.getInstance().asyncSendOutboundMessage(session, response);
-		System.out.println("Send main server info to client: " + response);
+		System.out.println("Send main server info "+response+"to client: " + session.getRemoteAddress());
+	}
+	
+	private static S_LoginServerInfo buildS_LoginServerInfo(String serverIp, int port){
+		S_LoginServerInfo.Builder builder = S_LoginServerInfo.newBuilder();
+		builder.setIpAddress(serverIp);
+		builder.setPort(port);
+		return builder.build();
 	}
 	
 }

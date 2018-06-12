@@ -14,13 +14,6 @@ import game.protocol.protobuf.GameProtocol.S_RoleData;
 import game.protocol.protobuf.GameProtocol.StringKeyParameter;
 
 public class NetMessageUtil {
-
-	public static S_LoginServerInfo buildS_LoginServerInfo(String serverIp, int port){
-		S_LoginServerInfo.Builder builder = S_LoginServerInfo.newBuilder();
-		builder.setIpAddress(serverIp);
-		builder.setPort(port);
-		return builder.build();
-	}
 	
 	public static Role convertS_RoleData(S_RoleData roleData){
 		Role role = new Role();

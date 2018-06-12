@@ -11,9 +11,13 @@ import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.netty.NetChannelInboundMessageHandler;
 import com.tiny.game.common.net.netty.NetSession;
+import com.tiny.game.common.net.netty.NetSessionFilter;
 import com.tiny.game.common.net.netty.NetSessionHandler;
+import com.tiny.game.common.net.netty.NetSessionIpFilter;
+import com.tiny.game.common.net.netty.NetSessionManagerFilter;
 import com.tiny.game.common.util.GameUtil;
 
+import game.protocol.protobuf.GameProtocol.C_RegisterClient;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 
@@ -29,12 +33,18 @@ public class NetClientManager {
 	
 	private NetKeeperThread connectionKeeperThread = null;
 	
+	private C_RegisterClient registerMessage = null;
+	
 	private static NetClientManager instance = new NetClientManager();
 	private NetClientManager() {
 	}
 
 	public static NetClientManager getInstance() {
 		return instance;
+	}
+	
+	public C_RegisterClient getRegisterMessage() {
+		return registerMessage;
 	}
 	
 	public synchronized int getNextMessageId() {
@@ -102,7 +112,8 @@ public class NetClientManager {
 		}
 	}
 	
-	public synchronized void start() {
+	public synchronized void start(C_RegisterClient registerMessage) {
+		this.registerMessage = registerMessage;
 		if(netClient ==null) {
 			netClient = buildNetClient();
 			connectionKeeperThread = new NetKeeperThread();
@@ -145,7 +156,6 @@ public class NetClientManager {
 		String targetServerTag;
 		String host;
 		int port;
-		
 		Channel channel = null;
 		
 		public boolean isConnected() {
@@ -160,7 +170,6 @@ public class NetClientManager {
 			this.host = host;
 			this.port = port;
 		}
-		
 		
 		public boolean equals(Object o) {
 			if(o==null || !(o instanceof ConnectTarget)) {
@@ -180,20 +189,26 @@ public class NetClientManager {
 	class NetKeeperThread extends Thread {
 		public void run() {
 			keeperThreadRunFlag = true;
-			try {
-				while(keeperThreadRunFlag) {
+			while(keeperThreadRunFlag) {
+				try {
+					Thread.sleep(500);
 					connectToTargets();
-					Thread.sleep(3000);
+					Thread.sleep(2500);
+				}catch(Exception e) {
+					e.printStackTrace(); // no need extra handling
 				}
-			}catch(Exception e) {
-				e.printStackTrace(); // no need extra handling
 			}
 		}
 	}
 	
-	
 	public NetClient buildNetClient() {
+		
+		List<NetSessionFilter> filters = new ArrayList<NetSessionFilter>();
+		NetSessionAutoRegisterClientFilter filter = new NetSessionAutoRegisterClientFilter();
+		filters.add(filter);
+		
 		NetSessionHandler sessionHandler = new NetSessionHandler();
+		sessionHandler.setFilters(filters);
 		
 		NetChannelInboundMessageHandler channelHandler = new NetChannelInboundMessageHandler();
 		channelHandler.setSessionHandler(sessionHandler);

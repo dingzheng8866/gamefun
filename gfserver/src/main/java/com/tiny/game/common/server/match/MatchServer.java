@@ -6,6 +6,8 @@ public class MatchServer extends AbstractGameServer {
 
 	public MatchServer(String propPath, String serverTag){
 		super(propPath, serverTag);
+		isNeedToRegisterToProxyServer = true;
+		isNeedToRegisterToGateServer = false;	
 	}
 	
 	public static void main(String[] args) throws Exception {

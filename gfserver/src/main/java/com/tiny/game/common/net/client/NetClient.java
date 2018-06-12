@@ -25,7 +25,6 @@ public class NetClient {
 	public Bootstrap bootstrap = new Bootstrap();
 	public EventLoopGroup workerGroup = null;
 	
-	public Channel clientChannel = null;
 	private List<ChannelHandler> channelHandlers;
 	
 	public NetClient(List<ChannelHandler> channelHandlers) {
@@ -46,27 +45,51 @@ public class NetClient {
 		bootstrap.handler(new NetChannelInitializer(channelHandlers));
 	}
 	
+//	public Channel connect(String host, int port) {
+//		try {
+//			ChannelFuture future = bootstrap.connect(host, port).sync();
+//			if (future.isCancelled()) {
+//				logger.error("cancelled to connect to: " + host +"," + port);
+//				return null;
+//			} else if (!future.isSuccess()) {
+//				logger.error("failed to connect to: " + host +"," + port);
+//				return null;
+//			}
+//			clientChannel = future.channel();
+//			
+//			return clientChannel;
+//		} catch (Exception e) {
+//			logger.error("failed to connect to: " + host +"," + port +", error: " + e.getMessage());
+//			return null;
+//		}
+//	}
+
 	public Channel connect(String host, int port) {
 		try {
 			ChannelFuture future = bootstrap.connect(host, port).sync();
+			future.awaitUninterruptibly();
+
+			assert future.isDone();
+
 			if (future.isCancelled()) {
+				// Connection attempt cancelled by user
 				logger.error("cancelled to connect to: " + host +"," + port);
 				return null;
 			} else if (!future.isSuccess()) {
 				logger.error("failed to connect to: " + host +"," + port);
 				return null;
 			}
-			clientChannel = future.channel();
 			
-			return clientChannel;
-		} catch (InterruptedException e) {
-			logger.error("failed(interrupted) to connect to: " + host +"," + port);
+			Channel channel = future.channel();
+			logger.info("successfully connect to server!host={},port={}", host, port);
+			return channel;
+		} catch (Exception e) {
+			logger.info("Failed to connnect to: " + host+":"+port+", error: " + e.getMessage());
 			return null;
 		}
-	}
-
+	}	
+	
 	public void close() {
-		clientChannel.close().awaitUninterruptibly();
 		workerGroup.shutdownGracefully();
 	}
 }

@@ -28,7 +28,7 @@ public class RoleSessionService {
 	}
 	
 	public static NetSession getRoleSession(String roleId) {
-		NetSession session = NetSessionManager.getInstance().getSession(roleId);
+		NetSession session = NetSessionManager.getInstance().getSessionByPeerUniqueId(roleId);
 		return session;
 	}
 	

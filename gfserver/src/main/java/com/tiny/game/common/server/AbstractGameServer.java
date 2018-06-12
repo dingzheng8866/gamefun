@@ -25,6 +25,9 @@ public abstract class AbstractGameServer {
 	protected String serverProp = ""; //resources/login_server.properties
 	protected String serverTag = "Unknown";
 	
+	protected boolean isNeedToRegisterToProxyServer = true;
+	protected boolean isNeedToRegisterToGateServer = false;
+	
 	public AbstractGameServer(String propPath, String serverTag){
 		this.serverProp = propPath;
 		this.serverTag = serverTag;
@@ -45,6 +48,8 @@ public abstract class AbstractGameServer {
 		ServerContext.getInstance().setGameServer(this);
 		// put net layer init at last
 		NetLayerManager.getInstance().init(ServerContext.getInstance());
+		startNetClients();
+		
 		logger.info("Started server: " + getClass()+"," + ServerContext.getInstance().getServerUniqueTag());
 		
 		onStart();
@@ -54,29 +59,46 @@ public abstract class AbstractGameServer {
 		
 	}
 	
-	protected void startNetClient(){
-		
-		String gateServers = ServerContext.getInstance().getProperty("gateserver.hosts");
-		if(gateServers!=null && gateServers.trim().length() > 0){
-			gateServers = gateServers.trim();
-			List<String> gateServerList = GameUtil.splitToStringList(gateServers, ",");
-			int gateServerPort = ServerContext.getInstance().getPropertyInt("gateserver.port");
-			for(String serverIp : gateServerList){
-				NetClientManager.getInstance().addConnectTarget(GateServer.class.getSimpleName(), serverIp, gateServerPort);
-			}
-			NetClientManager.getInstance().start();
-		}
-		
-		
+	protected C_RegisterClient buildRegisterMessage() {
 		C_RegisterClient.Builder builder = C_RegisterClient.newBuilder();
-		builder.setClientType(MainGameServer.class.getSimpleName());
+		builder.setClientType(getClass().getSimpleName());
 		builder.setClientUniqueId(ServerContext.getInstance().getServerUniqueTag());
 		builder.setServerIp(ServerContext.getInstance().getLocalAnyIp());
 		builder.setServerPort(ServerContext.getInstance().getProperty(ContextParameter.NET_SERVER_LISTEN_PORT).trim());
-		
-		NetClientManager.getInstance().sendMsg(GateServer.class.getSimpleName(), builder.build());
-		
-		NetClientManager.getInstance().sendMsg(GateServer.class.getSimpleName(), C_GetLoginServerInfo.newBuilder().build());
+		return builder.build();
+	}
+	
+	protected boolean initNetClientConnectTargets(String configedPropTargetServerKey, String configedPropTargetServerPortKey){
+		boolean needToStartClient = false;
+		String gateServers = ServerContext.getInstance().getProperty(configedPropTargetServerKey);
+		if(gateServers!=null && gateServers.trim().length() > 0){
+			gateServers = gateServers.trim();
+			List<String> gateServerList = GameUtil.splitToStringList(gateServers, ",");
+			int gateServerPort = ServerContext.getInstance().getPropertyInt(configedPropTargetServerPortKey);
+			for(String serverIp : gateServerList){
+				NetClientManager.getInstance().addConnectTarget(GateServer.class.getSimpleName(), serverIp, gateServerPort);
+				needToStartClient = true;
+			}
+		}
+		return needToStartClient;
+	}
+	
+	protected void startNetClients(){
+		boolean needToStartClient = false;
+		if(isNeedToRegisterToGateServer) {
+			needToStartClient = initNetClientConnectTargets("gateserver.hosts", "gateserver.port");
+		}
+		if(isNeedToRegisterToProxyServer) {
+			boolean flag = initNetClientConnectTargets("proxyserver.hosts", "proxyserver.port");
+			if(!needToStartClient && flag) {
+				needToStartClient = flag;
+			}
+		}
+		if(needToStartClient) {
+			C_RegisterClient msg = buildRegisterMessage();
+			logger.info("Start net client, register message: " + msg);
+			NetClientManager.getInstance().start(msg);
+		}
 	}
 	
 }

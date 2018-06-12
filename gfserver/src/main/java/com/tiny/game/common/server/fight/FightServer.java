@@ -6,6 +6,8 @@ public class FightServer extends AbstractGameServer {
 
 	public FightServer(String propPath, String serverTag){
 		super(propPath, serverTag);
+		isNeedToRegisterToProxyServer = true;
+		isNeedToRegisterToGateServer = false;
 	}
 	
 	public static void main(String[] args) throws Exception {

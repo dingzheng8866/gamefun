@@ -6,6 +6,8 @@ public class GateServer extends AbstractGameServer {
 
 	public GateServer(String propPath, String serverTag){
 		super(propPath, serverTag);
+		isNeedToRegisterToProxyServer = false;
+		isNeedToRegisterToGateServer = false;		
 	}
 	
 	public static void main(String[] args) throws Exception {

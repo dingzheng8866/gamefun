@@ -1,6 +1,7 @@
 package com.tiny.game.common.net;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,42 +21,51 @@ public class NetSessionManager {
 		return instance;
 	}
 	
-	private Map<String, Map<String, NetSession>> sessions = new ConcurrentHashMap<String, Map<String, NetSession>>();
+	private Map<String, List<NetSession>> sessions = new ConcurrentHashMap<String, List<NetSession>>();
+	private Map<String, NetSession> sessionMap = new ConcurrentHashMap<String, NetSession>();
+	
 	
 	public void addSession(C_RegisterClient req, NetSession session) {
 		session.setClientRegisterInfo(req);
 		String clientType = req.getClientType();
-		Map<String, NetSession> subSessions = sessions.get(clientType);
+		session.setClientType(clientType);
+		
+		List<NetSession> subSessions = sessions.get(clientType);
 		if(subSessions==null) {
-			subSessions = new ConcurrentHashMap<String, NetSession>();
+			subSessions = Collections.synchronizedList(new ArrayList<NetSession>());
 			sessions.put(clientType, subSessions);
 		}
-		session.setClientType(clientType);
-		subSessions.put(session.getKey(), session);
-		System.out.println("add session: "+clientType+"==>" + session.getKey());
+		subSessions.add(session);
+		
+		sessionMap.put(session.getPeerUniqueId(), session);
+		System.out.println("add session: "+clientType+"==>" + session.getPeerUniqueId());
 	}
 	
 	public void removeSession(NetSession session) {
-		Map<String, NetSession> subSessions = sessions.get(session.getCientType());
+		List<NetSession> subSessions = sessions.get(session.getCientType());
 		if(subSessions!=null) {
-			subSessions.remove(session.getKey());
-			System.out.println("remove session: " + session.getKey());
+			subSessions.remove(session);
+			System.out.println("remove session: " + session.getPeerUniqueId());
 		}
+		sessionMap.remove(session.getPeerUniqueId());
 	}
 	
-	public NetSession getSession(String clientType) {
-		Map<String, NetSession> subSessions = sessions.get(clientType);
+	public NetSession getRandomSessionByPeerType(String clientType) {
+		List<NetSession> subSessions = sessions.get(clientType);
 		if(subSessions!=null) {
 			if(subSessions.size() > 0) {
 				if(subSessions.size() == 1) {
-					return subSessions.values().iterator().next();
+					return subSessions.get(0);
 				} else {
-					List<String> keys = new ArrayList<String>(subSessions.keySet());
-					return subSessions.get(keys.get(GameUtil.randomRange(0, keys.size())));
+					return subSessions.get(GameUtil.randomRange(0, subSessions.size()-1));
 				}
 			}
 		}
 		return null;
+	}
+	
+	public NetSession getSessionByPeerUniqueId(String clientUniqueId) {
+		return sessionMap.get(clientUniqueId);
 	}
 	
 }
