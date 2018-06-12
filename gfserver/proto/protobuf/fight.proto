@@ -1,0 +1,123 @@
+import "game.proto";
+option java_package = "game.protocol.protobuf";
+option java_outer_classname = "FightProtocol";
+option optimize_for = SPEED;
+
+message C_FightMatch {
+	required string roleId      = 1;
+	required int32 matchType    = 2;
+	optional int32 vsX      	= 3;
+	optional int32 vsY 		    = 4;
+	optional int32 stageId      = 5;
+	optional string reserved    = 6;
+}
+
+message S_FightMatching {
+	required string roleId      = 1;
+	optional int32 predictTime  = 2;
+}
+
+message C_FightMatchCancel {
+	required string roleId      = 1;
+}
+
+message C_CreateFightRoom {
+	repeated string role        = 1;
+	optional int32 matchType    = 2;
+	optional int32 vsX      	= 3;
+	optional int32 vsY 		    = 4;
+	optional int32 stageId      = 5;
+	optional string videoId     = 6;
+	optional string reserved    = 7;
+}
+
+message C_FightRoomCreateReady {
+	required string roomId     		= 1;
+	repeated FightLegionData legion	= 2;
+	required string serverIp        = 3;
+	required string serverPort      = 4;
+	required int32 stageId      	= 5;
+	required int32 matchType    	= 6;
+	optional int32 vsX      		= 7;
+	optional int32 vsY 		    	= 8;	
+	optional string reserved        = 9;
+}
+
+message FightLegionData {
+	required string roleId     		= 1;
+	required string roleName 	   	= 2;
+	required string legionId        = 3;
+	required string groupId      	= 4;
+	required bool isRobot      		= 5;
+	optional int32 robotAi 			= 6;
+	repeated S_OwnItem item 		= 7;
+}
+
+message C_FightLoadProgress {
+	required string roleId     		= 1;
+	required int32 progress 		= 2;
+}
+
+message S_FightLoadProgress {
+	required int32 roomStatus = 1;
+	repeated ProtoLoadProgress loadStatus = 2;
+}
+
+message ProtoLoadProgress {
+	required int32 roleId = 1;
+	required int32 progress = 2;
+}
+
+message C_WarFightAction {
+	required int32					actionName			= 1;
+	repeated FightObjectParameter  	parameter	 		= 2;
+}
+
+message S_WarFightUpdateData {
+	required int32				dataFlag 				= 1;
+	repeated WarFightObjectData fightObjectData         = 2;
+}
+
+message WarFightObjectData {
+	required int32					uniqueId 			= 1;
+	repeated FightObjectParameter  	parameter	 		= 2;
+}
+
+message FightObjectParameter {
+	required int32					key 		= 1;
+	required string					value 		= 2;
+}
+
+message S_FightEnd {
+	required int32 stageId      			= 1;
+	required int32 matchType    			= 2;
+	repeated RoleFightResult fightResult 	= 3;
+	optional string videoId              	= 4; 
+}
+
+message RoleFightResult {
+	required string roleId 					= 1;
+	required int32 endType 					= 2;  // 0.失败  1.小败  2.平局  3.小胜   4.胜利   
+	repeated FightObjectParameter parameter = 3;
+	
+	//optional int32 star = 3;
+	//optional int32 buildCount = 4;
+	//optional int32 buildTotal = 5;
+	//optional int32 legionId = 6;   
+	//optional bool isSurrender = 7;
+}
+
+//message WarFightVideoActionRecord
+//{
+//	required int32					time			= 1;
+//	required C_WarFightAction_0x890  	actionParameter 		= 2;
+//}
+
+//message WarFightVideoRecord
+//{
+//	required WarEnterData					enterData			= 1;
+//	repeated WarFightVideoActionRecord  	actionRecords 		= 2;
+//	repeated ProtoRoleFightResult			results 			= 3;
+//	required int64							seed 				= 4;
+//}
+
