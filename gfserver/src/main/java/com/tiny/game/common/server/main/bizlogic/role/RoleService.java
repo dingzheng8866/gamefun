@@ -239,7 +239,8 @@ public class RoleService {
 		ownItem.addExtendProp(propName, itemValue);
 	}
 	
-	public static void getSignReward(Role role, int day){
+	public static OwnItem getSignReward(Role role, int day){
+		OwnItem gotItem = null;
 		int totalDay = getTotalSignLoginDays(role);
 		if(day > totalDay){
 			throw new RuntimeException();
@@ -250,13 +251,17 @@ public class RoleService {
 		} else {
 			RoleSign reward = (RoleSign)LocalConfManager.getInstance().getConfReader(RoleSignConfReader.class).getConfBean(day+"");
 			if(reward!=null){
-				role.addOwnItem(RoleUtil.buildOwnItem(reward.getItemId(), 1, reward.getItemCount()));
+				gotItem = RoleUtil.buildOwnItem(reward.getItemId(), 1, reward.getItemCount());
+				role.addOwnItem(gotItem);
 				addItemSpecifiedSubExtendPropValue(role, ItemId.signGotRewardTag, ItemId.signGotRewardTag.name(), day+"");
+				DaoFactory.getInstance().getUserDao().updateRole(role);
+				
 				logger.info("Role: " + role.getRoleId() + ", get sign reward: " + reward);
 			} else {
 				throw new InternalBugException("Not found sign reward to day: " + day);
 			}
 		}
+		return gotItem;
 	}
 	
 }

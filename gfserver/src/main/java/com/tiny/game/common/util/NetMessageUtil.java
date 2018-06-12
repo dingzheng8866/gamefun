@@ -12,10 +12,18 @@ import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.S_OwnItem;
+import game.protocol.protobuf.GameProtocol.S_OwnItemNotification;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
 import game.protocol.protobuf.GameProtocol.StringKeyParameter;
 
 public class NetMessageUtil {
+	
+	public static S_OwnItemNotification buildRoleNotifyOwnItem(S_OwnItemNotification.ItemChangeType changeType, OwnItem ownItem){
+		S_OwnItemNotification.Builder builder = S_OwnItemNotification.newBuilder();
+		builder.setChangeType(changeType);
+		builder.setItem(NetMessageUtil.convertOwnItem(ownItem));
+		return builder.build();
+	}
 	
 	public static I_RouteMessage buildRouteMessage(NetCmd msg, String routeToTargetServerTag, String finalClientTag){
 		I_RouteMessage.Builder proxy = I_RouteMessage.newBuilder();
@@ -54,7 +62,7 @@ public class NetMessageUtil {
 		return ownItem;
 	}
 	
-	private static S_OwnItem convertOwnItem(OwnItem item){
+	public static S_OwnItem convertOwnItem(OwnItem item){
 		S_OwnItem.Builder builder = S_OwnItem.newBuilder();
 		builder.setItemId(item.getItem().getItemId().getValue());
 		builder.setValue(item.getValue());

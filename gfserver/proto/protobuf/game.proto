@@ -87,6 +87,13 @@ message C_GetSignReward{
 
 message S_OwnItemNotification{
 	required S_OwnItem item = 1;
-	required int32 changeType = 2;
+	
+	enum ItemChangeType
+    {
+        Add = 0;
+        Set = 1;
+        Del = 2;
+    }
+	required ItemChangeType changeType = 2;
 }
 
