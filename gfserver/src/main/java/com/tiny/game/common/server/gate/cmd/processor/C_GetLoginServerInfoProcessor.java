@@ -15,7 +15,7 @@ import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.main.MainGameServer;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
+import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 import game.protocol.protobuf.GameProtocol.S_LoginServerInfo;
 
 
@@ -32,9 +32,9 @@ public class C_GetLoginServerInfoProcessor extends NetCmdProcessor {
 			NetLayerManager.getInstance().asyncSendOutboundMessage(session, NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_NoActiveGameServer.getValue(), ""));
 			return ;
 		}
-		C_RegisterClient client = gameServerSession.getClientRegisterInfo();
+		I_RegisterClient client = gameServerSession.getClientRegisterInfo();
 		if(client==null) {
-			throw new InternalBugException("Bug: not set C_RegisterClient on session while init!");
+			throw new InternalBugException("Bug: not set I_RegisterClient on session while init!");
 		}
 		
 		S_LoginServerInfo response = buildS_LoginServerInfo(client.getServerIp(), Integer.parseInt(client.getServerPort()));

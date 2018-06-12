@@ -5,12 +5,12 @@ import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.net.NetSessionManager;
 import com.tiny.game.common.net.netty.NetSession;
 
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
+import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 
 public class RoleSessionService {
 
 	public static void saveRoleSession(Role role, NetSession session) {
-		C_RegisterClient.Builder req = C_RegisterClient.newBuilder();
+		I_RegisterClient.Builder req = I_RegisterClient.newBuilder();
 		req.setClientType(role.getRoleId());
 		req.setClientUniqueId(role.getRoleId());
 		

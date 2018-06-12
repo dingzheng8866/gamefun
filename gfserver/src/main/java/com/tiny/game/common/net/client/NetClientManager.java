@@ -17,7 +17,7 @@ import com.tiny.game.common.net.netty.NetSessionIpFilter;
 import com.tiny.game.common.net.netty.NetSessionManagerFilter;
 import com.tiny.game.common.util.GameUtil;
 
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
+import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 
@@ -33,7 +33,7 @@ public class NetClientManager {
 	
 	private NetKeeperThread connectionKeeperThread = null;
 	
-	private C_RegisterClient registerMessage = null;
+	private I_RegisterClient registerMessage = null;
 	
 	private static NetClientManager instance = new NetClientManager();
 	private NetClientManager() {
@@ -43,7 +43,7 @@ public class NetClientManager {
 		return instance;
 	}
 	
-	public C_RegisterClient getRegisterMessage() {
+	public I_RegisterClient getRegisterMessage() {
 		return registerMessage;
 	}
 	
@@ -112,7 +112,7 @@ public class NetClientManager {
 		}
 	}
 	
-	public synchronized void start(C_RegisterClient registerMessage) {
+	public synchronized void start(I_RegisterClient registerMessage) {
 		this.registerMessage = registerMessage;
 		if(netClient ==null) {
 			netClient = buildNetClient();

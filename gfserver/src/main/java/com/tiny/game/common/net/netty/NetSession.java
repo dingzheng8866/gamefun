@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.net.NetMessage;
 
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
+import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -27,7 +27,7 @@ public class NetSession {
 	
 	private Role playerRole;
 	
-	private C_RegisterClient clientRegisterInfo = null;
+	private I_RegisterClient clientRegisterInfo = null;
 	
 	public NetSession(Channel channel) {
 		this.setChannel(channel);
@@ -41,11 +41,11 @@ public class NetSession {
 		return channel.id().equals(((NetSession) o).channel.id());
 	}
 	
-	public C_RegisterClient getClientRegisterInfo() {
+	public I_RegisterClient getClientRegisterInfo() {
 		return clientRegisterInfo;
 	}
 
-	public void setClientRegisterInfo(C_RegisterClient clientRegisterInfo) {
+	public void setClientRegisterInfo(I_RegisterClient clientRegisterInfo) {
 		this.clientRegisterInfo = clientRegisterInfo;
 		this.peerUniqueId = clientRegisterInfo.getClientUniqueId();
 	}

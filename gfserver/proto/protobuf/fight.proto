@@ -4,12 +4,17 @@ option java_outer_classname = "FightProtocol";
 option optimize_for = SPEED;
 
 message C_FightMatch {
-	required string roleId      = 1;
-	required int32 matchType    = 2;
-	optional int32 vsX      	= 3;
-	optional int32 vsY 		    = 4;
-	optional int32 stageId      = 5;
+	required int32 matchType    = 1;
+	optional int32 vsX      	= 2;
+	optional int32 vsY 		    = 3;
+	optional int32 stageId      = 4;
+	optional string videoId     = 5;
 	optional string reserved    = 6;
+}
+
+message I_FightMatch {
+	required string roleId      = 1;
+	required C_FightMatch matchRequest    = 2;
 }
 
 message S_FightMatching {
@@ -18,10 +23,16 @@ message S_FightMatching {
 }
 
 message C_FightMatchCancel {
+}
+
+message I_FightMatchCancel {
 	required string roleId      = 1;
 }
 
-message C_CreateFightRoom {
+message S_FightMatchCanceled {
+}
+
+message I_CreateFightRoom {
 	repeated string role        = 1;
 	optional int32 matchType    = 2;
 	optional int32 vsX      	= 3;
@@ -31,7 +42,7 @@ message C_CreateFightRoom {
 	optional string reserved    = 7;
 }
 
-message C_FightRoomCreateReady {
+message S_FightRoomCreateReady {
 	required string roomId     		= 1;
 	repeated FightLegionData legion	= 2;
 	required string serverIp        = 3;

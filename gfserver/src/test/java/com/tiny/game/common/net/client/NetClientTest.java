@@ -9,7 +9,7 @@ public class NetClientTest {
 //		NetClientManager.getInstance().addConnectTarget(GateServer.class.getSimpleName(), "127.0.0.1", 7777);
 //		NetClientManager.getInstance().start();
 //		
-//		C_RegisterClient.Builder builder = C_RegisterClient.newBuilder();
+//		I_RegisterClient.Builder builder = I_RegisterClient.newBuilder();
 //		builder.setClientType(MainGameServer.class.getSimpleName());
 //		builder.setTag("game.server.ip");
 //		builder.setParameter1("127.0.0.1");

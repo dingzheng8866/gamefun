@@ -9,6 +9,11 @@ message S_CReqCmd_Ack{
 message C_Heartbeat{
 }
 
+message S_Kickout{
+	required int32 errorCode = 1;
+	optional string parameter = 2; 
+}
+
 message S_ErrorInfo{
 	required int32 errorCode = 1;
 	optional string parameter = 2; 
@@ -19,14 +24,14 @@ message S_HintInfo{
 	optional string parameter = 2; 
 }
 
-message C_ProxyBroadcastReq{
+message I_RouteMessage{
 	required string finalTargetClientType      = 1;
 	required string msgName    	    = 2;
 	required bytes  msgContent      = 3;
 	required string targetServerTag = 4;
 }
 
-message C_RegisterClient{
+message I_RegisterClient{
 	required string clientType     = 1;
 	required string clientUniqueId = 2;
 	optional string serverIp       = 3;
@@ -78,5 +83,10 @@ message IntKeyParameter{
 
 message C_GetSignReward{
 	required int32 day = 1;
+}
+
+message S_OwnItemNotification{
+	required S_OwnItem item = 1;
+	required int32 changeType = 2;
 }
 

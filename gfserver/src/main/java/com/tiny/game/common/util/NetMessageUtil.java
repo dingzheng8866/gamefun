@@ -10,15 +10,15 @@ import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
-import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
+import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.S_OwnItem;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
 import game.protocol.protobuf.GameProtocol.StringKeyParameter;
 
 public class NetMessageUtil {
 	
-	public static C_ProxyBroadcastReq buildRouteMessage(NetCmd msg, String routeToTargetServerTag, String finalClientTag){
-		C_ProxyBroadcastReq.Builder proxy = C_ProxyBroadcastReq.newBuilder();
+	public static I_RouteMessage buildRouteMessage(NetCmd msg, String routeToTargetServerTag, String finalClientTag){
+		I_RouteMessage.Builder proxy = I_RouteMessage.newBuilder();
 		proxy.setMsgName(msg.getName());
 		proxy.setMsgContent(ByteString.copyFrom(msg.getParameters()));
 		proxy.setTargetServerTag(routeToTargetServerTag);

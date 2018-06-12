@@ -14,16 +14,16 @@ import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.ServerContext;
 import com.tiny.game.common.server.broadcast.RouterService;
 
-import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
+import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 
-@NetCmdAnnimation(cmd = C_ProxyBroadcastReq.class)
-public class C_ProxyBroadcastReqProcessor extends NetCmdProcessor {
+@NetCmdAnnimation(cmd = I_RouteMessage.class)
+public class I_RouteMessageProcessor extends NetCmdProcessor {
 
-	private static final Logger logger = LoggerFactory.getLogger(C_ProxyBroadcastReqProcessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(I_RouteMessageProcessor.class);
 	
 	@Override
 	public void process(NetSession session, NetMessage msg) {
-		C_ProxyBroadcastReq req = NetUtils.getNetProtocolObject(C_ProxyBroadcastReq.PARSER, msg);
+		I_RouteMessage req = NetUtils.getNetProtocolObject(I_RouteMessage.PARSER, msg);
 		String specifiedTarget = req.getFinalTargetClientType();
 		
 		if(ServerContext.getInstance().getServerUniqueTag().equals(req.getTargetServerTag())) {

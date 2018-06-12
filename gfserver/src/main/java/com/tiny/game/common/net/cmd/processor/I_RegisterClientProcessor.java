@@ -10,20 +10,20 @@ import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
 
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
+import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 
 
-@NetCmdAnnimation(cmd = C_RegisterClient.class)
-public class C_RegisterClientProcessor extends NetCmdProcessor {
+@NetCmdAnnimation(cmd = I_RegisterClient.class)
+public class I_RegisterClientProcessor extends NetCmdProcessor {
 
-	private static final Logger logger = LoggerFactory.getLogger(C_RegisterClientProcessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(I_RegisterClientProcessor.class);
 
 	@Override
 	public void process(NetSession session, NetMessage msg) {
-		C_RegisterClient req = NetUtils.getNetProtocolObject(C_RegisterClient.PARSER, msg);
+		I_RegisterClient req = NetUtils.getNetProtocolObject(I_RegisterClient.PARSER, msg);
 		
 		NetSessionManager.getInstance().addSession(req, session);
-		logger.info("C_RegisterClient: type: "+req.toString());
+		logger.info("I_RegisterClient: type: "+req.toString());
 	}
 	
 }

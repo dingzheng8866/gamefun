@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.util.GameUtil;
 
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
+import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 
 public class NetSessionManager {
 
@@ -25,7 +25,7 @@ public class NetSessionManager {
 	private Map<String, NetSession> sessionMap = new ConcurrentHashMap<String, NetSession>();
 	
 	
-	public void addSession(C_RegisterClient req, NetSession session) {
+	public void addSession(I_RegisterClient req, NetSession session) {
 		session.setClientRegisterInfo(req);
 		String clientType = req.getClientType();
 		session.setClientType(clientType);

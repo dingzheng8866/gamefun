@@ -11,7 +11,7 @@ import com.tiny.game.common.server.gate.GateServer;
 import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
-import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
+import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 
 public class MainGameServer extends AbstractGameServer {
 
@@ -30,7 +30,7 @@ public class MainGameServer extends AbstractGameServer {
 //		NetClientManager.getInstance().sendMsg(GateServer.class.getSimpleName(), C_GetLoginServerInfo.newBuilder().build());
 		
 		NetCmd errorCmd = NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_AnotherDeviceLogin.getValue(), null);
-		C_ProxyBroadcastReq req = NetMessageUtil.buildRouteMessage(errorCmd, ServerContext.getInstance().getServerUniqueTag(), "123456");
+		I_RouteMessage req = NetMessageUtil.buildRouteMessage(errorCmd, ServerContext.getInstance().getServerUniqueTag(), "123456");
 		RouterService.routeToTarget(req);
 		
 	}

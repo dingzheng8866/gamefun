@@ -14,7 +14,7 @@ import com.tiny.game.common.server.ServerContext;
 import com.tiny.game.common.server.main.bizlogic.role.RoleSessionService;
 import com.tiny.game.common.server.proxy.ProxyServer;
 
-import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
+import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import sun.security.krb5.internal.NetClient;
 
 
@@ -33,7 +33,7 @@ public class RouterService {
 		}
 	}
 	
-	public static void routeToTarget(C_ProxyBroadcastReq req) {
+	public static void routeToTarget(I_RouteMessage req) {
 //		if(ServerContext.getInstance().getGameServer() instanceof ProxyServer) {
 //			NetSession proxyServerSession = NetSessionManager.getInstance().getRandomSessionByPeerType(ProxyServer.class.getSimpleName());
 //			if(proxyServerSession!=null) {

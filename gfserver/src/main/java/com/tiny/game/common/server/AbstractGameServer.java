@@ -15,7 +15,7 @@ import com.tiny.game.common.server.proxy.ProxyServer;
 import com.tiny.game.common.util.GameUtil;
 
 import game.protocol.protobuf.GameProtocol.C_GetLoginServerInfo;
-import game.protocol.protobuf.GameProtocol.C_RegisterClient;
+import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 
 
 public abstract class AbstractGameServer {
@@ -60,8 +60,8 @@ public abstract class AbstractGameServer {
 		
 	}
 	
-	protected C_RegisterClient buildRegisterMessage() {
-		C_RegisterClient.Builder builder = C_RegisterClient.newBuilder();
+	protected I_RegisterClient buildRegisterMessage() {
+		I_RegisterClient.Builder builder = I_RegisterClient.newBuilder();
 		builder.setClientType(getClass().getSimpleName());
 		builder.setClientUniqueId(ServerContext.getInstance().getServerUniqueTag());
 		builder.setServerIp(ServerContext.getInstance().getLocalAnyIp());
@@ -96,7 +96,7 @@ public abstract class AbstractGameServer {
 			}
 		}
 		if(needToStartClient) {
-			C_RegisterClient msg = buildRegisterMessage();
+			I_RegisterClient msg = buildRegisterMessage();
 			logger.info("Start net client, register message: " + msg);
 			NetClientManager.getInstance().start(msg);
 		}

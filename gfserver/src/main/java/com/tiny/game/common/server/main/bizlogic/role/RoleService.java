@@ -32,7 +32,7 @@ import com.tiny.game.common.util.GameUtil;
 import com.tiny.game.common.util.IdGenerator;
 import com.tiny.game.common.util.NetMessageUtil;
 
-import game.protocol.protobuf.GameProtocol.C_ProxyBroadcastReq;
+import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
 import game.protocol.protobuf.GameProtocol.S_ErrorInfo;
 
@@ -111,7 +111,7 @@ public class RoleService {
 	
 	private static void kickoffUserToOffline(String userId, String specifiedLoginServerId){
 		NetCmd errorCmd = NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_AnotherDeviceLogin.getValue(), null);
-		C_ProxyBroadcastReq req = NetMessageUtil.buildRouteMessage(errorCmd, specifiedLoginServerId, userId);
+		I_RouteMessage req = NetMessageUtil.buildRouteMessage(errorCmd, specifiedLoginServerId, userId);
 		RouterService.routeToTarget(req);
 	}
 	
