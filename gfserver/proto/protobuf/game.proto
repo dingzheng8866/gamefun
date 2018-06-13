@@ -117,8 +117,15 @@ message S_EstimateTime { // seems not used now
 	//need reason type?
 }
 
+message OperItem {
+	required int32 itemId  		= 1;
+	required int32 level  		= 2;
+	optional int32 count  		= 3;
+}
+
+//maybe need to switch to other cases
 message C_UseItem { //<==S_BatchOwnItemNotification
-	required int32 itemId  = 1;
+	required OperItem item  = 1;
 }
 
 message C_SwitchJoinInBattleArmyId { //<==S_BatchOwnItemNotification
@@ -131,6 +138,16 @@ message C_JoinInBattleArmy { //<==S_BatchOwnItemNotification
 }
 
 message C_JoinOutBattleArmy { //<==S_BatchOwnItemNotification
+	required int32 armyId  = 1;
+	required int32 itemId  = 2;
+}
+
+message C_JoinInBattleHero { //<==S_BatchOwnItemNotification
+	required int32 armyId  = 1;
+	required int32 itemId  = 2;
+}
+
+message C_JoinOutBattleHero { //<==S_BatchOwnItemNotification
 	required int32 armyId  = 1;
 	required int32 itemId  = 2;
 }

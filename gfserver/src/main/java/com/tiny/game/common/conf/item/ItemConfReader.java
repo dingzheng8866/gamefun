@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.tiny.game.common.conf.ConfAnnotation;
 import com.tiny.game.common.conf.ConfReader;
 import com.tiny.game.common.domain.item.Item;
+import com.tiny.game.common.domain.item.ItemCategory;
 import com.tiny.game.common.domain.item.ItemId;
 
 
@@ -27,6 +28,11 @@ public class ItemConfReader extends ConfReader<Item> {
 		String accumulativeFlag = getSafeValue(csv, "accumulativeFlag");
 		if(StringUtils.isNotEmpty(accumulativeFlag)){
 			bean.setAccumulative("0".equals(accumulativeFlag) ? false : true);
+		}
+		
+		String categoryStr = getSafeValue(csv, "category");
+		if(StringUtils.isNotEmpty(categoryStr)){
+			bean.setCategory(ItemCategory.valueOf(Integer.parseInt(categoryStr)));
 		}
 		
 		addConfBean(bean.getKey(), bean);

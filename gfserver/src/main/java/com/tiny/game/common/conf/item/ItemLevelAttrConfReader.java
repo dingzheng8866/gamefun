@@ -4,9 +4,12 @@ package com.tiny.game.common.conf.item;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.tiny.game.common.conf.ConfAnnotation;
 import com.tiny.game.common.conf.ConfReader;
 import com.tiny.game.common.domain.item.Item;
+import com.tiny.game.common.domain.item.ItemCategory;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 
@@ -34,6 +37,11 @@ public class ItemLevelAttrConfReader extends ConfReader<LevelItem> {
 		bean.setName(getSafeValue(csv, "name"));
 		bean.setAvatarId(getSafeValue(csv, "avatarId"));
 		bean.setLevel(Integer.parseInt(getSafeValue(csv, "level")));
+		
+		String categoryStr = getSafeValue(csv, "category");
+		if(StringUtils.isNotEmpty(categoryStr)){
+			bean.setCategory(ItemCategory.valueOf(Integer.parseInt(categoryStr)));
+		}
 		
 		int propStartIndex = getIndex("avatarId") + 1;
 		for(int i=propStartIndex; i<csv.length; i++){

@@ -24,6 +24,8 @@ public class Item {
 	
 	protected boolean isAccumulative = true;
 	
+	protected ItemCategory category = ItemCategory.Unknown;
+	
 	protected Map<String, String> props = new HashMap<String, String>();
 
 	public int getLevel() {
@@ -139,6 +141,14 @@ public class Item {
 	
 	public String toString(){
 		return itemId.name()+",avatarId:"+avatarId+",props:"+attrsToString();
+	}
+
+	public ItemCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCategory category) {
+		this.category = category;
 	}
 	
 }
