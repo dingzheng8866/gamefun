@@ -7,7 +7,7 @@ public class RoleInitItem {
 	private int level = 1;
 
 	public String getKey(){
-		return Item.getKey(itemId);
+		return Item.getKey(itemId, level);
 	}
 	
 	public ItemId getItemId() {

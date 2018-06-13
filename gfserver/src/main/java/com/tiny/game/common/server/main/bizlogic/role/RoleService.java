@@ -75,8 +75,8 @@ public class RoleService {
 		int levelMaxExp = roleExp.getExp();
 		int currentExp = role.getOwnItemValue(ItemId.roleExp);
 		if(currentExp > levelMaxExp){
-			role.subOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, levelMaxExp)); // exp-max==>then fixup again
-			role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1)); // level+1
+			role.subOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, levelMaxExp)); // exp-max==>then fixup again
+			role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 1, 1)); // level+1
 			//TODO: broadcast role level up, maybe give some reward
 			logger.info("TODO: broadcast role level up, maybe give some reward to level: " + role.getLevel());
 			fixupRoleExpChange(role);
@@ -101,7 +101,8 @@ public class RoleService {
 		Role role = DaoFactory.getInstance().getUserDao().getRole(user.getUserId());
 		// do we need to update lastupdatetime of role, seems need
 		role.setLastUpdateTime(Calendar.getInstance().getTime());
-		DaoFactory.getInstance().getUserDao().updateRole(role);
+		checkUpgradingItems(role);
+		markRoleSignTag(role);
 		
 		UserOnlineInfo userOnlineInfo = DaoFactory.getInstance().getUserDao().getUserOnlineInfo(user.getUserId());
 		if(userOnlineInfo==null) {
@@ -112,7 +113,8 @@ public class RoleService {
 			} 
 			updateUserOnlineInfo(userOnlineInfo);
 		}
-		markRoleSignTag(role);
+		
+		DaoFactory.getInstance().getUserDao().updateRole(role);
 		return role;
 	}
 	
@@ -125,6 +127,7 @@ public class RoleService {
 	public static Role createUserAndRole(C_RoleLogin req, String userIp, String loginAcctId){
 		User user = buildUser(req, userIp);
 		Role role = RoleUtil.buildRole(user.getUserId());
+		initRoleSignTag(role);
 		
 		DaoFactory.getInstance().getUserDao().createUser(user);
 		DaoFactory.getInstance().getUserDao().createRole(role);
@@ -143,7 +146,7 @@ public class RoleService {
 		}
 		
 		createUserOnlineInfo(user.getUserId());
-		initRoleSignTag(role);
+		
 		return role;
 	}
 	
@@ -193,7 +196,7 @@ public class RoleService {
 	
 	public static void initRoleSignTag(Role role){
 //		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signFinishTag, 0, 0));
-		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signGotRewardTag, 0, 0));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signGotRewardTag, 1, 0));
 		
 //		OwnItem ownItem = role.getOwnItem(ItemId.signTag);
 //		ownItem.addExtendProp("firstSignDay", System.currentTimeMillis()+"");
@@ -207,7 +210,7 @@ public class RoleService {
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			String loginDay = df.format(Calendar.getInstance().getTime());
 			if(!hasItemContainsSpecifiedSubExtendPropValue(role, ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay)){
-				role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signTag, 0, 1));
+				role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signTag, 1, 1));
 				addItemSpecifiedSubExtendPropValue(role, ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay);
 			}
 		}
@@ -271,9 +274,19 @@ public class RoleService {
 		return gotItem;
 	}
 	
+	private static boolean checkUpgradingItems(Role role){
+		List<OwnItem> upgradingItems = role.getAllOwnItemsContainsAttrKey(ItemAttr.beginUpgradeTime);
+		boolean changed = false;
+		for(OwnItem ownItem : upgradingItems){
+			changed = upgradeItem(role, null, ownItem.getItem().getItemId().getValue(), ownItem.getLevel(), false);
+		}
+		return changed;
+	}
+	
 	// client will send this action when it almost finished
 	// user login will check upgrade and update the related values
-	public static void upgradeItem(Role role, NetSession session, int itemId, int currentLevel) {
+	public static boolean upgradeItem(Role role, NetSession session, int itemId, int currentLevel, boolean persistent) {
+		boolean changed = false;
 		OwnItem ownItem = role.getOwnItem(ItemId.valueOf(itemId), currentLevel);
 		if(ownItem==null) {
 			throw new InvalidRequestParameter(ErrorCode.Error_InvalidRequestParameter, "Not found item:" + itemId+"-"+currentLevel);
@@ -294,12 +307,17 @@ public class RoleService {
 				//newLevelItem.getExtendedProps().putAll(ownItem.getExtendedProps()); // ?
 				role.removeOwnItem(ownItem.getKey());
 				role.addOwnItem(newLevelItem);
-				DaoFactory.getInstance().getUserDao().updateRole(role);
+				changed = true;
+				if(persistent){
+					DaoFactory.getInstance().getUserDao().updateRole(role);
+				}
 				
-				S_BatchOwnItemNotification.Builder builder = S_BatchOwnItemNotification.newBuilder();
-				builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Add, newLevelItem));
-				builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Del, ownItem));
-				NetLayerManager.getInstance().asyncSendOutboundMessage(session, builder.build());
+				if(session!=null){
+					S_BatchOwnItemNotification.Builder builder = S_BatchOwnItemNotification.newBuilder();
+					builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Add, newLevelItem));
+					builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Del, ownItem));
+					NetLayerManager.getInstance().asyncSendOutboundMessage(session, builder.build());
+				}
 			}
 		} else {
 			// check unlock condition
@@ -325,12 +343,17 @@ public class RoleService {
 				//newLevelItem.getExtendedProps().putAll(ownItem.getExtendedProps()); // ?
 				role.removeOwnItem(ownItem.getKey());
 				role.addOwnItem(newLevelItem);
-				DaoFactory.getInstance().getUserDao().updateRole(role);
+				changed = true;
+				if(persistent){
+					DaoFactory.getInstance().getUserDao().updateRole(role);
+				}
 				
-				S_BatchOwnItemNotification.Builder builder = S_BatchOwnItemNotification.newBuilder();
-				builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Add, newLevelItem));
-				builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Del, ownItem));
-				NetLayerManager.getInstance().asyncSendOutboundMessage(session, builder.build());
+				if(session!=null){
+					S_BatchOwnItemNotification.Builder builder = S_BatchOwnItemNotification.newBuilder();
+					builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Add, newLevelItem));
+					builder.addNotification(NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Del, ownItem));
+					NetLayerManager.getInstance().asyncSendOutboundMessage(session, builder.build());
+				}
 			} else {
 				// notify user upgrade need time
 				long beginTime = System.currentTimeMillis();
@@ -340,11 +363,13 @@ public class RoleService {
 				ownItem.setExtendAttrValue(ItemAttr.leftUpgradeTime, upgradeNeedTime+"");
 				DaoFactory.getInstance().getUserDao().updateRole(role);
 				
-				S_BatchOwnItemNotification response = NetMessageUtil.buildRoleSingleNotifyOwnItem(OwnItemNotification.ItemChangeType.Set, ownItem);
-				NetLayerManager.getInstance().asyncSendOutboundMessage(session, response);
+				if(session!=null){
+					S_BatchOwnItemNotification response = NetMessageUtil.buildRoleSingleNotifyOwnItem(OwnItemNotification.ItemChangeType.Set, ownItem);
+					NetLayerManager.getInstance().asyncSendOutboundMessage(session, response);
+				}
 			}
 		}
-
+		return changed;
 	}
 	
 }

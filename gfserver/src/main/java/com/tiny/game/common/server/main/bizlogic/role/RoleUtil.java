@@ -12,6 +12,7 @@ import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.item.RoleInitItem;
 import com.tiny.game.common.domain.role.Role;
+import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.domain.role.OwnItem;
 
 public class RoleUtil {
@@ -21,12 +22,20 @@ public class RoleUtil {
 	
 	public static OwnItem buildOwnItem(ItemId itemId, int level, int value){
 		Item item = null;
+		if(level < 1){
+			level = 1;
+		}
 		if(level > 0){
 			item =  (LevelItem)LocalConfManager.getInstance().getConfReader(ItemLevelAttrConfReader.class).getConfBean(LevelItem.getKey(itemId, level));
 		}
-		if(item == null){
-			item = (Item)LocalConfManager.getInstance().getConfReader(ItemConfReader.class).getConfBean(Item.getKey(itemId));
+		if(item == null && level <=1){
+			item = (Item)LocalConfManager.getInstance().getConfReader(ItemConfReader.class).getConfBean(Item.getKey(itemId, level));
 		}
+		
+		if(item==null){
+			throw new InternalBugException("Not found item: " + itemId +", level: " + level);
+		}
+		
 		OwnItem ownItem = new OwnItem();
 		
 		ownItem.setItem(item);

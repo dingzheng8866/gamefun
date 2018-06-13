@@ -106,12 +106,12 @@ message S_BatchOwnItemNotification {
 	repeated OwnItemNotification notification = 1;
 }
 
-message C_UpLevelItem { //<==S_EstimateTime
+message C_UpLevelItem { //<==S_BatchOwnItemNotification
 	required int32 itemId  		 = 1;
 	required int32 currentLevel  = 2;
 }
 
-message S_EstimateTime {
+message S_EstimateTime { // seems not used now
 	required int32 time    = 1;
 	optional int32 itemId  = 2;
 	//need reason type?

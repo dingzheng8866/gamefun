@@ -20,7 +20,7 @@ public class C_UpLevelItemProcessor extends AbstractPlayerCmdProcessor {
 	@Override
 	public void process(Role role, NetSession session, NetMessage msg) {
 		C_UpLevelItem req = NetUtils.getNetProtocolObject(C_UpLevelItem.PARSER, msg);
-		RoleService.upgradeItem(role, session, req.getItemId(), req.getCurrentLevel());
+		RoleService.upgradeItem(role, session, req.getItemId(), req.getCurrentLevel(), true);
 	}
 	
 }

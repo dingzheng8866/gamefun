@@ -12,16 +12,24 @@ public class Item {
 
 	private static Logger logger = LoggerFactory.getLogger(Item.class);
 	
+	public static final String KEY_SEP = "-";
+	
 	protected ItemId itemId;
 	protected String name;
 	protected String avatarId;
 	
+	protected int level = 1;
+
 	protected long maxValue = -1;
 	
 	protected boolean isAccumulative = true;
 	
 	protected Map<String, String> props = new HashMap<String, String>();
 
+	public int getLevel() {
+		return level;
+	}
+	
 	public float getAttrFloatValue(String attrKey) {
 		return getAttrFloatValue(props, attrKey);
 	}
@@ -42,11 +50,15 @@ public class Item {
 	
 	
 	public String getKey(){
-		return getKey(itemId);
+		return getKey(itemId, level);
 	}
 	
-	public static String getKey(ItemId itemId){
-		return itemId.getValue()+"";
+//	public static String getKey(ItemId itemId){
+//		return Item.getKey(itemId);
+//	}
+	
+	public static String getKey(ItemId itemId, int level){
+		return itemId.getValue()+KEY_SEP+level;
 	}
 	
 	public boolean equals(Object o) {

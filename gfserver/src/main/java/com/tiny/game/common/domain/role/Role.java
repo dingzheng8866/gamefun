@@ -1,7 +1,9 @@
 package com.tiny.game.common.domain.role;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -120,7 +122,7 @@ public class Role {
 //	}
 	
 	public OwnItem getOwnItem(ItemId itemId) {
-		return items.get(Item.getKey(itemId));
+		return getOwnItem(itemId, 1);
 	}
 	
 	public OwnItem getOwnItem(ItemId itemId, int level) {
@@ -239,6 +241,16 @@ public class Role {
 			}
 		}
 		return flag;
+	}
+	
+	public List<OwnItem> getAllOwnItemsContainsAttrKey(String attrKey){
+		List<OwnItem> list = new ArrayList<OwnItem>();
+		for(OwnItem ownItem:items.values()) {
+			if(ownItem.hasAttr(attrKey)){
+				list.add(ownItem);
+			}
+		}
+		return list;
 	}
 	
 }

@@ -24,10 +24,10 @@ public class TestRole {
 		Role role = new Role();
 		role.setRoleId("123456");
 		role.setLastUpdateTime(Calendar.getInstance().getTime());
-		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 0, 1));
-		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 0, 0));
-		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.mainBase, 3, 1));
-		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerLeft, 2, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleLevel, 1, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.roleExp, 1, 0));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.mainBase, 2, 1));
+		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerLeft, 1, 1));
 		role.addOwnItem(RoleUtil.buildOwnItem(ItemId.defenseTowerRight, 1, 1));
 		return role;
 	}

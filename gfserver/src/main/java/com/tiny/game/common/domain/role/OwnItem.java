@@ -17,6 +17,10 @@ public class OwnItem {
 		return item.getKey();
 	}
 	
+	public int getLevel(){
+		return item.getLevel();
+	}
+	
 	public float getAttrFloatValue(String attrKey) {
 		return item.getAttrFloatValue(attrKey) + Item.getAttrFloatValue(extendedProps, attrKey);
 	}
@@ -58,6 +62,14 @@ public class OwnItem {
 		this.value = value;
 	}
 
+	public boolean hasAttr(String key){
+		boolean found =  getExtendProp(key)!=null;
+		if(!found){
+			found = item.getAttr(key)!=null;
+		}
+		return found;
+	}
+	
 	public String getExtendProp(String key){
 		return extendedProps.get(key);
 	}

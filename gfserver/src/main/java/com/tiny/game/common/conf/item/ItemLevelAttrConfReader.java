@@ -16,14 +16,14 @@ public class ItemLevelAttrConfReader extends ConfReader<LevelItem> {
 	private static Map<String, Integer> itemMaxLevelMap = new ConcurrentHashMap<String, Integer>();
 	
 	private static void adjustItemMaxLevel(LevelItem bean) {
-		Integer maxValue = itemMaxLevelMap.get(Item.getKey(bean.getItemId()));
+		Integer maxValue = itemMaxLevelMap.get(bean.getItemId().getValue()+"");
 		if(maxValue == null || bean.getLevel() > maxValue) {
-			itemMaxLevelMap.put(Item.getKey(bean.getItemId()), bean.getLevel());
+			itemMaxLevelMap.put(bean.getItemId().getValue()+"", bean.getLevel());
 		} 
 	}
 	
 	public static int getMaxLevel(ItemId itemId) {
-		Integer maxValue = itemMaxLevelMap.get(Item.getKey(itemId));
+		Integer maxValue = itemMaxLevelMap.get(itemId.getValue());
 		return maxValue==null ? 1 : maxValue;
 	}
 	
