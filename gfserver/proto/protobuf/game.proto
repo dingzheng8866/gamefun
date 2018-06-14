@@ -95,8 +95,9 @@ message OwnItemNotification {
 	
 	enum ItemChangeType {
         Add = 0;
-        Set = 1;
-        Del = 2;
+        Sub = 1;
+        Set = 2;
+        Del = 3;
     }
 	required ItemChangeType changeType = 2;
 }
@@ -106,7 +107,8 @@ message S_BatchOwnItemNotification {
 }
 
 message C_UpLevelItem { //<==S_EstimateTime
-	required int32 itemId  = 1;
+	required int32 itemId  		 = 1;
+	required int32 currentLevel  = 2;
 }
 
 message S_EstimateTime {

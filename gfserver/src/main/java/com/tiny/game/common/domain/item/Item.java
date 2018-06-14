@@ -6,6 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiny.game.common.exception.InternalBugException;
+
 public class Item {
 
 	private static Logger logger = LoggerFactory.getLogger(Item.class);
@@ -20,6 +22,25 @@ public class Item {
 	
 	protected Map<String, String> props = new HashMap<String, String>();
 
+	public float getAttrFloatValue(String attrKey) {
+		return getAttrFloatValue(props, attrKey);
+	}
+	
+	public static float getAttrFloatValue(Map<String, String> props, String attrKey) {
+		float v = 0;
+		String str = props.get(attrKey);
+		if(str!=null &&str.trim().length() >0) {
+			try {
+				v = Float.parseFloat(str.trim());
+			}catch(Exception e) {
+				logger.error("Falied to getAttrValue: "+e.getMessage(), e);
+				throw new InternalBugException("Falied to getAttrValue: "+e.getMessage(), e);
+			}
+		}
+		return v;
+	}
+	
+	
 	public String getKey(){
 		return getKey(itemId);
 	}

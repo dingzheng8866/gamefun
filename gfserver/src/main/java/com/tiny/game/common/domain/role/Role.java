@@ -172,7 +172,7 @@ public class Role {
 		}
 	}
 	
-	public void deleteOwnItem(OwnItem item) {
+	public void subOwnItem(OwnItem item) {
 		OwnItem oldItem = items.get(item.getKey());
 		if(oldItem!=null) {
 			boolean isAccumulative = oldItem.getItem().isAccumulative();
@@ -182,6 +182,10 @@ public class Role {
 			int newCount = oldItem.getValue() - item.getValue();
 			oldItem.setValue(newCount);
 		}
+	}
+	
+	public void removeOwnItem(String key) {
+		items.remove(key);
 	}
 	
 	public String getRoleId() {
@@ -224,5 +228,17 @@ public class Role {
 //		this.setting = setting;
 //	}
 	
+	public boolean hasOwnItemMeetMinLevelCondition(ItemId itemId, int minLevel) {
+		boolean flag = false;
+		for(OwnItem ownItem:items.values()) {
+			if(ownItem.getItem().getItemId() == itemId && (ownItem.getItem() instanceof LevelItem)) {
+				LevelItem levelItem = (LevelItem)ownItem.getItem();
+				if(levelItem.getLevel() >= minLevel) {
+					return true;
+				}
+			}
+		}
+		return flag;
+	}
 	
 }

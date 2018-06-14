@@ -17,6 +17,14 @@ public class OwnItem {
 		return item.getKey();
 	}
 	
+	public float getAttrFloatValue(String attrKey) {
+		return item.getAttrFloatValue(attrKey) + Item.getAttrFloatValue(extendedProps, attrKey);
+	}
+	
+	public void setExtendAttrValue(String attrKey, String value) {
+		extendedProps.put(attrKey, value);
+	}
+	
 	public boolean equals(Object o) {
 		if(o==null || !(o instanceof OwnItem)) {
 			return false;

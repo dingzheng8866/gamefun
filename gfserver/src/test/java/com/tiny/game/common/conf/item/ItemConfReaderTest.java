@@ -21,6 +21,8 @@ public class ItemConfReaderTest {
 	public void testItem(){
 		Item bean = (Item)LocalConfManager.getInstance().getConfReader(ItemConfReader.class).getConfBean(Item.getKey(ItemId.roleLevel));
 		assertNotNull(bean);
+		
+		assertTrue(ItemLevelAttrConfReader.getMaxLevel(ItemId.mainBase) >1);
 	}
 	
 	@Test
