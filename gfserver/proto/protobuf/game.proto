@@ -2,36 +2,41 @@ option java_package = "game.protocol.protobuf";
 option java_outer_classname = "GameProtocol";
 option optimize_for = SPEED;
 
-message S_CReqCmd_Ack{
+message S_CReqCmd_Ack {
 	required string cmd    = 1;
 }
 
-message C_Heartbeat{
+message C_Heartbeat {
 }
 
-message S_Kickout{
-	required int32 errorCode = 1;
+message S_Kickout {
+	required int32 errorCode  = 1;
 	optional string parameter = 2; 
 }
 
-message S_ErrorInfo{
-	required int32 errorCode = 1;
+message S_ErrorInfo {
+	required int32 errorCode  = 1;
 	optional string parameter = 2; 
 }
 
-message S_HintInfo{
-	optional int32 hintCode = 1;
-	optional string parameter = 2; 
+message S_HintInfo {
+	optional int32 hintCode 	= 1;
+	optional string parameter 	= 2; 
 }
 
-message I_RouteMessage{
+message S_SystemNotification { 
+	required int32 type  		= 1;
+	required string content   	= 2;
+}
+
+message I_RouteMessage {
 	required string finalTargetClientType      = 1;
 	required string msgName    	    = 2;
 	required bytes  msgContent      = 3;
 	required string targetServerTag = 4;
 }
 
-message I_RegisterClient{
+message I_RegisterClient {
 	required string clientType     = 1;
 	required string clientUniqueId = 2;
 	optional string serverIp       = 3;
@@ -39,15 +44,15 @@ message I_RegisterClient{
 	optional string reserved       = 5;
 }
 
-message C_GetLoginServerInfo{
+message C_GetLoginServerInfo {
 }
 
-message S_LoginServerInfo{
+message S_LoginServerInfo {
 	required string ipAddress = 1;
 	required int32 port = 2;
 }
 
-message C_RoleLogin{
+message C_RoleLogin {
 	required string login_account_id = 1;   // android device id, apple game center id, or binded email id etc
 	required string device_id = 2;   // 设备mac地址
 	required string platform = 3;    // 渠道名称
@@ -59,41 +64,182 @@ message C_RoleLogin{
 	optional string sdk_info = 9;    // 渠道sdk信息
 }
 
-message S_RoleData{
+message S_RoleData {
 	required string roleId = 1;
-	repeated S_OwnItem item = 2;
+	repeated RoleOwnItem item = 2;
 }
 
-message S_OwnItem{
+message RoleOwnItem {
 	required int32 itemId = 1;
 	required int32 value = 2; 
 	optional int32 level = 3; 
 	repeated StringKeyParameter parameter = 4;
 }
 
-message StringKeyParameter{
+message StringKeyParameter {
 	required string key = 1;
 	required string value = 2; 
 }
 
-message IntKeyParameter{
+message IntKeyParameter {
 	required int32 key = 1;
 	required string value = 2; 
 }
 
-message C_GetSignReward{
+message C_GetSignReward {
 	required int32 day = 1;
 }
 
-message S_OwnItemNotification{
-	required S_OwnItem item = 1;
+message OwnItemNotification {
+	required RoleOwnItem item = 1;
 	
-	enum ItemChangeType
-    {
+	enum ItemChangeType {
         Add = 0;
         Set = 1;
         Del = 2;
     }
 	required ItemChangeType changeType = 2;
+}
+
+message S_BatchOwnItemNotification {
+	repeated OwnItemNotification notification = 1;
+}
+
+message C_UpLevelItem { //<==S_EstimateTime
+	required int32 itemId  = 1;
+}
+
+message S_EstimateTime {
+	required int32 time    = 1;
+	optional int32 itemId  = 2;
+	//need reason type?
+}
+
+message C_UseItem { //<==S_BatchOwnItemNotification
+	required int32 itemId  = 1;
+}
+
+message C_SwitchJoinInBattleArmyId { //<==S_BatchOwnItemNotification
+	required int32 armyId  = 1;
+}
+
+message C_JoinInBattleArmy { //<==S_BatchOwnItemNotification
+	required int32 armyId  = 1;
+	required int32 itemId  = 2;
+}
+
+message C_JoinOutBattleArmy { //<==S_BatchOwnItemNotification
+	required int32 armyId  = 1;
+	required int32 itemId  = 2;
+}
+
+message C_ChangeSetting { //<==S_BatchOwnItemNotification
+	required int32 itemId  = 1;
+	required int32 value   = 2;
+}
+
+message C_ShopBuy { //<==S_BatchOwnItemNotification
+	required int32 shopItemId  = 1;
+}
+
+message C_CreateAlliance {
+	required string name  			= 1;
+	required int32 joinType  		= 2;
+	optional int32 joinNeedPrize  	= 3;
+	optional string description 	= 4;
+	optional int32 location 		= 5;
+	optional int32 fightRate 		= 6;
+	optional int32 publicFightLog 	= 7;
+}
+
+message C_JoinAlliance {
+	required string allianceId  = 1;
+}
+
+message C_LeaveAlliance {
+	required string allianceId  = 1;
+}
+
+message C_FavoriteAlliance {
+	required string allianceId  = 1;
+}
+
+message C_GetAllianceDetail {
+	required string allianceId  = 1;
+}
+
+message C_RequestAllianceDonation {
+	optional string helpContent   = 1;
+}
+
+message C_DoAlliaceDonation {
+	required int32 itemId  = 1;
+	required int32 count   = 2;
+}
+
+message C_AskAllianceHelp {
+}
+
+message C_DoAllianceHelp {
+}
+
+message C_SearchAlliance {
+	required string name  			= 1;
+	optional int32 joinType  		= 2;
+	optional int32 joinNeedPrize  	= 3;
+	optional int32 onlyJoinable   	= 4;
+	optional int32 location 		= 5;
+	optional int32 fightRate 		= 6;
+	optional int32 level 			= 7;
+}
+
+message C_GetPlayerMoreInfo { // in alliance to show info
+	required string playerId  = 1;
+}
+
+message C_GetPlayerBaseCityInfo {  // go to player base check all info
+	required string playerId  = 1;
+}
+
+
+message C_SendChatMessage { 
+	required int32 chatGroup  = 1;
+	required string content   = 2;
+}
+
+message S_ChatMessage {  
+	required string roleId 			= 1;
+	required string roleName 		= 2;
+	required int32 chatGroup  		= 3;
+	required string content   		= 4;
+	optional int32 prize 	  		= 5;
+	optional int32 allianceTitle 	= 6;
+	optional string headIcon 		= 7;
+}
+
+message C_AskAsFriend {  
+	required string targetFriendRoleId 	= 1;
+	optional string askDescription 		= 2;
+}
+
+message C_MakeAsFriend {  
+	required string targetFriendRoleId 	= 1;
+}
+
+message C_FollowRole {  
+	required string targetRoleId 		= 1;
+}
+
+message C_UnFollowRole {  
+	required string targetRoleId 		= 1;
+}
+
+message C_SendEmail { 
+	required string targetRoleId  = 1;
+	required string content   	  = 2;
+}
+
+message C_SendAllianceAllEmail { 
+	required string content   	  = 1;
 }
 

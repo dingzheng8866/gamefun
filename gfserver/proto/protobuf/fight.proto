@@ -61,7 +61,7 @@ message FightLegionData {
 	required string groupId      	= 4;
 	required bool isRobot      		= 5;
 	optional int32 robotAi 			= 6;
-	repeated S_OwnItem item 		= 7;
+	repeated RoleOwnItem item 		= 7;
 }
 
 message C_FightLoadProgress {

@@ -11,17 +11,24 @@ import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
-import game.protocol.protobuf.GameProtocol.S_OwnItem;
-import game.protocol.protobuf.GameProtocol.S_OwnItemNotification;
+import game.protocol.protobuf.GameProtocol.OwnItemNotification;
+import game.protocol.protobuf.GameProtocol.RoleOwnItem;
+import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
 import game.protocol.protobuf.GameProtocol.StringKeyParameter;
 
 public class NetMessageUtil {
 	
-	public static S_OwnItemNotification buildRoleNotifyOwnItem(S_OwnItemNotification.ItemChangeType changeType, OwnItem ownItem){
-		S_OwnItemNotification.Builder builder = S_OwnItemNotification.newBuilder();
+	public static OwnItemNotification buildOwnItemNotification(OwnItemNotification.ItemChangeType changeType, OwnItem ownItem){
+		OwnItemNotification.Builder builder = OwnItemNotification.newBuilder();
 		builder.setChangeType(changeType);
 		builder.setItem(NetMessageUtil.convertOwnItem(ownItem));
+		return builder.build();
+	}
+	
+	public static S_BatchOwnItemNotification buildRoleSingleNotifyOwnItem(OwnItemNotification.ItemChangeType changeType, OwnItem ownItem){
+		S_BatchOwnItemNotification.Builder builder = S_BatchOwnItemNotification.newBuilder();
+		builder.addNotification(buildOwnItemNotification(changeType, ownItem));
 		return builder.build();
 	}
 	
@@ -37,8 +44,8 @@ public class NetMessageUtil {
 	public static Role convertS_RoleData(S_RoleData roleData){
 		Role role = new Role();
 		role.setRoleId(roleData.getRoleId());
-		for(S_OwnItem item : roleData.getItemList()){
-			role.addOwnItem(convertS_OwnItem(item));
+		for(RoleOwnItem item : roleData.getItemList()){
+			role.addOwnItem(convertRoleOwnItem(item));
 		}
 		return role;
 	}
@@ -53,7 +60,7 @@ public class NetMessageUtil {
 		return builder.build();
 	}
 	
-	private static OwnItem convertS_OwnItem(S_OwnItem item){
+	private static OwnItem convertRoleOwnItem(RoleOwnItem item){
 		OwnItem ownItem = RoleUtil.buildOwnItem(ItemId.valueOf(item.getItemId()), item.getLevel(), item.getValue());
 		
 		for(StringKeyParameter sp : item.getParameterList()){
@@ -62,8 +69,8 @@ public class NetMessageUtil {
 		return ownItem;
 	}
 	
-	public static S_OwnItem convertOwnItem(OwnItem item){
-		S_OwnItem.Builder builder = S_OwnItem.newBuilder();
+	public static RoleOwnItem convertOwnItem(OwnItem item){
+		RoleOwnItem.Builder builder = RoleOwnItem.newBuilder();
 		builder.setItemId(item.getItem().getItemId().getValue());
 		builder.setValue(item.getValue());
 		if(item.getItem() instanceof LevelItem){
