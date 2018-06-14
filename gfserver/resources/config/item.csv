@@ -25,6 +25,12 @@ id;type;name;avatarId;maxValue;accumulativeFlag;category
 100022;signFinishTag;签到完成标记;;;;
 100023;signGotRewardTag;签到领取标记;;;;
 100024;internalTagRoleLoginDay;内部标记登陆;;;;
+100025;usedJoinInArmyId;上阵军队编号;;;0;
+100026;joinInArmySeq1;上阵军队编号1;;;0;
+100027;joinInArmySeq2;上阵军队编号2;;;0;
+100028;joinInArmySeq3;上阵军队编号3;;;0;
+100029;joinInArmySeq4;上阵军队编号4;;;0;
+100030;joinInArmySeq5;上阵军队编号5;;;0;
 200001;mainBase;主基地;;;;
 200002;defenseTowerLeft;防御塔1;;;;
 200003;defenseTowerRight;防御塔2;;;;
