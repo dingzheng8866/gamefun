@@ -16,7 +16,7 @@ CREATE TABLE `user` (
   `lastUpdateTime` datetime DEFAULT NULL,
   `loginDeviceInfo` text,
   PRIMARY KEY (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `user_bind`;
 CREATE TABLE `user_bind` (

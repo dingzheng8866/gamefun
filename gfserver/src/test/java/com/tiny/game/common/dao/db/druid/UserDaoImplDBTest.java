@@ -18,7 +18,7 @@ import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 // Manually run this
 public class UserDaoImplDBTest extends BaseDaoDBTest {
 
-	private UserOnlineInfo buildUserOnlineInfo() {
+	public static UserOnlineInfo buildUserOnlineInfo() {
 		UserOnlineInfo bean = new UserOnlineInfo();
 		bean.setUserId("1");
 		bean.setLoginServerId("gs1");
@@ -26,14 +26,14 @@ public class UserDaoImplDBTest extends BaseDaoDBTest {
 		return bean;
 	}
 	
-	private UserAcctBindInfo buildUserAcctBindInfo() {
+	public static UserAcctBindInfo buildUserAcctBindInfo() {
 		UserAcctBindInfo bean = new UserAcctBindInfo();
 		bean.setBindedAccountId("1");
 		bean.setUserId("1");
 		return bean;
 	}
 
-	private User buildUser() {
+	public static User buildUser() {
 		User bean = new User();
 		bean.setUserId("1");
 		bean.setLoginAccountId("22222");
@@ -49,7 +49,7 @@ public class UserDaoImplDBTest extends BaseDaoDBTest {
 		return bean;
 	}
 	
-	private Role buildRole(){
+	public static Role buildRole(){
 		Role role = new Role();
 		role.setRoleId("123456");
 		role.setLastUpdateTime(Calendar.getInstance().getTime());
