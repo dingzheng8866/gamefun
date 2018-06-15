@@ -1,10 +1,11 @@
 编号;浮点数数据;整数数据;字符串数据;备注
 constName;floatValue;intValue;stringValue;comments
+Error_InternalBug;;200001;;
+Error_InternalRuntime;;200002;;
+Error_AnotherDeviceLogin;;100001;;
+Error_NoOperActionForLongTime;;100002;;
+Error_InvalidRequestParameter;;100003;;
+Error_NoActiveServer;;100004;;
 MaxJoinInBattleArmy;;5;;最大上阵军队配置数目
 TestConstFloatValue;1.0;;;
 TestConstStringValue;;;abc123#!ydf;
-Error_InternalBug;;2001;;
-Error_AnotherDeviceLogin;;1001;;
-Error_NoOperActionForLongTime;;1002;;
-Error_InvalidRequestParameter;;1003;;
-Error_NoActiveServer;;1004;;

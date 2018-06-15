@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.util.StringUtils;
+import com.tiny.game.common.GameConst;
 import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.User;
-import com.tiny.game.common.error.ErrorCode;
-import com.tiny.game.common.exception.InvalidRequestParameter;
+import com.tiny.game.common.exception.GameRuntimeException;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.NetMessage;
 import com.tiny.game.common.net.NetSessionManager;
@@ -29,7 +29,7 @@ public class C_RoleLoginProcessor extends NetCmdProcessor {
 
 	private void validateReq(C_RoleLogin req){
 		if(StringUtils.isEmpty(req.getLoginAccountId()) && StringUtils.isEmpty(req.getDeviceId())){
-			throw new InvalidRequestParameter(ErrorCode.Error_InvalidRequestParameter, "empty login acct id and device id");
+			throw new GameRuntimeException(GameConst.Error_InvalidRequestParameter, "empty login acct id and device id");
 		}
 	}
 	

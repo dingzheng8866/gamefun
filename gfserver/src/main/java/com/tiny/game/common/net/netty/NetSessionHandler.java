@@ -64,13 +64,16 @@ public class NetSessionHandler {
 				filter.onCloseNetSession(session);
 			}
 		}
+		
+		if(session.getTimeoutTask()!=null) {
+			session.getTimeoutTask().cancel();
+		}
 	}
 	
 	public void processInboundMessage(Channel channel, NetMessage msg) {
 		NetSession session = channel.attr(KEY_GAME_SESSION).get();
 		if (session == null) {
-			logger.error("session is null");
-			// TODO: send msg to client to re-create session
+			logger.error("Session is null: " + channel.remoteAddress().toString() + ", msg: " +msg.getName());
 			return;
 		}
 		session.setLastVisitTime(System.currentTimeMillis());

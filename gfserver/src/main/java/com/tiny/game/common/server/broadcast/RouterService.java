@@ -3,7 +3,6 @@ package com.tiny.game.common.server.broadcast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tiny.game.common.error.ErrorCode;
 import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.NetSessionManager;
@@ -43,7 +42,7 @@ public class RouterService {
 //				throw new InternalBugException(ErrorCode.Error_NoActiveProxyServer.name() + " to proxy message: " + req.getMsgName());
 //			}
 //		} else {
-			logger.info("Route proxy message: " + req.getMsgName() + " to " + req.getFinalTargetClientType());
+			logger.info("Route proxy message: " + req);
 			NetClientManager.getInstance().sendMsg(ProxyServer.class.getSimpleName(), req);
 //		}
 	}

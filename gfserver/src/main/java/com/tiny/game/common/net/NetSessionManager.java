@@ -47,7 +47,9 @@ public class NetSessionManager {
 			subSessions.remove(session);
 			System.out.println("remove session: " + session.getPeerUniqueId());
 		}
-		sessionMap.remove(session.getPeerUniqueId());
+		if(session.getPeerUniqueId()!=null) {
+			sessionMap.remove(session.getPeerUniqueId());
+		}
 	}
 	
 	public NetSession getRandomSessionByPeerType(String clientType) {

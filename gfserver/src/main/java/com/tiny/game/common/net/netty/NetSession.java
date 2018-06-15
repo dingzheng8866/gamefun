@@ -10,6 +10,7 @@ import game.protocol.protobuf.GameProtocol.I_RegisterClient;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.Timeout;
 
 public class NetSession {
 
@@ -28,6 +29,8 @@ public class NetSession {
 	private Role playerRole;
 	
 	private I_RegisterClient clientRegisterInfo = null;
+	
+	private Timeout timeoutTask = null;
 	
 	public NetSession(Channel channel) {
 		this.setChannel(channel);
@@ -138,6 +141,14 @@ public class NetSession {
 
 	public void setPlayerRole(Role playerRole) {
 		this.playerRole = playerRole;
+	}
+
+	public Timeout getTimeoutTask() {
+		return timeoutTask;
+	}
+
+	public void setTimeoutTask(Timeout timeoutTask) {
+		this.timeoutTask = timeoutTask;
 	}
 
 }

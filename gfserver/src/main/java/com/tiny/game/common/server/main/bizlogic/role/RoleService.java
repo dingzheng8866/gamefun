@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
+import com.tiny.game.common.GameConst;
 import com.tiny.game.common.conf.LocalConfManager;
 import com.tiny.game.common.conf.item.ItemLevelAttrConfReader;
 import com.tiny.game.common.conf.role.RoleExpConfReader;
@@ -24,9 +25,8 @@ import com.tiny.game.common.domain.role.RoleSign;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
-import com.tiny.game.common.error.ErrorCode;
 import com.tiny.game.common.exception.InternalBugException;
-import com.tiny.game.common.exception.InvalidRequestParameter;
+import com.tiny.game.common.exception.GameRuntimeException;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.cmd.NetCmdFactory;
@@ -41,6 +41,7 @@ import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.OwnItemNotification;
 import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
+import game.protocol.protobuf.GameProtocol.I_KickoutRole;
 import game.protocol.protobuf.GameProtocol.S_ErrorInfo;
 
 public class RoleService {
@@ -119,9 +120,11 @@ public class RoleService {
 	}
 	
 	private static void kickoffUserToOffline(String userId, String specifiedLoginServerId){
-		NetCmd errorCmd = NetCmdFactory.factoryCmdS_ErrorInfo(ErrorCode.Error_AnotherDeviceLogin.getValue(), null);
-		I_RouteMessage req = NetMessageUtil.buildRouteMessage(errorCmd, specifiedLoginServerId, userId);
-		RouterService.routeToTarget(req);
+		I_KickoutRole.Builder builder = I_KickoutRole.newBuilder();
+		builder.setRoleId(userId);
+		builder.setReasonCode(GameConst.Error_AnotherDeviceLogin);
+		I_RouteMessage.Builder req = NetMessageUtil.buildRouteMessage(new NetCmd(builder.build()), specifiedLoginServerId, false, userId, ServerContext.getInstance().getServerUniqueTag());
+		RouterService.routeToTarget(req.build());
 	}
 	
 	public static Role createUserAndRole(C_RoleLogin req, String userIp, String loginAcctId){
@@ -227,11 +230,13 @@ public class RoleService {
 	
 	private static boolean hasItemContainsSpecifiedSubExtendPropValue(Role role, ItemId itemId, String propName, String subValue){
 		OwnItem ownItem = role.getOwnItem(itemId);
-		String itemValue = ownItem.getExtendProp(propName);
-		if(itemValue!=null){
-			List<String> list = GameUtil.splitToStringList(itemValue, ",");
-			if(list.contains(subValue)){
-				return true;
+		if(ownItem!=null) {
+			String itemValue = ownItem.getExtendProp(propName);
+			if(itemValue!=null){
+				List<String> list = GameUtil.splitToStringList(itemValue, ",");
+				if(list.contains(subValue)){
+					return true;
+				}
 			}
 		}
 		return false;
@@ -289,11 +294,11 @@ public class RoleService {
 		boolean changed = false;
 		OwnItem ownItem = role.getOwnItem(ItemId.valueOf(itemId), currentLevel);
 		if(ownItem==null) {
-			throw new InvalidRequestParameter(ErrorCode.Error_InvalidRequestParameter, "Not found item:" + itemId+"-"+currentLevel);
+			throw new GameRuntimeException(GameConst.Error_InvalidRequestParameter, "Not found item:" + itemId+"-"+currentLevel);
 		}
 		int maxValue = ItemLevelAttrConfReader.getMaxLevel(ItemId.valueOf(itemId));
 		if(currentLevel >= maxValue) {
-			throw new InvalidRequestParameter(ErrorCode.Error_InvalidRequestParameter, "Item "+itemId+" current level:" + currentLevel+" exceed max level"+maxValue);
+			throw new GameRuntimeException(GameConst.Error_InvalidRequestParameter, "Item "+itemId+" current level:" + currentLevel+" exceed max level"+maxValue);
 		}
 		
 		float beginUpgradeTime = ownItem.getAttrFloatValue(ItemAttr.beginUpgradeTime);
@@ -331,7 +336,7 @@ public class RoleService {
 					ItemId checkItemId = ItemId.valueOf(Integer.parseInt(strList.get(0)));
 					int checkLevel = Integer.parseInt(strList.get(1));
 					if(!role.hasOwnItemMeetMinLevelCondition(checkItemId, checkLevel)) {
-						throw new InvalidRequestParameter(ErrorCode.Error_InvalidRequestParameter, "not meet unlock condition: " + cond +" to item: " + ownItem.getKey());
+						throw new GameRuntimeException(GameConst.Error_InvalidRequestParameter, "not meet unlock condition: " + cond +" to item: " + ownItem.getKey());
 					}
 				}
 			}

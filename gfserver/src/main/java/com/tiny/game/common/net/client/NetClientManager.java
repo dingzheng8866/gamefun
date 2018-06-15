@@ -97,7 +97,7 @@ public class NetClientManager {
 			}
 			
 			if(activeTargets.size() < 1) {
-				throw new InternalBugException("No active router target to use: " + routerTag);
+				throw new InternalBugException("No active router target to use: " + routerTag + " for message: " + msg.getName());
 			}
 			
 			while(activeTargets.size() > 0) {
@@ -191,9 +191,9 @@ public class NetClientManager {
 			keeperThreadRunFlag = true;
 			while(keeperThreadRunFlag) {
 				try {
-					Thread.sleep(500);
+					Thread.currentThread().sleep(500);
 					connectToTargets();
-					Thread.sleep(2500);
+					Thread.currentThread().sleep(2500);
 				}catch(Exception e) {
 					e.printStackTrace(); // no need extra handling
 				}

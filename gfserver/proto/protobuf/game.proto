@@ -9,14 +9,20 @@ message S_CReqCmd_Ack {
 message C_Heartbeat {
 }
 
-message S_Kickout {
-	required int32 errorCode  = 1;
-	optional string parameter = 2; 
+message I_KickoutRole {
+	required string roleId  	= 1;
+	optional int32 reasonCode 	= 2; 
 }
 
 message S_ErrorInfo {
 	required int32 errorCode  = 1;
 	optional string parameter = 2; 
+}
+
+message S_Exception {
+	required int32 code  		= 1;
+	optional string description = 2; 
+	optional string trace 		= 3; 
 }
 
 message S_HintInfo {
@@ -30,10 +36,13 @@ message S_SystemNotification {
 }
 
 message I_RouteMessage {
-	required string finalTargetClientType      = 1;
-	required string msgName    	    = 2;
-	required bytes  msgContent      = 3;
-	required string targetServerTag = 4;
+	required string targetServerTag 			= 1;
+	required bool isRandomServer 				= 2; 
+	required string msgName    	    			= 3;
+	required bytes  msgContent      			= 4;
+	required string originalFromServerUniqueTag = 5;
+	required string finalRouteToRoleId     		= 6;
+	repeated string backupFinalRouteToRoleId	= 7; 
 }
 
 message I_RegisterClient {
