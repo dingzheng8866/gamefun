@@ -1,0 +1,7 @@
+package com.tiny.game.common;
+
+public interface GameConst {
+
+#CONST_VAR
+	
+}

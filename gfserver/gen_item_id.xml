@@ -17,11 +17,16 @@
 		<exec executable="bin/genitemid.bat">
 		</exec>
 	</target>
+	<target name="gen_const" if="is_windows" depends="prepare">
+		<echo message="item_id_genereate_source bin/genconst.bat" />
+		<exec executable="bin/genconst.bat">
+		</exec>
+	</target>	
 	<target name="gen_item_attr" if="is_windows" depends="gen_item_id">
 		<echo message="gen_item_attr bin/genitemattr.bat" />
 		<exec executable="bin/genitemattr.bat">
 		</exec>
 	</target>
-	<target name="main" depends="gen_item_attr">
+	<target name="main" depends="gen_item_attr, gen_const">
 	</target>
 </project>
