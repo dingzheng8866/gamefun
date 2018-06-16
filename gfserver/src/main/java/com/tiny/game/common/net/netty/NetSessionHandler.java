@@ -60,8 +60,12 @@ public class NetSessionHandler {
 		channel.attr(KEY_GAME_SESSION).remove();
 		
 		if(filters!=null) {
-			for(NetSessionFilter filter : filters) {
-				filter.onCloseNetSession(session);
+			try {
+				for(NetSessionFilter filter : filters) {
+					filter.onCloseNetSession(session);
+				}
+			}catch(Exception e) {
+				logger.error("Failed to process filter: "+e.getMessage(), e);
 			}
 		}
 		

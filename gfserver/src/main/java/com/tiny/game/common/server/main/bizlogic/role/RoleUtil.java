@@ -1,5 +1,7 @@
 package com.tiny.game.common.server.main.bizlogic.role;
 
+import java.util.Calendar;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +49,7 @@ public class RoleUtil {
 	public static Role buildRole(String roleId){
 		Role role = new Role();
 		role.setRoleId(roleId);
+		role.setLastUpdateTime(Calendar.getInstance().getTime());
 		
 		for(Object obj : LocalConfManager.getInstance().getConfReader(RoleInitItemConfReader.class).getAllConfBeans()){
 			RoleInitItem initItem = (RoleInitItem) obj;

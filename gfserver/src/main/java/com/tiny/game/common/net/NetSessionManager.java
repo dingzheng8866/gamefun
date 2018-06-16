@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.tiny.game.common.net.netty.NetSession;
+import com.tiny.game.common.server.main.bizlogic.role.RoleService;
 import com.tiny.game.common.util.GameUtil;
 
 import game.protocol.protobuf.GameProtocol.I_RegisterClient;
@@ -49,6 +50,9 @@ public class NetSessionManager {
 		}
 		if(session.getPeerUniqueId()!=null) {
 			sessionMap.remove(session.getPeerUniqueId());
+		}
+		if(session.getPlayerRole()!=null) {
+			RoleService.deleteUserOnlineInfo(session.getPlayerRole().getRoleId());
 		}
 	}
 	

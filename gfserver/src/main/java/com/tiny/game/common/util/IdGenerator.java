@@ -19,7 +19,8 @@ public class IdGenerator {
 	}
 	
 	public static String genServerTagUniqueId(String prefix){
-		return prefix+"_" + genUniqueId(6)+"_" + ServerContext.getInstance().getLocalAnyIp();
+//		return prefix+"_" + genUniqueId(6)+"_" + ServerContext.getInstance().getLocalAnyIp();
+		return prefix+"_" + ServerContext.getInstance().getLocalAnyIp();
 	}
 	
 	public static String genUniqueId(int len){

@@ -116,6 +116,7 @@ public class NetClientManager {
 		this.registerMessage = registerMessage;
 		if(netClient ==null) {
 			netClient = buildNetClient();
+			keeperThreadRunFlag = true;
 			connectionKeeperThread = new NetKeeperThread();
 			connectionKeeperThread.start();
 		}
@@ -148,7 +149,9 @@ public class NetClientManager {
 			netClient = null;
 		}
 		if(connectionKeeperThread!=null) {
-			connectionKeeperThread.stop();
+			keeperThreadRunFlag = false;
+			connectionKeeperThread.interrupt();
+			//connectionKeeperThread.stop();
 		}
 	}
 	
@@ -191,11 +194,13 @@ public class NetClientManager {
 			keeperThreadRunFlag = true;
 			while(keeperThreadRunFlag) {
 				try {
-					Thread.currentThread().sleep(500);
+					Thread.sleep(500);
 					connectToTargets();
-					Thread.currentThread().sleep(2500);
+					Thread.sleep(2500);
 				}catch(Exception e) {
-					e.printStackTrace(); // no need extra handling
+					if(!(e instanceof InterruptedException)) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

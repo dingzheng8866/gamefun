@@ -153,6 +153,10 @@ public class RoleService {
 		return role;
 	}
 	
+	public static void deleteUserOnlineInfo(String userId) {
+		DaoFactory.getInstance().getUserDao().deleteUserOnlineInfo(userId);
+	}
+	
 	private static void createUserOnlineInfo(String userId){
 		UserOnlineInfo userOnlineInfo = new UserOnlineInfo();
 		userOnlineInfo.setUserId(userId);
@@ -244,6 +248,11 @@ public class RoleService {
 	
 	private static void addItemSpecifiedSubExtendPropValue(Role role, ItemId itemId, String propName, String subValue){
 		OwnItem ownItem = role.getOwnItem(itemId);
+		if(ownItem==null) {
+			role.addOwnItem(RoleUtil.buildOwnItem(itemId, 1, 1));
+			ownItem = role.getOwnItem(itemId);
+		}
+		
 		String itemValue = ownItem.getExtendProp(propName);
 		if(itemValue==null){
 			itemValue = "";

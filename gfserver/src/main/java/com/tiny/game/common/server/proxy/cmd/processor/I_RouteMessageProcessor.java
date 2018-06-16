@@ -15,6 +15,7 @@ import com.tiny.game.common.net.cmd.NetCmdProcessor;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.ServerContext;
 import com.tiny.game.common.server.broadcast.RouterService;
+import com.tiny.game.common.server.main.MainGameServer;
 import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
@@ -49,13 +50,18 @@ public class I_RouteMessageProcessor extends NetCmdProcessor {
 				logger.info("Proxy router: " +req.getMsgName() +", "+session.getPeerUniqueId() + "==>" + routerSession.getPeerUniqueId());
 				NetLayerManager.getInstance().asyncSendOutboundMessage(routerSession, req); 
 			} else {
-				logger.error("Not found target active session: " + req.getTargetServerTag()+", try to give error message back to router: " + req.getOriginalFromServerUniqueTag());
-				// TODO: find final user id --> online server
-				routerSession = NetSessionManager.getInstance().getSessionByPeerUniqueId(req.getOriginalFromServerUniqueTag());
-				if(routerSession!=null) {
-					S_Exception exp = NetMessageUtil.buildS_Exception(GameConst.Error_NoActiveServer, "No active server: " + req.getTargetServerTag(), "");
-					I_RouteMessage.Builder routeMsg = NetMessageUtil.buildRouteMessage(new NetCmd(exp), req.getOriginalFromServerUniqueTag(), false, req.getFinalRouteToRoleId(), req.getOriginalFromServerUniqueTag());
-					NetLayerManager.getInstance().asyncSendOutboundMessage(routerSession, routeMsg.build());
+				if(req.getOriginalFromServerUniqueTag().indexOf(MainGameServer.class.getSimpleName())!=-1
+						&& req.getTargetServerTag().indexOf(MainGameServer.class.getSimpleName())!=-1) {
+					// route from gameserver to gameserver, if not found target gameserver, drop this message
+					logger.warn("Drop this route message: "+req.getMsgName()+"==>" + req.getTargetServerTag()+"==>" + req.getOriginalFromServerUniqueTag());
+				} else {
+					logger.error("Not found target active session: " + req.getTargetServerTag()+", try to give error message back to router: " + req.getOriginalFromServerUniqueTag());
+					routerSession = NetSessionManager.getInstance().getSessionByPeerUniqueId(req.getOriginalFromServerUniqueTag());
+					if(routerSession!=null) {
+						S_Exception exp = NetMessageUtil.buildS_Exception(GameConst.Error_NoActiveServer, "No active server: " + req.getTargetServerTag(), "");
+						I_RouteMessage.Builder routeMsg = NetMessageUtil.buildRouteMessage(new NetCmd(exp), req.getOriginalFromServerUniqueTag(), false, req.getFinalRouteToRoleId(), req.getOriginalFromServerUniqueTag());
+						NetLayerManager.getInstance().asyncSendOutboundMessage(routerSession, routeMsg.build());
+					}
 				}
 			}
 		}
