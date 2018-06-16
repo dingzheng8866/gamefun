@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 0a7dff7217b01b145b59a27bb10cb1a4
+timeCreated: 1524927990
+licenseType: Pro
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  userData: 
+  assetBundleName: shaders/imglight.shader.assetbundle
+  assetBundleVariant: 

@@ -1,0 +1,3 @@
+Locale=zh_cn
+Damage="伤害"
+heal="治疗"

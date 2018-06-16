@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<avatar id="10001" name="lianchuibing" colorId="2">
+	<action name="walk">
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/1/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/2/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/3/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/4/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/5/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/6/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/7/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/walk/8/">
+			<img name="0000.png" />
+			<img name="0003.png" />
+			<img name="0006.png" />
+			<img name="0009.png" />
+			<img name="0012.png" />
+			<img name="0015.png" />
+			<img name="0018.png" />
+			<img name="0021.png" />
+		</animation>
+	</action>
+	
+	<action name="die">
+		<animation path="avatar/soldier/kuijiabing_1_2/die/1/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/die/2/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/die/3/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/die/4/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/die/5/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/die/6/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/die/7/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>
+		<animation path="avatar/soldier/kuijiabing_1_2/die/8/">
+			<img name="0000.png" />
+			<img name="0002.png" />
+			<img name="0004.png" />
+			<img name="0006.png" />
+			<img name="0008.png" />
+		</animation>														
+	</action>
+</avatar>

@@ -1,0 +1,3 @@
+Locale=zh_tw
+Damage="傷害"
+heal="治療"
