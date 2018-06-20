@@ -12,4 +12,8 @@ CREATE TABLE if not exists gamefun.user_online (userId text,loginServerId text,l
 CREATE TABLE if not exists gamefun.role (roleId text,roleData blob,lastUpdateTime timestamp,PRIMARY KEY (roleId));
 
 
+CREATE TABLE if not exists gamefun.alliance (id text,name text,description text,location int,joinType int,joinNeedPrize int,fightRate int,publicFightLog int,level int,maxMemebers int,lastUpdateTime timestamp,PRIMARY KEY (id));
+CREATE INDEX IF NOT EXISTS ON gamefun.alliance (name);
 
+CREATE TABLE if not exists gamefun.alliance_memeber (allianceId text,roleId text,title int, donated int, lastUpdateTime timestamp,PRIMARY KEY (roleId));
+CREATE INDEX IF NOT EXISTS ON gamefun.alliance_memeber (allianceId);
