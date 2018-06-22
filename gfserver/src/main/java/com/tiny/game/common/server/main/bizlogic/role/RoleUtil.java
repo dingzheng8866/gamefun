@@ -5,6 +5,7 @@ import java.util.Calendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiny.game.common.GameConst;
 import com.tiny.game.common.conf.LocalConfManager;
 import com.tiny.game.common.conf.item.ItemConfReader;
 import com.tiny.game.common.conf.item.ItemLevelAttrConfReader;
@@ -15,6 +16,7 @@ import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.item.RoleInitItem;
 import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.exception.InternalBugException;
+import com.tiny.game.common.util.IdGenerator;
 import com.tiny.game.common.domain.role.OwnItem;
 
 public class RoleUtil {
@@ -49,6 +51,7 @@ public class RoleUtil {
 	public static Role buildRole(String roleId){
 		Role role = new Role();
 		role.setRoleId(roleId);
+		
 		role.setLastUpdateTime(Calendar.getInstance().getTime());
 		
 		for(Object obj : LocalConfManager.getInstance().getConfReader(RoleInitItemConfReader.class).getAllConfBeans()){
@@ -56,6 +59,7 @@ public class RoleUtil {
 			OwnItem ownItem = buildOwnItem(initItem.getItemId(), initItem.getLevel(), initItem.getValue());
 			role.addOwnItem(ownItem);
 		}
+		role.setRoleName(IdGenerator.genUserName());
 		
 		return role;
 	}

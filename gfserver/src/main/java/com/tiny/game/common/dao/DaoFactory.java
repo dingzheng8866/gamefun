@@ -3,6 +3,7 @@ package com.tiny.game.common.dao;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.tiny.game.common.dao.impl.AllianceDaoImpl;
 import com.tiny.game.common.dao.impl.UserDaoImpl;
 import com.tiny.game.common.exception.InternalBugException;
 
@@ -34,6 +35,10 @@ public class DaoFactory {
 	
 	public UserDao getUserDao() {
 		return (UserDao)getDao(UserDaoImpl.class);
+	}
+	
+	public AllianceDao getAllianceDao() {
+		return (AllianceDao)getDao(AllianceDaoImpl.class);
 	}
 	
 }

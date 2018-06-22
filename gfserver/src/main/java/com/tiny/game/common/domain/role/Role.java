@@ -8,11 +8,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.tiny.game.common.GameConst;
 import com.tiny.game.common.domain.item.Item;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.server.main.bizlogic.role.RoleService;
+import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
+import com.tiny.game.common.util.IdGenerator;
 import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.S_RoleData;
@@ -83,6 +86,23 @@ public class Role {
 		}
 		
 		return roleId.equals(((Role) o).roleId);
+	}
+	
+	public void setRoleName(String roleName) {
+		OwnItem item = getOwnItem(ItemId.roleName);
+		if(item == null) {
+			item = RoleUtil.buildOwnItem(ItemId.roleName, 1, 1);
+			setOwnItem(item);
+		}
+		item.setExtendAttrValue(GameConst.ITEM_ATTR_ROLE_NAME, roleName);
+	}
+	
+	public String getRoleName() {
+		OwnItem item = getOwnItem(ItemId.roleName);
+		if(item == null) {
+			return "";
+		}
+		return item.getExtendProp(GameConst.ITEM_ATTR_ROLE_NAME);
 	}
 	
 	public Collection<OwnItem> getOwnItems(){

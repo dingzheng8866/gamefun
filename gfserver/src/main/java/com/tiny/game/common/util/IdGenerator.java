@@ -14,6 +14,14 @@ public class IdGenerator {
 		return genUniqueId(ServerContext.getInstance().getUserIdLen());
 	}
 	
+	public static String genUniqueAllianceId(){
+		return genUniqueId(ServerContext.getInstance().getUserIdLen());
+	}
+	
+	public static String genUniqueAllianceEventId(){
+		return genUniqueId(16);
+	}
+	
 	public static String genUserName(){
 		return genUniqueId(ServerContext.getInstance().getUserNameLen()).toLowerCase();
 	}

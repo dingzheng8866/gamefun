@@ -180,8 +180,28 @@ message C_CreateAlliance {
 	optional int32 publicFightLog 	= 7;
 }
 
+message S_AllianceEvent {
+	required string allianceId  			= 1;
+	required string eventId  				= 2;
+	required int32 allianceEventType   		= 3;
+	required string time  					= 4;
+	repeated IntKeyParameter parameter 		= 5;
+}
+
 message C_JoinAlliance {
 	required string allianceId  = 1;
+}
+
+message C_ApproveJoinInAlliance {
+	required string roleId  	= 1;
+	required string allianceId  = 2;
+	required string eventId		= 3;
+}
+
+message C_RejectJoinInAlliance {
+	required string roleId  	= 1;
+	required string allianceId  = 2;
+	required string eventId		= 3;
 }
 
 message C_LeaveAlliance {
