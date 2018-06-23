@@ -6,12 +6,16 @@ import static org.junit.Assert.assertTrue;
 import java.util.Calendar;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+import com.tiny.game.common.GameConst;
 import com.tiny.game.common.domain.alliance.Alliance;
+import com.tiny.game.common.domain.alliance.AllianceEvent;
 import com.tiny.game.common.domain.alliance.AllianceJoinInType;
 import com.tiny.game.common.domain.alliance.AllianceMember;
 import com.tiny.game.common.domain.alliance.AllianceMemberTitle;
+import com.tiny.game.common.util.IdGenerator;
 
 public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
 
@@ -41,6 +45,7 @@ public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
 		return am;
 	}
 	
+	@Ignore
 	@Test
 	public void testAlliance() {
 		AllianceDaoImplCassandra.getInstance().removeAlliance("a123456");
@@ -95,6 +100,7 @@ public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
 		AllianceDaoImplCassandra.getInstance().removeAlliance("b123456");
 	}
 	
+	@Ignore
 	@Test
 	public void testAllianceMember() {
 		AllianceMember am = buildAllianceMember("user3");
@@ -125,5 +131,33 @@ public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
 		assertTrue(list.size() == 0);
 	}
 	
+	@Test
+	public void testAllianceEvent() {
+		AllianceEvent ae = factoryAllianceEvent("a123456",GameConst.ALLIANCE_EVENT_CREATE_ALLIANCE, "user3", "user3");
+		AllianceDaoImplCassandra.getInstance().createAllianceEvent(ae);
+		
+		String allianceId = ae.getAllianceId();
+		String eventId = ae.getEventId();
+		ae = AllianceDaoImplCassandra.getInstance().getAllianceEvent(ae.getAllianceId(), ae.getEventId());
+		assertTrue(ae.getAllianceId().equals(allianceId));
+		assertTrue(ae.getParameter(GameConst.ALLIANCE_PARA_ACTION_ROLE_ID).equals("user3"));
+		
+		List<AllianceEvent> list = AllianceDaoImplCassandra.getInstance().getAllianceEvents(allianceId, 10);
+		assertTrue(list.size() == 1);
+		
+		AllianceDaoImplCassandra.getInstance().deleteAllianceEvent(allianceId, eventId);
+		list = AllianceDaoImplCassandra.getInstance().getAllianceEvents(allianceId, 10);
+		assertTrue(list.size() == 0);
+	}
 	
+	private static AllianceEvent factoryAllianceEvent(String allianceId, int eventType, String actionRoleId, String actionRoleName) {
+		AllianceEvent ae = new AllianceEvent();
+		ae.setAllianceId(allianceId);
+		ae.setAllianceEventType(eventType);
+		ae.setEventId(IdGenerator.genUniqueAllianceEventId());
+		ae.setTime(Calendar.getInstance().getTime());
+		ae.setParameter(GameConst.ALLIANCE_PARA_ACTION_ROLE_ID, actionRoleId);
+		ae.setParameter(GameConst.ALLIANCE_PARA_ACTION_ROLE_NAME, actionRoleName);
+		return ae;
+	}
 }

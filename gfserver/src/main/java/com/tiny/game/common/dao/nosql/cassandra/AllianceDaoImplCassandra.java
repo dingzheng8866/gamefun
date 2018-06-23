@@ -162,8 +162,10 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 	@Override
 	public void createAllianceEvent(AllianceEvent ae) {
 		//CREATE TABLE if not exists gamefun.alliance_event (allianceId text,eventId text, allianceEventType int,lastUpdateTime timestamp,parameters blob,PRIMARY KEY (allianceId, eventId));
-		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime,parameters) VALUES (?,?,?,?,?);";
-		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime(),NetMessageUtil.convertToAllianceEventParameters(ae.getParameters()).toByteArray());
+//		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime,parameters) VALUES (?,?,?,?,?);";
+//		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime(),NetMessageUtil.convertToAllianceEventParameters(ae.getParameters()).toByteArray());
+		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime) VALUES (?,?,?,?);";
+		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime());
 	}
 
 	@Override
