@@ -3,6 +3,7 @@ package com.tiny.game.common.dao;
 import java.util.List;
 
 import com.tiny.game.common.domain.alliance.Alliance;
+import com.tiny.game.common.domain.alliance.AllianceEvent;
 import com.tiny.game.common.domain.alliance.AllianceMember;
 
 public interface AllianceDao {
@@ -19,5 +20,10 @@ public interface AllianceDao {
 	public void removeAllianceMember(String roleId);
 	public List<AllianceMember> getAllianceMembers(String allianceId);
 	public AllianceMember getAllianceMember(String roleId);
+	
+	public void createAllianceEvent(AllianceEvent ae);
+	public void deleteAllianceEvent(String allianceId, String eventId);
+	public AllianceEvent getAllianceEvent(String allianceId, String eventId);
+	public List<AllianceEvent> getAllianceEvents(String allianceId, int limitCount);
 	
 }

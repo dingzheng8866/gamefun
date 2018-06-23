@@ -5,6 +5,7 @@ import java.util.List;
 import com.tiny.game.common.dao.AllianceDao;
 import com.tiny.game.common.dao.nosql.cassandra.AllianceDaoImplCassandra;
 import com.tiny.game.common.domain.alliance.Alliance;
+import com.tiny.game.common.domain.alliance.AllianceEvent;
 import com.tiny.game.common.domain.alliance.AllianceMember;
 
 public class AllianceDaoImpl implements AllianceDao{
@@ -62,6 +63,26 @@ public class AllianceDaoImpl implements AllianceDao{
 	@Override
 	public AllianceMember getAllianceMember(String roleId) {
 		return AllianceDaoImplCassandra.getInstance().getAllianceMember(roleId);
+	}
+
+	@Override
+	public void createAllianceEvent(AllianceEvent ae) {
+		AllianceDaoImplCassandra.getInstance().createAllianceEvent(ae);
+	}
+
+	@Override
+	public void deleteAllianceEvent(String allianceId, String eventId) {
+		AllianceDaoImplCassandra.getInstance().deleteAllianceEvent(allianceId, eventId);
+	}
+
+	@Override
+	public List<AllianceEvent> getAllianceEvents(String allianceId, int limitCount) {
+		return AllianceDaoImplCassandra.getInstance().getAllianceEvents(allianceId, limitCount);
+	}
+
+	@Override
+	public AllianceEvent getAllianceEvent(String allianceId, String eventId) {
+		return AllianceDaoImplCassandra.getInstance().getAllianceEvent(allianceId, eventId);
 	}
 
 }

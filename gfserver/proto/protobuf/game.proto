@@ -185,7 +185,11 @@ message S_AllianceEvent {
 	required string eventId  				= 2;
 	required int32 allianceEventType   		= 3;
 	required string time  					= 4;
-	repeated IntKeyParameter parameter 		= 5;
+	optional AllianceEventParameters parameters = 5;
+}
+
+message AllianceEventParameters {
+	repeated IntKeyParameter parameter 		= 1;
 }
 
 message C_JoinAlliance {

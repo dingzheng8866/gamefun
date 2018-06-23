@@ -3,24 +3,33 @@ package com.tiny.game.common.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.tiny.game.common.GameConst;
+import com.tiny.game.common.domain.alliance.AllianceEvent;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.role.OwnItem;
 import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.exception.GameRuntimeException;
+import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.net.NetMessage;
+import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.net.cmd.NetCmd;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.ServerContext;
 import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 
+import game.protocol.protobuf.GameProtocol.AllianceEventParameters;
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
+import game.protocol.protobuf.GameProtocol.IntKeyParameter;
 import game.protocol.protobuf.GameProtocol.OwnItemNotification;
 import game.protocol.protobuf.GameProtocol.RoleOwnItem;
+import game.protocol.protobuf.GameProtocol.S_AllianceEvent;
 import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
 import game.protocol.protobuf.GameProtocol.S_Exception;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
@@ -143,4 +152,50 @@ public class NetMessageUtil {
 		return builder.build();
 	}
 	
+	public static S_AllianceEvent.Builder convertAllianceEvent(AllianceEvent ae){
+		S_AllianceEvent.Builder builder = S_AllianceEvent.newBuilder();
+		builder.setAllianceId(ae.getAllianceId());
+		builder.setAllianceEventType(ae.getAllianceEventType());
+		builder.setEventId(ae.getEventId());
+		builder.setTime(ae.getTime().getTime()+"");
+		AllianceEventParameters aep = convertToAllianceEventParameters(ae.getParameters());
+		builder.setParameters(aep);
+		return builder;
+	}
+	
+	public static AllianceEventParameters convertToAllianceEventParameters(Map<Integer, String> parameters) {
+		AllianceEventParameters.Builder builder = AllianceEventParameters.newBuilder();
+		for(Map.Entry<Integer, String> entry : parameters.entrySet()) {
+			builder.addParameter(buildIntKeyParameter(entry.getKey(), entry.getValue()));
+		}
+		return builder.build();
+	}
+	
+	public static Map<Integer, String> convertToAllianceEventParameters(byte[] parameters) {
+		AllianceEventParameters data = null;
+		try {
+			data = AllianceEventParameters.PARSER.parseFrom(parameters, 0, parameters.length);
+		} catch (InvalidProtocolBufferException e) {
+			throw new InternalBugException("Invalid bin data to convert: " + e.getMessage(), e);
+		}
+		data.getParameterList();
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		for(IntKeyParameter para : data.getParameterList()) {
+			map.put(para.getKey(), para.getValue());
+		}
+		return map;
+	}
+	
+	private static IntKeyParameter buildIntKeyParameter(int key, String value) {
+		IntKeyParameter.Builder builder = IntKeyParameter.newBuilder();
+		builder.setKey(key);
+		builder.setValue(value);
+		return builder.build();
+	}
+	
+	public static byte[] getByteArrayFromByteBuffer(ByteBuffer byteBuffer) {
+	    byte[] bytesArray = new byte[byteBuffer.remaining()];
+	    byteBuffer.get(bytesArray, 0, bytesArray.length);
+	    return bytesArray;
+	}
 }

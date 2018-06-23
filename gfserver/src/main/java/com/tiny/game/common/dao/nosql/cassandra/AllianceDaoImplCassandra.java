@@ -1,5 +1,6 @@
 package com.tiny.game.common.dao.nosql.cassandra;
 
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,9 +12,11 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.tiny.game.common.dao.AllianceDao;
 import com.tiny.game.common.domain.alliance.Alliance;
+import com.tiny.game.common.domain.alliance.AllianceEvent;
 import com.tiny.game.common.domain.alliance.AllianceJoinInType;
 import com.tiny.game.common.domain.alliance.AllianceMember;
 import com.tiny.game.common.domain.alliance.AllianceMemberTitle;
+import com.tiny.game.common.util.NetMessageUtil;
 
 public class AllianceDaoImplCassandra implements AllianceDao {
 
@@ -58,6 +61,20 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 			bean.setTitle(AllianceMemberTitle.valueOf(rs.getInt("title")));
 			bean.setDonated(rs.getInt("donated"));
 			bean.setLastUpdateTime(rs.getTimestamp("lastUpdateTime"));
+			return bean;
+		}
+	}
+	
+	private AllianceEventRSH allianceEventRSH = new AllianceEventRSH();
+	private static class AllianceEventRSH extends CqlAbstractResultSetHandler<AllianceEvent> {
+		public AllianceEvent factoryBeanObject(Row rs) {
+			AllianceEvent bean = new AllianceEvent();
+			bean.setAllianceId(rs.getString("allianceId"));
+			bean.setEventId(rs.getString("eventId"));
+			bean.setAllianceEventType(rs.getInt("allianceEventType"));
+			bean.setTime(rs.getTimestamp("lastUpdateTime"));
+			byte[] paras = NetMessageUtil.getByteArrayFromByteBuffer(rs.getBytes("parameters"));
+			bean.setParameters(NetMessageUtil.convertToAllianceEventParameters(paras));
 			return bean;
 		}
 	}
@@ -140,6 +157,35 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 		String cql = "SELECT * FROM gamefun.alliance_memeber where roleId=?;";
 		ResultSet rs = session.execute(cql, roleId);
 		return allianceMemberRSH.buildSingle(rs);
+	}
+
+	@Override
+	public void createAllianceEvent(AllianceEvent ae) {
+		//CREATE TABLE if not exists gamefun.alliance_event (allianceId text,eventId text, allianceEventType int,lastUpdateTime timestamp,parameters blob,PRIMARY KEY (allianceId, eventId));
+		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime,parameters) VALUES (?,?,?,?,?);";
+		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime(),NetMessageUtil.convertToAllianceEventParameters(ae.getParameters()).toByteArray());
+	}
+
+	@Override
+	public void deleteAllianceEvent(String allianceId, String eventId) {
+		String cql = "DELETE FROM gamefun.alliance_event WHERE allianceId=? and eventId=?;";
+		session.execute(cql, allianceId, eventId);
+	}
+	
+	@Override
+	public List<AllianceEvent> getAllianceEvents(String allianceId, int limitCount) {
+//		String cql = "SELECT * FROM gamefun.alliance_event where allianceId=? and lastUpdateTime >=?;";
+//		ResultSet rs = session.execute(cql, allianceId, Calendar.getInstance().getTimeInMillis() - deltaTime);
+		String cql = "SELECT * FROM gamefun.alliance_event where allianceId=? LIMIT ? ALLOW FILTERING;;";
+		ResultSet rs = session.execute(cql, allianceId, limitCount);
+		return allianceEventRSH.buildMultiple(rs);
+	}
+
+	@Override
+	public AllianceEvent getAllianceEvent(String allianceId, String eventId) {
+		String cql = "SELECT * FROM gamefun.alliance_event where allianceId=? and eventId =?;";
+		ResultSet rs = session.execute(cql, allianceId, eventId);
+		return allianceEventRSH.buildSingle(rs);
 	}
 	
 }

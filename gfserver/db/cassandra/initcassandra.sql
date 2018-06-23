@@ -17,3 +17,6 @@ CREATE INDEX IF NOT EXISTS ON gamefun.alliance (name);
 
 CREATE TABLE if not exists gamefun.alliance_memeber (allianceId text,roleId text,title int, donated int, lastUpdateTime timestamp,PRIMARY KEY (roleId));
 CREATE INDEX IF NOT EXISTS ON gamefun.alliance_memeber (allianceId);
+
+CREATE TABLE if not exists gamefun.alliance_event (allianceId text,eventId text, allianceEventType int,lastUpdateTime timestamp,parameters blob,PRIMARY KEY (allianceId, eventId));
+
