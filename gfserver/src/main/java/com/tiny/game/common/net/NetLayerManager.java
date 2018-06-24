@@ -103,7 +103,11 @@ public class NetLayerManager {
 			logger.error("process route msg "+req.getMsgName()+" error: "+e.getMessage(), e);
 			if(ServerContext.getInstance().getServerUniqueTag().equals(req.getOriginalFromServerUniqueTag())) {
 				NetSession roleSession = RoleSessionService.getRoleSession(req.getFinalRouteToRoleId());
-				asyncSendOutboundMessage(roleSession, NetMessageUtil.buildS_Exception(e));
+				if(roleSession!=null){
+					asyncSendOutboundMessage(roleSession, NetMessageUtil.buildS_Exception(e));
+				} else {
+					logger.info("Drop message for role "+req.getFinalRouteToRoleId()+"is not on line on server: " + req.getOriginalFromServerUniqueTag() + " now to I_RouteMessage: " + req.getMsgName());
+				}
 			} else {
 				S_Exception exp = NetMessageUtil.buildS_Exception(e);
 				

@@ -31,6 +31,11 @@ public class AllianceDaoImpl implements AllianceDao{
 	}
 
 	@Override
+	public List<Alliance> getRecommendAlliancesByRoleLeaguePrize(int prize){
+		return AllianceDaoImplCassandra.getInstance().getRecommendAlliancesByRoleLeaguePrize(prize);
+	}
+	
+	@Override
 	public List<Alliance> getAlliances(String allianceName) {
 		return AllianceDaoImplCassandra.getInstance().getAlliances(allianceName);
 	}

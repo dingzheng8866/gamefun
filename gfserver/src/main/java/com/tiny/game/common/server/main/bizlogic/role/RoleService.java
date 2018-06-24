@@ -216,9 +216,9 @@ public class RoleService {
 			// check login day changed or not
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			String loginDay = df.format(Calendar.getInstance().getTime());
-			if(!hasItemContainsSpecifiedSubExtendPropValue(role, ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay)){
+			if(!role.hasItemContainsSubExtendAttributeValue(ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay)){
 				role.addOwnItem(RoleUtil.buildOwnItem(ItemId.signTag, 1, 1));
-				addItemSpecifiedSubExtendPropValue(role, ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay);
+				role.addItemSubExtendAttributeValue(ItemId.internalTagRoleLoginDay, ItemId.internalTagRoleLoginDay.name(), loginDay);
 			}
 		}
 	}
@@ -232,37 +232,6 @@ public class RoleService {
 		return totalLoginDays;
 	}
 	
-	private static boolean hasItemContainsSpecifiedSubExtendPropValue(Role role, ItemId itemId, String propName, String subValue){
-		OwnItem ownItem = role.getOwnItem(itemId);
-		if(ownItem!=null) {
-			String itemValue = ownItem.getExtendProp(propName);
-			if(itemValue!=null){
-				List<String> list = GameUtil.splitToStringList(itemValue, ",");
-				if(list.contains(subValue)){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	private static void addItemSpecifiedSubExtendPropValue(Role role, ItemId itemId, String propName, String subValue){
-		OwnItem ownItem = role.getOwnItem(itemId);
-		if(ownItem==null) {
-			role.addOwnItem(RoleUtil.buildOwnItem(itemId, 1, 1));
-			ownItem = role.getOwnItem(itemId);
-		}
-		
-		String itemValue = ownItem.getExtendProp(propName);
-		if(itemValue==null){
-			itemValue = "";
-		} else {
-			itemValue += ",";
-		}
-		itemValue += subValue;
-		ownItem.addExtendProp(propName, itemValue);
-	}
-	
 	public static OwnItem getSignReward(Role role, int day){
 		OwnItem gotItem = null;
 		int totalDay = getTotalSignLoginDays(role);
@@ -270,14 +239,14 @@ public class RoleService {
 			throw new RuntimeException();
 		}
 		
-		if(hasItemContainsSpecifiedSubExtendPropValue(role, ItemId.signGotRewardTag, ItemId.signGotRewardTag.name(), day+"")){
+		if(role.hasItemContainsSubExtendAttributeValue(ItemId.signGotRewardTag, ItemId.signGotRewardTag.name(), day+"")){
 			logger.error("Role: " + role.getRoleId() + ", has already got sign reward to day: " + day);
 		} else {
 			RoleSign reward = (RoleSign)LocalConfManager.getInstance().getConfReader(RoleSignConfReader.class).getConfBean(day+"");
 			if(reward!=null){
 				gotItem = RoleUtil.buildOwnItem(reward.getItemId(), 1, reward.getItemCount());
 				role.addOwnItem(gotItem);
-				addItemSpecifiedSubExtendPropValue(role, ItemId.signGotRewardTag, ItemId.signGotRewardTag.name(), day+"");
+				role.addItemSubExtendAttributeValue(ItemId.signGotRewardTag, ItemId.signGotRewardTag.name(), day+"");
 				DaoFactory.getInstance().getUserDao().updateRole(role);
 				
 				logger.info("Role: " + role.getRoleId() + ", get sign reward: " + reward);

@@ -8,8 +8,12 @@ public class AllianceMember {
 	private String roleId;
 	private AllianceMemberTitle title;
 	private int donated; // reset by week/month
-	
+	private int requested;
 	private Date lastUpdateTime = null;
+	private int point; // TODO
+	private int roleLevel; // TODO
+	private String roleName; // TODO
+	private Date lastReqReinforceTime = null; // TODO
 	
 	public boolean equals(Object o) {
 		if(o==null || !(o instanceof AllianceMember)) {
@@ -48,6 +52,46 @@ public class AllianceMember {
 	}
 	public Date getLastUpdateTime() {
 		return lastUpdateTime;
+	}
+
+	public int getRequested() {
+		return requested;
+	}
+
+	public void setRequested(int requested) {
+		this.requested = requested;
+	}
+
+	public int getPoint() {
+		return point;
+	}
+
+	public void setPoint(int point) {
+		this.point = point;
+	}
+
+	public int getRoleLevel() {
+		return roleLevel;
+	}
+
+	public void setRoleLevel(int roleLevel) {
+		this.roleLevel = roleLevel;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public Date getLastReqReinforceTime() {
+		return lastReqReinforceTime;
+	}
+
+	public void setLastReqReinforceTime(Date lastReqReinforceTime) {
+		this.lastReqReinforceTime = lastReqReinforceTime;
 	}
 
 }

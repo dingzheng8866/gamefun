@@ -14,6 +14,7 @@ public interface AllianceDao {
 	public Alliance getAllianceById(String allianceId);
 	public List<Alliance> getAlliances(String allianceName);
 	public List<Alliance> getAlliances(int maxMembers, int location, int prize, int limitCount);
+	public List<Alliance> getRecommendAlliancesByRoleLeaguePrize(int prize);
 	
 	public void createAllianceMember(AllianceMember allianceMember);
 	public void updateAllianceMember(AllianceMember allianceMember);
