@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.tiny.game.common.GameConst;
 import com.tiny.game.common.dao.AllianceDao;
 import com.tiny.game.common.domain.alliance.Alliance;
 import com.tiny.game.common.domain.alliance.AllianceEvent;
@@ -48,6 +49,10 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 			bean.setLevel(rs.getInt("level"));
 			bean.setMaxMemebers(rs.getInt("maxMemebers"));
 			bean.setLastUpdateTime(rs.getTimestamp("lastUpdateTime"));
+			bean.setConsecutiveWin(rs.getInt("consecutiveWin"));
+			bean.setCurrentMemberSize(rs.getInt("currentMemberSize"));
+			bean.setLogo(rs.getString("logo"));
+			bean.setPoint(rs.getInt("point"));
 			return bean;
 		}
 	}
@@ -61,6 +66,11 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 			bean.setTitle(AllianceMemberTitle.valueOf(rs.getInt("title")));
 			bean.setDonated(rs.getInt("donated"));
 			bean.setLastUpdateTime(rs.getTimestamp("lastUpdateTime"));
+			bean.setLastReqReinforceTime(rs.getTimestamp("lastReqReinforceTime"));
+			bean.setPoint(rs.getInt("point"));
+			bean.setRequested(rs.getInt("requested"));
+			bean.setRoleLevel(rs.getInt("roleLevel"));
+			bean.setRoleName(rs.getString("roleName"));
 			return bean;
 		}
 	}
@@ -81,15 +91,17 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 	
 	@Override
 	public void createAlliance(Alliance alliance) {
-		//CREATE TABLE if not exists gamefun.alliance (id text,name text,description text,location int,joinType int,joinNeedPrize int,fightRate int,publicFightLog int,level int,maxMemebers int,lastUpdateTime timestamp,PRIMARY KEY (id));
-		String cql = "INSERT INTO gamefun.alliance (id,name,description,location,joinType,joinNeedPrize,fightRate,publicFightLog,level,maxMemebers,lastUpdateTime) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
-		session.execute(cql, alliance.getId(),alliance.getName(),alliance.getDescription(),alliance.getLocation(),alliance.getJoinType().getValue(),alliance.getJoinNeedPrize(),alliance.getFightRate(),alliance.getPublicFightLog(), alliance.getLevel(),alliance.getMaxMemebers(),alliance.getLastUpdateTime().getTime());
+		String cql = "INSERT INTO gamefun.alliance (id,name,description,location,joinType,joinNeedPrize,fightRate,publicFightLog,level,maxMemebers,lastUpdateTime,currentMemberSize,consecutiveWin,point,logo) "
+				+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+		session.execute(cql, alliance.getId(),alliance.getName(),alliance.getDescription(),alliance.getLocation(),alliance.getJoinType().getValue(),
+				alliance.getJoinNeedPrize(),alliance.getFightRate(),alliance.getPublicFightLog(), alliance.getLevel(),alliance.getMaxMemebers(),
+				alliance.getLastUpdateTime().getTime(),alliance.getCurrentMemberSize(), alliance.getConsecutiveWin(), alliance.getPoint(),alliance.getLogo());
 	}
 
 	@Override
 	public void updateAlliance(Alliance alliance) {
-		String cql = "UPDATE gamefun.alliance SET description=?,location=?,joinType=?,joinNeedPrize=?,fightRate=?,publicFightLog=?,level=?,maxMemebers=?,lastUpdateTime=? where id=?;";
-		session.execute(cql, alliance.getDescription(),alliance.getLocation(),alliance.getJoinType().getValue(),alliance.getJoinNeedPrize(),alliance.getFightRate(),alliance.getPublicFightLog(), alliance.getLevel(),alliance.getMaxMemebers(),alliance.getLastUpdateTime().getTime(), alliance.getId());
+		String cql = "UPDATE gamefun.alliance SET logo=?,point=?,consecutiveWin=?,currentMemberSize=?,description=?,location=?,joinType=?,joinNeedPrize=?,fightRate=?,publicFightLog=?,level=?,maxMemebers=?,lastUpdateTime=? where id=?;";
+		session.execute(cql, alliance.getLogo(), alliance.getPoint(), alliance.getConsecutiveWin(), alliance.getCurrentMemberSize(), alliance.getDescription(),alliance.getLocation(),alliance.getJoinType().getValue(),alliance.getJoinNeedPrize(),alliance.getFightRate(),alliance.getPublicFightLog(), alliance.getLevel(),alliance.getMaxMemebers(),alliance.getLastUpdateTime().getTime(), alliance.getId());
 	}
 
 	@Override
@@ -132,16 +144,16 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 	}
 
 	@Override
-	public void createAllianceMember(AllianceMember allianceMember) {
-		//CREATE TABLE if not exists gamefun.alliance_memeber (allianceId text,roleId text,title int, donated int, lastUpdateTime timestamp,PRIMARY KEY (roleId));
-		String cql = "INSERT INTO gamefun.alliance_memeber (allianceId,roleId,title,donated,lastUpdateTime) VALUES (?,?,?,?,?);";
-		session.execute(cql, allianceMember.getAllianceId(),allianceMember.getRoleId(),allianceMember.getTitle().getValue(),allianceMember.getDonated(),allianceMember.getLastUpdateTime().getTime());
+	public void createAllianceMember(AllianceMember am) {
+		String cql = "INSERT INTO gamefun.alliance_memeber (allianceId,roleId,title,donated,lastUpdateTime,roleName,roleLevel,requested,point,lastReqReinforceTime) VALUES (?,?,?,?,?,?,?,?,?,?);";
+		session.execute(cql, am.getAllianceId(),am.getRoleId(),am.getTitle().getValue(),am.getDonated(),am.getLastUpdateTime().getTime(),
+				am.getRoleName(), am.getRoleLevel(), am.getRequested(), am.getPoint(), am.getLastReqReinforceTime());
 	}
 
 	@Override
-	public void updateAllianceMember(AllianceMember allianceMember) {
-		String cql = "UPDATE gamefun.alliance_memeber SET title=?,donated=?,lastUpdateTime=? where roleId=?;";
-		session.execute(cql, allianceMember.getTitle().getValue(),allianceMember.getDonated(),allianceMember.getLastUpdateTime().getTime(), allianceMember.getRoleId());
+	public void updateAllianceMember(AllianceMember am) {
+		String cql = "UPDATE gamefun.alliance_memeber SET lastReqReinforceTime=?,point=?,requested=?,roleLevel=?,roleName=?,title=?,donated=?,lastUpdateTime=? where roleId=?;";
+		session.execute(cql, am.getLastReqReinforceTime(), am.getPoint(), am.getRequested(), am.getRoleLevel(), am.getRoleName(), am.getTitle().getValue(),am.getDonated(),am.getLastUpdateTime().getTime(), am.getRoleId());
 	}
 
 	@Override
@@ -166,25 +178,24 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 
 	@Override
 	public void createAllianceEvent(AllianceEvent ae) {
-//		CREATE TABLE if not exists gamefun.alliance_event (allianceId text,eventId text, allianceEventType int,lastUpdateTime timestamp,parameters blob,PRIMARY KEY (allianceId, eventId));
-		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime,parameters) VALUES (?,?,?,?,?);";
+		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,belongToRoleId,allianceEventType,lastUpdateTime,parameters) VALUES (?,?,?,?,?,?);";
 		ByteBuffer bf = ByteBuffer.wrap(NetMessageUtil.convertToAllianceEventParameters(ae.getParameters()).toByteArray());
-		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime(),bf);
-
+		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getBelongToRoleId(), ae.getAllianceEventType(),ae.getTime().getTime(),bf);
 	}
 
 	@Override
-	public void deleteAllianceEvent(String allianceId, String eventId) {
+	public void deleteAllianceEventByEventId(String allianceId, String eventId) {
 		String cql = "DELETE FROM gamefun.alliance_event WHERE allianceId=? and eventId=?;";
 		session.execute(cql, allianceId, eventId);
 	}
 	
 	@Override
 	public List<AllianceEvent> getAllianceEvents(String allianceId, int limitCount) {
-//		String cql = "SELECT * FROM gamefun.alliance_event where allianceId=? and lastUpdateTime >=?;";
-//		ResultSet rs = session.execute(cql, allianceId, Calendar.getInstance().getTimeInMillis() - deltaTime);
-		String cql = "SELECT * FROM gamefun.alliance_event where allianceId=? LIMIT ? ALLOW FILTERING;;";
-		ResultSet rs = session.execute(cql, allianceId, limitCount);
+		int deltaTime = GameConst.USER_QUERY_ALLIANCE_EVENT_DELTA_TIME;
+		String cql = "SELECT * FROM gamefun.alliance_event where allianceId=? and lastUpdateTime >=? LIMIT ? ALLOW FILTERING;";
+		ResultSet rs = session.execute(cql, allianceId, Calendar.getInstance().getTimeInMillis() - deltaTime, limitCount);
+//		String cql = "SELECT * FROM gamefun.alliance_event where allianceId=? LIMIT ? ALLOW FILTERING;";
+//		ResultSet rs = session.execute(cql, allianceId, limitCount);
 		return allianceEventRSH.buildMultiple(rs);
 	}
 

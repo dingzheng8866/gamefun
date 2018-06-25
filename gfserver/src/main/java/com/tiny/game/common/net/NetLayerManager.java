@@ -195,10 +195,12 @@ public class NetLayerManager {
 	
 	public void syncSendOutboundMessage(NetSession session, NetCmd msg, boolean flush) {
 		System.out.println("About to send out bound message: " + msg.getName() + ", flush: " + flush);
-		if(flush) {
-			session.writeAndFlush(msg);
-		} else {
-			session.write(msg);
+		if(session!=null) {
+			if(flush) {
+				session.writeAndFlush(msg);
+			} else {
+				session.write(msg);
+			}
 		}
 	}
 	

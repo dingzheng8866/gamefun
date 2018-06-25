@@ -23,7 +23,9 @@ public interface AllianceDao {
 	public AllianceMember getAllianceMember(String roleId);
 	
 	public void createAllianceEvent(AllianceEvent ae);
-	public void deleteAllianceEvent(String allianceId, String eventId);
+	public void deleteAllianceEventByEventId(String allianceId, String eventId);
+	//public void deleteAllianceEventByRoleId(String allianceId, String roleId);
+	
 	public AllianceEvent getAllianceEvent(String allianceId, String eventId);
 	public List<AllianceEvent> getAllianceEvents(String allianceId, int limitCount);
 	

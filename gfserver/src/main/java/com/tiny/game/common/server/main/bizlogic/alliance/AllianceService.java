@@ -62,6 +62,19 @@ public class AllianceService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AllianceService.class);
 	
+	// only role login to server need to notify all events
+	public static void notifyLatestAllianceEvents(Role role, NetSession session) {
+		AllianceMember am = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());
+		if(am!=null) {
+			List<AllianceEvent> events = DaoFactory.getInstance().getAllianceDao().getAllianceEvents(am.getAllianceId(), GameConst.USER_QUERY_ALLIANCE_EVENT_LIMIT_COUNT);
+			S_AllianceNotification.Builder notification = S_AllianceNotification.newBuilder();
+			for(AllianceEvent ae : events) {
+				notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
+			}
+			broadcasetAllianceNotification(am.getAllianceId(), notification.build());
+		}
+	}
+	
 	public static void kickoutAllianceMember(Role role, NetSession session, C_KickoutAllianceMember req){
 		AllianceMember m1 = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());
 		AllianceMember m2 = DaoFactory.getInstance().getAllianceDao().getAllianceMember(req.getCandidateRoleId());
@@ -70,7 +83,9 @@ public class AllianceService {
 		}
 		
 		DaoFactory.getInstance().getAllianceDao().removeAllianceMember(m2.getRoleId());
-
+		
+		handleMemberOutAlliance(m2);
+		
 		AllianceEvent ae = factoryAllianceEvent(m2.getAllianceId(),GameConst.ALLIANCE_EVENT_KICKOUT_MEMBER,m2.getRoleId(),m2.getRoleName());
 		ae.setParameter(GameConst.ALLIANCE_PARA_ACTION_BY_ROLE_ID, role.getRoleId());
 		ae.setParameter(GameConst.ALLIANCE_PARA_ACTION_BY_ROLE_NAME, role.getRoleName());
@@ -80,8 +95,24 @@ public class AllianceService {
 		notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
 		
 		broadcasetAllianceNotification(m2.getAllianceId(), notification.build());
+		logger.info("kickout alliance member:" + role.getRoleId() +" --> " + req.getCandidateRoleId());
 	}
 	
+	private static void handleMemberOutAlliance(AllianceMember member) {
+		// alliance change, note:no need to sync to client about this change
+		Alliance alliance = DaoFactory.getInstance().getAllianceDao().getAllianceById(member.getAllianceId());
+		alliance.setCurrentMemberSize(alliance.getCurrentMemberSize() - 1);
+		alliance.setPoint(alliance.getPoint() - member.getPoint());
+		alliance.setLastUpdateTime(Calendar.getInstance().getTime());
+		DaoFactory.getInstance().getAllianceDao().updateAlliance(alliance);
+		
+		// remove req reinforce, this could be handled by client: Note:
+		
+		// remove all the related event?
+		// seems no need to remove the kickout member event
+		// 1: when user click alliance ==> fetch all alliance info (alliance detail + all members)
+		// 2: alliance chat ==> fetch all alliance events limit count like 50 (and exclude belongToRoleId not in alliance)
+	}
 	
 	public static void changeAllianceLeader(Role role, NetSession session, C_ChangeAllianceLeader req){
 		AllianceMember m1 = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());
@@ -108,6 +139,7 @@ public class AllianceService {
 		notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
 		
 		broadcasetAllianceNotification(m2.getAllianceId(), notification.build());
+		logger.info("change alliance leader:" + role.getRoleId() +" --> " + req.getCandidateRoleId());
 	}
 	
 	public static void upAllianceMemberTitle(Role role, NetSession session, C_UpAllianceMemberTitle req){
@@ -133,6 +165,7 @@ public class AllianceService {
 			DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
 			
 			notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
+			logger.info("up alliance member title: leader down" + m1.getRoleId());
 		}
 		
 		AllianceEvent ae = factoryAllianceEvent(m2.getAllianceId(),GameConst.ALLIANCE_EVENT_UP_TITLE,m2.getRoleId(),m2.getRoleName());
@@ -142,6 +175,7 @@ public class AllianceService {
 		notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
 
 		broadcasetAllianceNotification(m2.getAllianceId(), notification.build());
+		logger.info("up alliance member title:" + role.getRoleId() +" --> " + req.getCandidateRoleId());
 	}
 	
 	public static void downAllianceMemberTitle(Role role, NetSession session, C_DownAllianceMemberTitle req){
@@ -164,6 +198,7 @@ public class AllianceService {
 		notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
 		
 		broadcasetAllianceNotification(m2.getAllianceId(), notification.build());
+		logger.info("down alliance member title:" + role.getRoleId() +" --> " + req.getCandidateRoleId());
 	}
 	
 	public static void getRecommendAlliances(Role role, NetSession session) {
@@ -332,13 +367,11 @@ public class AllianceService {
 	}
 	
 	public static void leaveAlliance(Role role, NetSession session, C_LeaveAlliance req) {
-//		String allianceId = req.getAllianceId();
 		logger.info("Role " + role.getRoleId() + " want to leave alliance: " + req.getAllianceId());
 		AllianceMember am = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());
 		if(am!=null){
 			//check am is leader or not
 			DaoFactory.getInstance().getAllianceDao().removeAllianceMember(role.getRoleId());
-			
 			boolean needToRemoveAlliance = false;
 			AllianceMember newLeader = null;
 			if(am.getTitle() == AllianceMemberTitle.Leader){
@@ -363,32 +396,44 @@ public class AllianceService {
 				logger.info("Alliance " + am.getAllianceId() + " deleted");
 				DaoFactory.getInstance().getAllianceDao().removeAlliance(am.getAllianceId());
 			} else {
+				handleMemberOutAlliance(am);
+				
+				S_AllianceNotification.Builder notification = S_AllianceNotification.newBuilder();
+				
 				logger.info("Role " + role.getRoleId() + " leaved alliance: " + am.getAllianceId());
 				AllianceEvent ae = factoryAllianceEvent(am.getAllianceId(),GameConst.ALLIANCE_EVENT_JOIN_OUT_ALLIANCE,role.getRoleId(),role.getRoleName());
 				DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
-				broadcasetAllianceNotification(am.getAllianceId(), NetMessageUtil.convertAllianceEvent(ae).build());
+				notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
 				
-				// TODO: batch send alliance events
 				if(newLeader!=null){
 					logger.info("Role " + newLeader.getRoleId() + " changed to leader to alliance: " + am.getAllianceId());
 					DaoFactory.getInstance().getAllianceDao().updateAllianceMember(newLeader);
 					Role leaderRole = DaoFactory.getInstance().getUserDao().getRole(newLeader.getRoleId());
 					ae = factoryAllianceEvent(am.getAllianceId(),GameConst.ALLIANCE_EVENT_CHANGE_LEADER,newLeader.getRoleId(),leaderRole.getRoleName());
 					DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
-					broadcasetAllianceNotification(am.getAllianceId(), NetMessageUtil.convertAllianceEvent(ae).build());
+					notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
+					
+					broadcasetAllianceNotification(am.getAllianceId(), notification.build());
 				}
 			}
 		}
 	}
 	
 	public static void createAlliance(Role role, NetSession session, C_CreateAlliance req) {
-		Alliance alliance = buildAlliance(req);
+		Alliance alliance = buildAlliance(role, req);
 		DaoFactory.getInstance().getAllianceDao().createAlliance(alliance);
+		
 		AllianceMember am = factoryAllianceMember(alliance.getId(), role.getRoleId(), AllianceMemberTitle.Leader);
 		DaoFactory.getInstance().getAllianceDao().createAllianceMember(am);
+		
 		AllianceEvent ae = factoryAllianceEvent(alliance.getId(),GameConst.ALLIANCE_EVENT_CREATE_ALLIANCE,role.getRoleId(),role.getRoleName());
 		DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
-		NetLayerManager.getInstance().asyncSendOutboundMessage(session, NetMessageUtil.convertAllianceEvent(ae).build());
+		
+		S_AllianceNotification.Builder notification = S_AllianceNotification.newBuilder();
+		notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
+		notification.addMemberUpdate(S_AllianceMemberInfoUpdate.newBuilder().addMember(convertAllianceMember(am)).build());
+		
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, notification.build());
 	}
 	
 	public static void joinInAlliance(Role role, NetSession session, C_JoinAlliance req) {
@@ -399,7 +444,7 @@ public class AllianceService {
 		}
 		AllianceJoinInType joinInType = alliance.getJoinType();
 		if(joinInType == AllianceJoinInType.Any) {
-			allowRoleJoinInAlliace(allianceId, role.getRoleId(), role.getRoleName());
+			allowRoleJoinInAlliace(alliance, role);
 		} else if (joinInType == AllianceJoinInType.Approve) {
 			AllianceEvent ae = factoryAllianceEvent(alliance.getId(),GameConst.ALLIANCE_EVENT_NEED_JOIN_IN,role.getRoleId(),role.getRoleName());
 			DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
@@ -411,20 +456,19 @@ public class AllianceService {
 	
 	// TODO: detail each invalid parameter cases
 	public static void approveJoinInAlliance(Role role, NetSession session, C_ApproveJoinInAlliance req) {
+		Alliance alliance = DaoFactory.getInstance().getAllianceDao().getAllianceById(req.getAllianceId());
+		if(alliance == null) {
+			throw new GameRuntimeException(GameConst.Error_Alliance_Not_Exist, "Not found alliance by id: " + req.getAllianceId());
+		}
 		Role joinInRole = validateOperRoleJoinInData(role, session, req.getRoleId(), req.getAllianceId());
-		DaoFactory.getInstance().getAllianceDao().deleteAllianceEvent(req.getAllianceId(), req.getEventId());
-		approveRoleJoinInAlliace(req.getAllianceId(), joinInRole.getRoleId(), joinInRole.getRoleName(), role.getRoleId(), role.getRoleName());
+		DaoFactory.getInstance().getAllianceDao().deleteAllianceEventByEventId(req.getAllianceId(), req.getEventId());
+		approveRoleJoinInAlliace(alliance, joinInRole, role.getRoleId(), role.getRoleName());
 	}
 	
 	private static Role validateOperRoleJoinInData(Role role, NetSession session, String needJoinInRoleId, String allianceId) {
 		Role needJoinInRole = DaoFactory.getInstance().getUserDao().getRole(needJoinInRoleId);
 		if(needJoinInRole == null) {
 			throw new GameRuntimeException(GameConst.Error_InvalidRequestParameter, "Not found role by id: " + needJoinInRoleId);
-		}
-		
-		Alliance alliance = DaoFactory.getInstance().getAllianceDao().getAllianceById(allianceId);
-		if(alliance == null) {
-			throw new GameRuntimeException(GameConst.Error_Alliance_Not_Exist, "Not found alliance by id: " + allianceId);
 		}
 		
 		AllianceMember am = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());
@@ -443,19 +487,26 @@ public class AllianceService {
 	}
 	
 	public static void rejectJoinInAlliance(Role role, NetSession session, C_RejectJoinInAlliance req) {
+		Alliance alliance = DaoFactory.getInstance().getAllianceDao().getAllianceById(req.getAllianceId());
+		if(alliance == null) {
+			throw new GameRuntimeException(GameConst.Error_Alliance_Not_Exist, "Not found alliance by id: " + req.getAllianceId());
+		}
 		Role joinInRole = validateOperRoleJoinInData(role, session, req.getRoleId(), req.getAllianceId());
-		DaoFactory.getInstance().getAllianceDao().deleteAllianceEvent(req.getAllianceId(), req.getEventId());
+		DaoFactory.getInstance().getAllianceDao().deleteAllianceEventByEventId(req.getAllianceId(), req.getEventId());
 		rejectRoleJoinInAlliace(req.getAllianceId(), joinInRole.getRoleId(), joinInRole.getRoleName(), role.getRoleId(), role.getRoleName());
 	}
 	
-	private static void approveRoleJoinInAlliace(String allianceId, String roleId, String roleName, String byRoleId, String byRoleName) {
-		AllianceMember am = factoryAllianceMember(allianceId, roleId, AllianceMemberTitle.Member);
+	private static void approveRoleJoinInAlliace(Alliance alliance, Role joinInRole, String byRoleId, String byRoleName) {
+		handleAllianceMemberChange(alliance, joinInRole, true);
+		DaoFactory.getInstance().getAllianceDao().updateAlliance(alliance);
+		
+		AllianceMember am = factoryAllianceMember(alliance.getId(), joinInRole.getRoleId(), AllianceMemberTitle.Member);
 		DaoFactory.getInstance().getAllianceDao().createAllianceMember(am);
-		AllianceEvent ae = factoryAllianceEvent(allianceId,GameConst.ALLIANCE_EVENT_JOIN_IN_ALLIANCE,roleId,roleName);
+		AllianceEvent ae = factoryAllianceEvent(alliance.getId(),GameConst.ALLIANCE_EVENT_JOIN_IN_ALLIANCE,joinInRole.getRoleId(),joinInRole.getRoleName());
 		ae.setParameter(GameConst.ALLIANCE_PARA_ACTION_BY_ROLE_ID, byRoleId);
 		ae.setParameter(GameConst.ALLIANCE_PARA_ACTION_BY_ROLE_NAME, byRoleName);
 		DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
-		broadcasetAllianceNotification(allianceId, NetMessageUtil.convertAllianceEvent(ae).build());
+		broadcasetAllianceNotification(alliance.getId(), NetMessageUtil.convertAllianceEvent(ae).build());
 	}
 	
 	private static void rejectRoleJoinInAlliace(String allianceId, String roleId, String roleName, String byRoleId, String byRoleName) {
@@ -466,12 +517,31 @@ public class AllianceService {
 		broadcasetAllianceNotification(allianceId, NetMessageUtil.convertAllianceEvent(ae).build());
 	}
 	
-	private static void allowRoleJoinInAlliace(String allianceId, String roleId, String roleName) {
-		AllianceMember am = factoryAllianceMember(allianceId, roleId, AllianceMemberTitle.Member);
+	private static void allowRoleJoinInAlliace(Alliance alliance, Role role) {
+		handleAllianceMemberChange(alliance, role, true);
+		DaoFactory.getInstance().getAllianceDao().updateAlliance(alliance);
+		
+		AllianceMember am = factoryAllianceMember(alliance.getId(), role.getRoleId(), AllianceMemberTitle.Member);
 		DaoFactory.getInstance().getAllianceDao().createAllianceMember(am);
-		AllianceEvent ae = factoryAllianceEvent(allianceId,GameConst.ALLIANCE_EVENT_JOIN_IN_ALLIANCE,roleId,roleName);
+		AllianceEvent ae = factoryAllianceEvent(alliance.getId(),GameConst.ALLIANCE_EVENT_JOIN_IN_ALLIANCE,role.getRoleId(),role.getRoleName());
 		DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
-		broadcasetAllianceNotification(allianceId, NetMessageUtil.convertAllianceEvent(ae).build());
+		
+		S_AllianceNotification.Builder notification = S_AllianceNotification.newBuilder();
+		notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
+		notification.addMemberUpdate(S_AllianceMemberInfoUpdate.newBuilder().addMember(convertAllianceMember(am)).build());
+		
+		broadcasetAllianceNotification(alliance.getId(), notification.build());
+	}
+	
+	private static void handleAllianceMemberChange(Alliance alliance, Role role, boolean joinIn) {
+		if(joinIn) {
+			alliance.setPoint(alliance.getPoint()+role.getLeaguePrize());
+			alliance.setCurrentMemberSize(alliance.getCurrentMemberSize()+1);
+		} else {
+			alliance.setPoint(alliance.getPoint()-role.getLeaguePrize());
+			alliance.setCurrentMemberSize(alliance.getCurrentMemberSize()-1);
+		}
+		alliance.setLastUpdateTime(Calendar.getInstance().getTime());
 	}
 	
 	private static void broadcasetAllianceNotification(String allianceId, GeneratedMessage event) {
@@ -498,7 +568,7 @@ public class AllianceService {
 		return ae;
 	}
 	
-	private static Alliance buildAlliance(C_CreateAlliance req) {
+	private static Alliance buildAlliance(Role role, C_CreateAlliance req) {
 		Alliance alliance = new Alliance();
 		alliance.setId(IdGenerator.genUniqueAllianceId());
 		alliance.setDescription(req.getDescription());
@@ -511,6 +581,10 @@ public class AllianceService {
 		alliance.setName(req.getName());
 		alliance.setPublicFightLog(req.getPublicFightLog());
 		alliance.setLastUpdateTime(Calendar.getInstance().getTime());
+		alliance.setPoint(role.getLeaguePrize());
+		alliance.setConsecutiveWin(0);
+		alliance.setCurrentMemberSize(1);
+		alliance.setLogo(""); // TODO: random log
 		return alliance;
 	}
 	

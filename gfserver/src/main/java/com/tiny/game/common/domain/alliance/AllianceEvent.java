@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.tiny.game.common.GameConst;
+
 public class AllianceEvent {
 
 	private String allianceId;
@@ -18,6 +20,10 @@ public class AllianceEvent {
 		}
 		
 		return allianceId.equals(((AllianceEvent) o).allianceId) && eventId.equals(((AllianceEvent) o).eventId);
+	}
+	
+	public String getBelongToRoleId() {
+		return parameters.get(GameConst.ALLIANCE_PARA_ACTION_ROLE_ID);
 	}
 	
 	public String getAllianceId() {

@@ -17,7 +17,7 @@ import com.tiny.game.common.domain.alliance.AllianceMember;
 import com.tiny.game.common.domain.alliance.AllianceMemberTitle;
 import com.tiny.game.common.util.IdGenerator;
 
-public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
+public class AllianceDaoImplCassandraTest extends CassandraManagerTestBase {
 
 	private AllianceMember buildAllianceMember(String roleId) {
 		AllianceMember am = new AllianceMember();
@@ -45,7 +45,6 @@ public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
 		return am;
 	}
 	
-	@Ignore
 	@Test
 	public void testAlliance() {
 		AllianceDaoImplCassandra.getInstance().removeAlliance("a123456");
@@ -100,7 +99,6 @@ public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
 		AllianceDaoImplCassandra.getInstance().removeAlliance("b123456");
 	}
 	
-	@Ignore
 	@Test
 	public void testAllianceMember() {
 		AllianceMember am = buildAllianceMember("user3");
@@ -145,7 +143,7 @@ public class UserDaoImplCassandraTest extends CassandraManagerTestBase {
 		List<AllianceEvent> list = AllianceDaoImplCassandra.getInstance().getAllianceEvents(allianceId, 10);
 		assertTrue(list.size() == 1);
 		
-		AllianceDaoImplCassandra.getInstance().deleteAllianceEvent(allianceId, eventId);
+		AllianceDaoImplCassandra.getInstance().deleteAllianceEventByEventId(allianceId, eventId);
 		list = AllianceDaoImplCassandra.getInstance().getAllianceEvents(allianceId, 10);
 		assertTrue(list.size() == 0);
 	}

@@ -76,8 +76,8 @@ public class AllianceDaoImpl implements AllianceDao{
 	}
 
 	@Override
-	public void deleteAllianceEvent(String allianceId, String eventId) {
-		AllianceDaoImplCassandra.getInstance().deleteAllianceEvent(allianceId, eventId);
+	public void deleteAllianceEventByEventId(String allianceId, String eventId) {
+		AllianceDaoImplCassandra.getInstance().deleteAllianceEventByEventId(allianceId, eventId);
 	}
 
 	@Override
