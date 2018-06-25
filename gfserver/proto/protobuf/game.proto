@@ -333,6 +333,7 @@ message C_GetPlayerBaseCityInfo {  // go to player base check all info
 message C_SendChatMessage { 
 	required int32 chatGroup  = 1;
 	required string content   = 2;
+	optional string targetRoleId  = 3;
 }
 
 message S_ChatMessage {  
