@@ -16,8 +16,14 @@ public class Alliance {
 	
 	private int level = 1;
 	private int maxMemebers = 50;
+	private int currentMemberSize = 0;// TODO
 	
 	private Date lastUpdateTime = null;
+	
+	private int consecutiveWin = 0;// TODO
+	
+	private String logo="";// TODO
+	private int point = 0; // TODO
 	
 	public boolean equals(Object o) {
 		if(o==null || !(o instanceof Alliance)) {
@@ -102,6 +108,38 @@ public class Alliance {
 
 	public int getPublicFightLog() {
 		return publicFightLog;
+	}
+
+	public int getConsecutiveWin() {
+		return consecutiveWin;
+	}
+
+	public void setConsecutiveWin(int consecutiveWin) {
+		this.consecutiveWin = consecutiveWin;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
+	public int getPoint() {
+		return point;
+	}
+
+	public void setPoint(int point) {
+		this.point = point;
+	}
+
+	public int getCurrentMemberSize() {
+		return currentMemberSize;
+	}
+
+	public void setCurrentMemberSize(int currentMemberSize) {
+		this.currentMemberSize = currentMemberSize;
 	}
 	
 }

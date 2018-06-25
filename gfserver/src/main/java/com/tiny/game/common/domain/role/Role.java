@@ -15,6 +15,7 @@ import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.exception.InternalBugException;
 import com.tiny.game.common.server.main.bizlogic.role.RoleService;
 import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
+import com.tiny.game.common.util.GameUtil;
 import com.tiny.game.common.util.IdGenerator;
 import com.tiny.game.common.util.NetMessageUtil;
 
@@ -137,6 +138,10 @@ public class Role {
 		return getOwnItemValue(ItemId.roleLevel);
 	}
 	
+	public int getLeaguePrize(){
+		return getOwnItemValue(ItemId.leaguePrize);
+	}
+	
 //	private OwnItem getOwnItem(String ownKey) {
 //		return items.get(ownKey);
 //	}
@@ -150,11 +155,13 @@ public class Role {
 	}
 	
 	public int getOwnItemValue(ItemId itemId){
-		return getOwnItem(itemId).getValue();
+		OwnItem oi = getOwnItem(itemId);
+		return oi==null ? 0 : oi.getValue();
 	}
 	
 	public int getOwnItemValue(ItemId itemId, int level){
-		return getOwnItem(itemId, level).getValue();
+		OwnItem oi = getOwnItem(itemId, level);
+		return oi==null ? 0 : oi.getValue();
 	}
 	
 	public void addOwnItem(OwnItem item) {
@@ -271,6 +278,42 @@ public class Role {
 			}
 		}
 		return list;
+	}
+	
+	public boolean hasItemContainsSubExtendAttributeValue(ItemId itemId, String attrName, String subValue){
+		OwnItem ownItem = getOwnItem(itemId);
+		if(ownItem!=null) {
+			String itemValue = ownItem.getExtendProp(attrName);
+			if(itemValue!=null){
+				List<String> list = GameUtil.splitToStringList(itemValue, ",");
+				if(list.contains(subValue)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void addItemSubExtendAttributeValue(ItemId itemId, String attrName, String subValue){
+		OwnItem ownItem = getOwnItem(itemId);
+		if(ownItem==null) {
+			addOwnItem(RoleUtil.buildOwnItem(itemId, 1, 1));
+			ownItem = getOwnItem(itemId);
+		}
+		
+		String itemValue = ownItem.getExtendProp(attrName);
+		if(itemValue==null){
+			itemValue = "";
+		} else {
+			itemValue += ",";
+		}
+		itemValue += subValue;
+		ownItem.addExtendProp(attrName, itemValue);
+	}
+	
+	
+	public long getReqReinforceTimeInterval(){
+		return GameConst.USER_REQ_REINFORCE_TIME_INTERVAL * 60 * 1000; // TODO: 
 	}
 	
 }

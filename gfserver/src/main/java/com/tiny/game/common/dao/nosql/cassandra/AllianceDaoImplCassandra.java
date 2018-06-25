@@ -104,6 +104,11 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 		ResultSet rs = session.execute(cql, allianceId);
 		return allianceRSH.buildSingle(rs);
 	}
+	
+	@Override
+	public List<Alliance> getRecommendAlliancesByRoleLeaguePrize(int prize){
+		return null; // TODO: finish me
+	}
 
 	@Override
 	public List<Alliance> getAlliances(String allianceName) {
@@ -161,11 +166,11 @@ public class AllianceDaoImplCassandra implements AllianceDao {
 
 	@Override
 	public void createAllianceEvent(AllianceEvent ae) {
-		//CREATE TABLE if not exists gamefun.alliance_event (allianceId text,eventId text, allianceEventType int,lastUpdateTime timestamp,parameters blob,PRIMARY KEY (allianceId, eventId));
-//		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime,parameters) VALUES (?,?,?,?,?);";
-//		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime(),NetMessageUtil.convertToAllianceEventParameters(ae.getParameters()).toByteArray());
-		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime) VALUES (?,?,?,?);";
-		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime());
+//		CREATE TABLE if not exists gamefun.alliance_event (allianceId text,eventId text, allianceEventType int,lastUpdateTime timestamp,parameters blob,PRIMARY KEY (allianceId, eventId));
+		String cql = "INSERT INTO gamefun.alliance_event (allianceId,eventId,allianceEventType,lastUpdateTime,parameters) VALUES (?,?,?,?,?);";
+		ByteBuffer bf = ByteBuffer.wrap(NetMessageUtil.convertToAllianceEventParameters(ae.getParameters()).toByteArray());
+		session.execute(cql, ae.getAllianceId(),ae.getEventId(),ae.getAllianceEventType(),ae.getTime().getTime(),bf);
+
 	}
 
 	@Override

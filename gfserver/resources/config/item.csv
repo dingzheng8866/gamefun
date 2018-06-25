@@ -32,6 +32,8 @@ id;type;name;avatarId;maxValue;accumulativeFlag;category
 100029;joinInArmySeq4;上阵军队编号4;;;0;
 100030;joinInArmySeq5;上阵军队编号5;;;0;
 100031;roleName;角色名字;;;0;
+100032;favoriteAlliance;关注的联盟;;;0;
+100033;leaguePrize;联赛奖杯;;;;
 200001;mainBase;主基地;;;;
 200002;defenseTowerLeft;防御塔1;;;;
 200003;defenseTowerRight;防御塔2;;;;

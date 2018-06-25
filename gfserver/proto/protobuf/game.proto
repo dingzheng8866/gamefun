@@ -188,6 +188,12 @@ message S_AllianceEvent {
 	optional AllianceEventParameters parameters = 5;
 }
 
+message S_AllianceNotification {
+	repeated S_AllianceEvent allianceEvent			  = 1;
+	repeated S_AllianceMemberInfoUpdate memberUpdate  = 2;
+	optional NetAllianceDetailInfo allianceUpdate  	  = 3;
+}
+
 message AllianceEventParameters {
 	repeated IntKeyParameter parameter 		= 1;
 }
@@ -208,6 +214,22 @@ message C_RejectJoinInAlliance {
 	required string eventId		= 3;
 }
 
+message C_UpAllianceMemberTitle {
+	required string candidateRoleId  	= 1;
+}
+
+message C_DownAllianceMemberTitle {
+	required string candidateRoleId  	= 1;
+}
+
+message C_ChangeAllianceLeader {
+	required string candidateRoleId  	= 1;
+}
+
+message C_KickoutAllianceMember {
+	required string candidateRoleId  	= 1;
+}
+
 message C_LeaveAlliance {
 	required string allianceId  = 1;
 }
@@ -220,13 +242,46 @@ message C_GetAllianceDetail {
 	required string allianceId  = 1;
 }
 
+message S_GetAllianceDetail {
+	required NetAllianceDetailInfo alliance  = 1;
+}
+
+message NetAllianceDetailInfo {
+	required string allianceId  	= 1;
+	required string name  			= 2;
+	required int32 joinType  		= 3;
+	optional int32 joinNeedPrize  	= 4;
+	optional string description 	= 5;
+	optional int32 location 		= 6;
+	optional int32 fightRate 		= 7;
+	optional int32 publicFightLog 	= 8;
+	optional string logo 			= 9;
+	optional int32 consecutiveWin 	= 10;
+	repeated NetAllianceMemberInfo member = 11;
+}
+
+message NetAllianceMemberInfo {
+	required string roleId  		= 1;
+	required string roleName  		= 2;
+	required int32 roleLevel 		= 3;
+	required int32 title  			= 4;
+	optional int32 point  			= 5;
+	optional int32 recentDonated 	= 6;
+	optional int32 recentRequested 	= 7;
+}
+
+message S_AllianceMemberInfoUpdate {
+	repeated NetAllianceMemberInfo member   = 1;
+}
+
 message C_RequestAllianceDonation {
 	optional string helpContent   = 1;
 }
 
 message C_DoAlliaceDonation {
-	required int32 itemId  = 1;
-	required int32 count   = 2;
+	required string reqReinforceEventId = 1;
+	required int32 itemId  				= 2;
+	required int32 count   				= 3;
 }
 
 message C_AskAllianceHelp {
@@ -242,7 +297,28 @@ message C_SearchAlliance {
 	optional int32 onlyJoinable   	= 4;
 	optional int32 location 		= 5;
 	optional int32 fightRate 		= 6;
-	optional int32 level 			= 7;
+	optional int32 level 			= 7; // not use 
+	optional int32 maxMember 		= 8;
+}
+
+message C_GetRecommendAlliances {
+}
+
+message S_GetRecommendAlliances {
+	repeated AllianceShortInfo alliance = 1;
+}
+
+message S_SearchAlliance {
+	repeated AllianceShortInfo alliance = 1;
+}
+
+message AllianceShortInfo {
+	required string name  			= 1;
+	required int32 memberSize  		= 2;
+	required int32 maxMemberSize   	= 3;
+	optional int32 points 			= 4;
+	optional int32 level  			= 5;
+	optional string logo  			= 6;
 }
 
 message C_GetPlayerMoreInfo { // in alliance to show info
