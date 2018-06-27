@@ -57,6 +57,7 @@ public class RoleUtil {
 		for(Object obj : LocalConfManager.getInstance().getConfReader(RoleInitItemConfReader.class).getAllConfBeans()){
 			RoleInitItem initItem = (RoleInitItem) obj;
 			OwnItem ownItem = buildOwnItem(initItem.getItemId(), initItem.getLevel(), initItem.getValue());
+			ownItem.getExtendedProps().putAll(initItem.getProps());
 			role.addOwnItem(ownItem);
 		}
 		role.setRoleName(IdGenerator.genUserName());

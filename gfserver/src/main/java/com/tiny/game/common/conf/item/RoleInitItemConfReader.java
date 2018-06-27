@@ -20,6 +20,14 @@ public class RoleInitItemConfReader extends ConfReader<RoleInitItem> {
 		if(StringUtils.isNotEmpty(level)){
 			bean.setLevel(Integer.parseInt(level));
 		}
+		int propStartIndex = getIndex("level") + 1;
+		for(int i=propStartIndex; i<csv.length; i++){
+			String attrKey = getColumnKey(i);
+			String value = csv[i];
+			if(value!=null && value.trim().length() > 0){
+				bean.addAttr(attrKey, value);
+			}
+		}
 		
 		addConfBean(bean.getKey(), bean);
 	}

@@ -25,6 +25,15 @@ public class NetSessionManager {
 	private Map<String, List<NetSession>> sessions = new ConcurrentHashMap<String, List<NetSession>>();
 	private Map<String, NetSession> sessionMap = new ConcurrentHashMap<String, NetSession>();
 	
+	public List<NetSession> getRoleSessions(){
+		List<NetSession> list = new ArrayList<NetSession>();
+		for(Map.Entry<String, NetSession> entry :sessionMap.entrySet()) {
+			if(entry.getKey().indexOf("_") == -1) {
+				list.add(entry.getValue());
+			}
+		}
+		return list;
+	}
 	
 	public void addSession(I_RegisterClient req, NetSession session) {
 		session.setClientRegisterInfo(req);

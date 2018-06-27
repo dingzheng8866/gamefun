@@ -34,7 +34,7 @@ public class I_RouteMessageProcessor extends NetCmdProcessor {
 			logger.info("Proxy router: " +req.getMsgName() +" arrived final route target: " + req.getTargetServerTag());
 			if(req.getMsgName().startsWith("S_")) { // direct response to user
 				String roleId = req.getFinalRouteToRoleId();
-				RouterService.routeToRole(roleId, req.getMsgName(), req.getMsgContent().toByteArray());
+				RouterService.directRouteToRole(roleId, req.getMsgName(), req.getMsgContent().toByteArray());
 			} else {
 				NetLayerManager.getInstance().processNetMessage(session, req);
 			} 

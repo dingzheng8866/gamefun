@@ -62,6 +62,18 @@ public class AllianceService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AllianceService.class);
 	
+	public static void sendAllianceChatMessage(Role role, NetSession session, String content) {
+		AllianceMember am = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());
+		if(am!=null) {
+			S_AllianceNotification.Builder notification = S_AllianceNotification.newBuilder();
+			AllianceEvent ae = factoryAllianceEvent(am.getAllianceId(),GameConst.ALLIANCE_EVENT_CHAT,role.getRoleId(),role.getRoleName());
+			ae.setParameter(GameConst.ALLIANCE_PARA_CHAT_MSG, content);
+			DaoFactory.getInstance().getAllianceDao().createAllianceEvent(ae);
+			notification.addAllianceEvent(NetMessageUtil.convertAllianceEvent(ae).build());
+			broadcasetAllianceNotification(am.getAllianceId(), notification.build());
+		}
+	}
+	
 	// only role login to server need to notify all events
 	public static void notifyLatestAllianceEvents(Role role, NetSession session) {
 		AllianceMember am = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.tiny.game.common.GameConst;
 import com.tiny.game.common.domain.item.Item;
@@ -311,6 +313,17 @@ public class Role {
 		ownItem.addExtendProp(attrName, itemValue);
 	}
 	
+	public void deleteItemSubExtendAttributeValue(ItemId itemId, String attrName, String subValue){
+		OwnItem ownItem = getOwnItem(itemId);
+		if(ownItem!=null) {
+			String itemValue = ownItem.getExtendProp(attrName);
+			if(itemValue!=null){
+				List<String> list = GameUtil.splitToStringList(itemValue, ",");
+				list.remove(subValue);
+				ownItem.setExtendAttrValue(attrName, StringUtils.join(list, ","));
+			}
+		}
+	}
 	
 	public long getReqReinforceTimeInterval(){
 		return GameConst.USER_REQ_REINFORCE_TIME_INTERVAL * 60 * 1000; // TODO: 

@@ -1,5 +1,7 @@
 package com.tiny.game.common.server.main.bizlogic.role;
 
+import java.util.List;
+
 import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.net.NetSessionManager;
@@ -30,6 +32,10 @@ public class RoleSessionService {
 	public static NetSession getRoleSession(String roleId) {
 		NetSession session = NetSessionManager.getInstance().getSessionByPeerUniqueId(roleId);
 		return session;
+	}
+	
+	public static List<NetSession> getAllActiveSessions() {
+		return NetSessionManager.getInstance().getRoleSessions();
 	}
 	
 }
