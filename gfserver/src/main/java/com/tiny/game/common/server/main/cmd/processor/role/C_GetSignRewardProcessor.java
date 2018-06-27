@@ -1,4 +1,4 @@
-package com.tiny.game.common.server.main.cmd.processor;
+package com.tiny.game.common.server.main.cmd.processor.role;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import com.tiny.game.common.net.NetUtils;
 import com.tiny.game.common.net.cmd.NetCmdAnnimation;
 import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.main.bizlogic.role.RoleService;
+import com.tiny.game.common.server.main.cmd.processor.AbstractPlayerCmdProcessor;
 import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.C_GetSignReward;

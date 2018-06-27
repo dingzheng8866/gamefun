@@ -40,9 +40,13 @@ import com.tiny.game.common.util.NetMessageUtil;
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.OwnItemNotification;
 import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
+import game.protocol.protobuf.GameProtocol.C_ChangeSetting;
+import game.protocol.protobuf.GameProtocol.C_GetPlayerBaseCityInfo;
+import game.protocol.protobuf.GameProtocol.C_GetPlayerMoreInfo;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
 import game.protocol.protobuf.GameProtocol.I_KickoutRole;
 import game.protocol.protobuf.GameProtocol.S_ErrorInfo;
+import game.protocol.protobuf.GameProtocol.S_RoleData;
 
 public class RoleService {
 
@@ -64,6 +68,14 @@ public class RoleService {
 		if(day > maxConfigRoleSignDay){
 			maxConfigRoleSignDay = day;
 		}
+	}
+	
+	public static void notifyChangedItems(NetSession session, OwnItemNotification...itemNotifications) {
+		S_BatchOwnItemNotification.Builder builder = S_BatchOwnItemNotification.newBuilder();
+		for(OwnItemNotification on : itemNotifications) {
+			builder.addNotification(on);
+		}
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, builder.build());
 	}
 	
 	public static void fixupRoleExpChange(Role role){
@@ -355,4 +367,27 @@ public class RoleService {
 		return changed;
 	}
 	
+	public static void changeSetting(Role role, NetSession session, C_ChangeSetting req) {
+		logger.info("Role: changeSetting " +role.getRoleId() + req);
+		role.setOwnItemValue(ItemId.valueOf(req.getItemId()), req.getValue());
+		role.setLastUpdateTime(Calendar.getInstance().getTime());
+		DaoFactory.getInstance().getUserDao().updateRole(role);
+		notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.valueOf(req.getItemId()))));
+	}
+	
+	public static void getPlayerMoreInfo(Role role, NetSession session, C_GetPlayerMoreInfo req) {
+		logger.info("Role: getPlayerMoreInfo " +role.getRoleId() + req);
+		Role checkRole = DaoFactory.getInstance().getUserDao().getRole(req.getPlayerId());
+		
+		S_RoleData roleData = NetMessageUtil.convertRoleForOtherToShow(checkRole);
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, roleData);
+	}
+	
+	public static void getPlayerBaseCityInfo(Role role, NetSession session, C_GetPlayerBaseCityInfo req) {
+		logger.info("Role: getPlayerBaseCityInfo " +role.getRoleId() + req);
+		Role checkRole = DaoFactory.getInstance().getUserDao().getRole(req.getPlayerId());
+		
+		S_RoleData roleData = NetMessageUtil.convertRoleForBaseCityToShow(checkRole);
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, roleData);
+	}
 }

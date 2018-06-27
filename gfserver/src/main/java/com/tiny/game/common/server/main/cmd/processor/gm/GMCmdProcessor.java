@@ -1,4 +1,4 @@
-package com.tiny.game.common.server.main.cmd.processor;
+package com.tiny.game.common.server.main.cmd.processor.gm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

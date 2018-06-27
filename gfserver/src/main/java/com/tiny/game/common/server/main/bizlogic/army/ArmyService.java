@@ -14,6 +14,7 @@ import com.tiny.game.common.domain.role.Role;
 import com.tiny.game.common.exception.InvalidParameterException;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.netty.NetSession;
+import com.tiny.game.common.server.main.bizlogic.role.RoleService;
 import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 import com.tiny.game.common.util.NetMessageUtil;
 
@@ -30,13 +31,7 @@ public class ArmyService {
 	
 	public static void switchJoinInBattleArmyId(Role role, NetSession session, C_SwitchJoinInBattleArmyId req) {
 		logger.info("Army: role " +role.getRoleId() + " switchJoinInBattleArmyId: " + req);
-		OwnItem oi = role.getOwnItem(ItemId.usedJoinInArmyId);
-		if(oi==null) {
-			oi = RoleUtil.buildOwnItem(ItemId.usedJoinInArmyId, 1, req.getArmyId());
-		} else {
-			oi.setValue(req.getArmyId());
-		}
-		role.setOwnItem(oi);
+		role.setOwnItemValue(ItemId.usedJoinInArmyId, req.getArmyId());
 		role.setLastUpdateTime(Calendar.getInstance().getTime());
 		DaoFactory.getInstance().getUserDao().updateRole(role);
 		// no need to notify user changed this, client will always use the new update one
@@ -65,7 +60,7 @@ public class ArmyService {
 			DaoFactory.getInstance().getUserDao().updateRole(role);
 		}
 		
-		notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
+		RoleService.notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
 	}
 	
 	public static void joinOutBattleArmy(Role role, NetSession session, C_JoinOutBattleArmy req) {
@@ -76,7 +71,7 @@ public class ArmyService {
 			role.setLastUpdateTime(Calendar.getInstance().getTime());
 			DaoFactory.getInstance().getUserDao().updateRole(role);
 		}
-		notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
+		RoleService.notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
 	}
 	
 	public static void joinInBattleHero(Role role, NetSession session, C_JoinInBattleHero req) {
@@ -102,7 +97,7 @@ public class ArmyService {
 			DaoFactory.getInstance().getUserDao().updateRole(role);
 		}
 		
-		notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
+		RoleService.notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
 	}
 	
 	public static void joinOutBattleHero(Role role, NetSession session, C_JoinOutBattleHero req) {
@@ -113,15 +108,7 @@ public class ArmyService {
 			role.setLastUpdateTime(Calendar.getInstance().getTime());
 			DaoFactory.getInstance().getUserDao().updateRole(role);
 		}
-		notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
-	}
-	
-	private static void notifyChangedItems(NetSession session, OwnItemNotification...itemNotifications) {
-		S_BatchOwnItemNotification.Builder builder = S_BatchOwnItemNotification.newBuilder();
-		for(OwnItemNotification on : itemNotifications) {
-			builder.addNotification(on);
-		}
-		NetLayerManager.getInstance().asyncSendOutboundMessage(session, builder.build());
+		RoleService.notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.usedJoinInArmyId)));
 	}
 	
 	

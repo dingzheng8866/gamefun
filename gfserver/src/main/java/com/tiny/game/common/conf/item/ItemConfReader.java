@@ -35,6 +35,11 @@ public class ItemConfReader extends ConfReader<Item> {
 			bean.setCategory(ItemCategory.valueOf(Integer.parseInt(categoryStr)));
 		}
 		
+		String str = getSafeValue(csv, "isVisableByOtherRole");
+		if(StringUtils.isNotEmpty(str)){
+			bean.setVisableToOtherToShow("1".equals(str));
+		}
+		
 		addConfBean(bean.getKey(), bean);
 	}
 	

@@ -26,6 +26,8 @@ public class Item {
 	
 	protected ItemCategory category = ItemCategory.Unknown;
 	
+	protected boolean isVisableToOtherToShow = false;
+	
 	protected Map<String, String> props = new HashMap<String, String>();
 
 	public int getLevel() {
@@ -149,6 +151,14 @@ public class Item {
 
 	public void setCategory(ItemCategory category) {
 		this.category = category;
+	}
+
+	public boolean isVisableToOtherToShow() {
+		return isVisableToOtherToShow;
+	}
+
+	public void setVisableToOtherToShow(boolean isVisableToOtherToShow) {
+		this.isVisableToOtherToShow = isVisableToOtherToShow;
 	}
 	
 }

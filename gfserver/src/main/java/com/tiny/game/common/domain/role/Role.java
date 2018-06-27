@@ -189,6 +189,16 @@ public class Role {
 		}
 	}
 	
+	public void setOwnItemValue(ItemId itemId, int value) {
+		OwnItem oi = getOwnItem(itemId);
+		if(oi==null) {
+			oi = RoleUtil.buildOwnItem(itemId, 1, value);
+		} else {
+			oi.setValue(value);
+		}
+		setOwnItem(oi);
+	}
+	
 	public void setOwnItem(OwnItem item) {
 		OwnItem oldItem = items.get(item.getKey());
 		if(oldItem==null) {

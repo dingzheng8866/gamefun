@@ -11,6 +11,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.tiny.game.common.GameConst;
 import com.tiny.game.common.domain.alliance.AllianceEvent;
+import com.tiny.game.common.domain.item.ItemCategory;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
 import com.tiny.game.common.domain.role.OwnItem;
@@ -119,6 +120,30 @@ public class NetMessageUtil {
 		builder.setRoleId(role.getRoleId());
 		for(OwnItem item : role.getOwnItems()){
 			builder.addItem(convertOwnItem(item));
+		}
+		return builder.build();
+	}
+	
+	public static S_RoleData convertRoleForOtherToShow(Role role){
+		S_RoleData.Builder builder = S_RoleData.newBuilder();
+		builder.setRoleId(role.getRoleId());
+		for(OwnItem item : role.getOwnItems()){
+			if(item.getItem().isVisableToOtherToShow()) {
+				builder.addItem(convertOwnItem(item));
+			}
+		}
+		return builder.build();
+	}
+	
+	public static S_RoleData convertRoleForBaseCityToShow(Role role){
+		S_RoleData.Builder builder = S_RoleData.newBuilder();
+		builder.setRoleId(role.getRoleId());
+		for(OwnItem item : role.getOwnItems()){
+			if(item.getItem().getCategory() == ItemCategory.Hero 
+					|| item.getItem().getCategory() == ItemCategory.Build
+					|| item.getItem().getCategory() == ItemCategory.Army) {
+				builder.addItem(convertOwnItem(item));
+			}
 		}
 		return builder.build();
 	}
