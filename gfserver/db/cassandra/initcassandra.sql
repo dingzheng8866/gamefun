@@ -20,3 +20,5 @@ CREATE INDEX IF NOT EXISTS ON gamefun.alliance_memeber (allianceId);
 
 CREATE TABLE if not exists gamefun.alliance_event (allianceId text,eventId text, belongToRoleId text, allianceEventType int,lastUpdateTime timestamp,parameters blob,PRIMARY KEY (allianceId, eventId));
 
+CREATE TABLE if not exists gamefun.email (emailId text,toRoleId text,fromGroupTypeId int,fromRoleId text, titleId int, contentId int, contentParameters text, attachment text, lastUpdateTime timestamp,PRIMARY KEY (emailId));
+CREATE INDEX IF NOT EXISTS ON gamefun.email (toRoleId);

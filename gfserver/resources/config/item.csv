@@ -29,6 +29,7 @@ id;type;name;avatarId;maxValue;accumulativeFlag;category;isVisableByOtherRole
 100031;roleName;角色名字;;;0;;1
 100032;favoriteAlliance;关注的联盟;;;0;;
 100033;leaguePrize;联赛奖杯;;;;;1
+100034;myFriends;我的好友;;;0;;
 200001;mainBase;主基地;;;;3;
 200002;defenseTowerLeft;防御塔1;;;;3;
 200003;defenseTowerRight;防御塔2;;;;3;

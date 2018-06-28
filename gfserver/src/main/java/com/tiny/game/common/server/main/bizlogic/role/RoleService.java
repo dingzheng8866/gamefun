@@ -16,6 +16,8 @@ import com.tiny.game.common.conf.item.ItemLevelAttrConfReader;
 import com.tiny.game.common.conf.role.RoleExpConfReader;
 import com.tiny.game.common.conf.role.RoleSignConfReader;
 import com.tiny.game.common.dao.DaoFactory;
+import com.tiny.game.common.domain.email.Email;
+import com.tiny.game.common.domain.email.EmailFactory;
 import com.tiny.game.common.domain.item.ItemAttr;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.role.OwnItem;
@@ -26,6 +28,7 @@ import com.tiny.game.common.domain.role.User;
 import com.tiny.game.common.domain.role.UserAcctBindInfo;
 import com.tiny.game.common.domain.role.UserOnlineInfo;
 import com.tiny.game.common.exception.InternalBugException;
+import com.tiny.game.common.exception.InvalidParameterException;
 import com.tiny.game.common.exception.GameRuntimeException;
 import com.tiny.game.common.net.NetLayerManager;
 import com.tiny.game.common.net.cmd.NetCmd;
@@ -39,10 +42,13 @@ import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.OwnItemNotification;
+import game.protocol.protobuf.GameProtocol.S_BatchEmail;
 import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
+import game.protocol.protobuf.GameProtocol.C_AskAsFriend;
 import game.protocol.protobuf.GameProtocol.C_ChangeSetting;
 import game.protocol.protobuf.GameProtocol.C_GetPlayerBaseCityInfo;
 import game.protocol.protobuf.GameProtocol.C_GetPlayerMoreInfo;
+import game.protocol.protobuf.GameProtocol.C_MakeAsFriend;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
 import game.protocol.protobuf.GameProtocol.I_KickoutRole;
 import game.protocol.protobuf.GameProtocol.S_ErrorInfo;
@@ -390,4 +396,31 @@ public class RoleService {
 		S_RoleData roleData = NetMessageUtil.convertRoleForBaseCityToShow(checkRole);
 		NetLayerManager.getInstance().asyncSendOutboundMessage(session, roleData);
 	}
+	
+	public static void askAsFriend(Role role, NetSession session, C_AskAsFriend req) {
+		logger.info("Role: askAsFriend " +role.getRoleId() + req);
+		Role targetRole = DaoFactory.getInstance().getUserDao().getRole(req.getTargetFriendRoleId());
+		if(targetRole == null) {
+			throw new InvalidParameterException("Not exist role: " + req.getTargetFriendRoleId() +" to be friend");
+		}
+		
+//		OwnItem targetRole.getOwnItem(ItemId.myFriends);
+		
+		Email email = EmailFactory.buildApplyFriendEmail(targetRole.getRoleId(), role.getRoleId());
+		DaoFactory.getInstance().getEmailDao().createEmail(email);
+		RouterService.routeToRole(targetRole.getRoleId(), NetMessageUtil.convert(email));
+	}
+	
+	public static void makeAsFriend(Role role, NetSession session, C_MakeAsFriend req) {
+		logger.info("Role: makeAsFriend " +role.getRoleId() + req);
+		Role targetRole = DaoFactory.getInstance().getUserDao().getRole(req.getTargetFriendRoleId());
+		if(targetRole == null) {
+			throw new InvalidParameterException("Not exist role: " + req.getTargetFriendRoleId() +" to make as friend");
+		}
+		
+		Email email = EmailFactory.buildApplyFriendEmail(targetRole.getRoleId(), role.getRoleId());
+		DaoFactory.getInstance().getEmailDao().createEmail(email);
+		RouterService.routeToRole(targetRole.getRoleId(), NetMessageUtil.convert(email));
+	}
+	
 }

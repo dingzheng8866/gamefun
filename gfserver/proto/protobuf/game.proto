@@ -372,3 +372,23 @@ message C_SendAllianceAllEmail {
 	required string content   	  = 1;
 }
 
+message S_BatchEmail {  
+	repeated NetEmail email 		= 1;
+}
+
+message NetEmail {  
+	required string toRoleId 							= 1;
+	required int32 fromGroupTypeId 						= 2;
+	required string fromRoleId  						= 3;
+	required int32 titleId   							= 4;
+	optional int32 contentId 	  						= 5;
+	optional string lastUpdateTime						= 6;
+	repeated string contentParameter 					= 7;
+	repeated NetEmailAttachment attachment 				= 8;
+}
+
+message NetEmailAttachment {  
+	required int32 itemId 		= 1;
+	required int32 itemLevel 	= 2;
+	required int32 count  		= 3;
+}

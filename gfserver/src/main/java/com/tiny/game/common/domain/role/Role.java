@@ -339,4 +339,8 @@ public class Role {
 		return GameConst.USER_REQ_REINFORCE_TIME_INTERVAL * 60 * 1000; // TODO: 
 	}
 	
+	public void getMyFriends() {
+		//targetRole.getOwnItem(ItemId.myFriends);
+	}
+	
 }

@@ -11,6 +11,8 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.tiny.game.common.GameConst;
 import com.tiny.game.common.domain.alliance.AllianceEvent;
+import com.tiny.game.common.domain.email.Email;
+import com.tiny.game.common.domain.email.EmailAttachment;
 import com.tiny.game.common.domain.item.ItemCategory;
 import com.tiny.game.common.domain.item.ItemId;
 import com.tiny.game.common.domain.item.LevelItem;
@@ -28,9 +30,12 @@ import com.tiny.game.common.server.main.bizlogic.role.RoleUtil;
 import game.protocol.protobuf.GameProtocol.AllianceEventParameters;
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.IntKeyParameter;
+import game.protocol.protobuf.GameProtocol.NetEmail;
+import game.protocol.protobuf.GameProtocol.NetEmailAttachment;
 import game.protocol.protobuf.GameProtocol.OwnItemNotification;
 import game.protocol.protobuf.GameProtocol.RoleOwnItem;
 import game.protocol.protobuf.GameProtocol.S_AllianceEvent;
+import game.protocol.protobuf.GameProtocol.S_BatchEmail;
 import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
 import game.protocol.protobuf.GameProtocol.S_Exception;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
@@ -223,4 +228,40 @@ public class NetMessageUtil {
 	    byteBuffer.get(bytesArray, 0, bytesArray.length);
 	    return bytesArray;
 	}
+	
+	public static S_BatchEmail convert(Email... emails) {
+		S_BatchEmail.Builder builder = S_BatchEmail.newBuilder();
+		for(Email e : emails) {
+			builder.addEmail(convertEmail(e));
+		}
+		return builder.build();
+	}
+	
+	private static NetEmail convertEmail(Email email) {
+		NetEmail.Builder builder = NetEmail.newBuilder();
+		builder.setToRoleId(email.getToRoleId());
+		builder.setFromGroupTypeId(email.getFromGroupTypeId());
+		builder.setFromRoleId(email.getFromRoleId());
+		builder.setTitleId(email.getTitleId());
+		builder.setContentId(email.getContentId());
+		builder.setLastUpdateTime(email.getLastUpdateTime().getTime()+"");
+		
+		if(email.getContentParameters()!=null) {
+			for(String s : email.getContentParameters()) {
+				builder.addContentParameter(s);
+			}
+		}
+		
+		if(email.getAttachments()!=null) {
+			for(EmailAttachment ea : email.getAttachments()) {
+				NetEmailAttachment.Builder nb = NetEmailAttachment.newBuilder();
+				nb.setItemId(ea.getItemId());
+				nb.setItemLevel(ea.getItemLevel());
+				nb.setCount(ea.getCount());
+				builder.addAttachment(nb.build());
+			}
+		}
+		return builder.build();
+	}
+	
 }
