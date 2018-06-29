@@ -346,6 +346,8 @@ message S_ChatMessage {
 	optional string headIcon 		= 7;
 }
 
+
+// friend
 message C_AskAsFriend {  
 	required string targetFriendRoleId 	= 1;
 	optional string askDescription 		= 2;
@@ -375,13 +377,14 @@ message C_UnFollowRole {  // not impl now
 	required string targetRoleId 		= 1;
 }
 
-message C_SendEmail { 
-	required string targetRoleId  = 1;
-	required string content   	  = 2;
-}
 
-message C_SendAllianceAllEmail { 
-	required string content   	  = 1;
+// email
+message C_SendEmail { 
+	required int32 emailGroupTypeId = 1;
+	required string targetId	    = 2;
+	required int32 titleId   		= 3;
+	optional int32 contentId 	  	= 4;
+	repeated string contentParameter= 5;
 }
 
 message S_BatchEmail {  

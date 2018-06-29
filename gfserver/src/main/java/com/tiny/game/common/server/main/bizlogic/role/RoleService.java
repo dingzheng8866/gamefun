@@ -1,6 +1,7 @@
 package com.tiny.game.common.server.main.bizlogic.role;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,8 @@ import com.tiny.game.common.conf.item.ItemLevelAttrConfReader;
 import com.tiny.game.common.conf.role.RoleExpConfReader;
 import com.tiny.game.common.conf.role.RoleSignConfReader;
 import com.tiny.game.common.dao.DaoFactory;
+import com.tiny.game.common.domain.alliance.AllianceMember;
+import com.tiny.game.common.domain.alliance.AllianceMemberTitle;
 import com.tiny.game.common.domain.email.Email;
 import com.tiny.game.common.domain.email.EmailFactory;
 import com.tiny.game.common.domain.item.ItemAttr;
@@ -53,6 +56,7 @@ import game.protocol.protobuf.GameProtocol.C_GetPlayerMoreInfo;
 import game.protocol.protobuf.GameProtocol.C_RejectToBeFriend;
 import game.protocol.protobuf.GameProtocol.C_RemoveFriend;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
+import game.protocol.protobuf.GameProtocol.C_SendEmail;
 import game.protocol.protobuf.GameProtocol.I_KickoutRole;
 import game.protocol.protobuf.GameProtocol.S_ErrorInfo;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
@@ -524,6 +528,35 @@ public class RoleService {
 			friendRole.setLastUpdateTime(Calendar.getInstance().getTime());
 			DaoFactory.getInstance().getUserDao().updateRole(friendRole);
 			RouterService.routeToRole(friendRole.getRoleId(), NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, friendRole.getOwnItem(ItemId.myFriends)));
+		}
+	}
+	
+	public static void sendEmail(Role role, NetSession session, C_SendEmail req) {
+		logger.info("Role: sendEmail " +role.getRoleId() + req);
+		
+		int emailGroupTypeId = req.getEmailGroupTypeId();
+		if(emailGroupTypeId==GameConst.EMAIL_GROUP_SYSTEM) {
+			throw new InvalidParameterException("Role: " +role.getRoleId() + " can't send system email");
+		}
+		
+		List<String> targetRoles = new ArrayList<String>();
+		if(emailGroupTypeId == GameConst.EMAIL_GROUP_ALLIANCE) {
+			AllianceMember am = DaoFactory.getInstance().getAllianceDao().getAllianceMember(role.getRoleId());
+			if(am==null || am.getTitle().getValue() <= AllianceMemberTitle.Elder.getValue()) {
+				throw new InvalidParameterException("Role: " +role.getRoleId() + " not in alliance, or title is not high");
+			}
+			List<AllianceMember> members =DaoFactory.getInstance().getAllianceDao().getAllianceMembers(am.getAllianceId());
+			for(AllianceMember obj : members) {
+				targetRoles.add(obj.getRoleId());
+			}
+		} else {
+			targetRoles.add(req.getTargetId());
+		}
+		
+		for(String roleId : targetRoles) {
+			Email email = EmailFactory.buildEmail(roleId, emailGroupTypeId, role.getRoleId(), req.getTitleId(), req.getContentId(), null, req.getContentParameterList().toArray(new String[0]));
+			DaoFactory.getInstance().getEmailDao().createEmail(email);
+			RouterService.routeToRole(roleId, NetMessageUtil.convert(email));
 		}
 	}
 	

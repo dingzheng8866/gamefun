@@ -8,7 +8,7 @@ import com.tiny.game.common.util.IdGenerator;
 
 public class EmailFactory {
 
-	private static Email buildEmail(String toRoleId, int fromGroupTypeId, String fromRoleId,int titleId,int contentId, List<EmailAttachment> attachments, String... contentParas) {
+	public static Email buildEmail(String toRoleId, int fromGroupTypeId, String fromRoleId,int titleId,int contentId, List<EmailAttachment> attachments, String... contentParas) {
 		Email email = new Email();
 		email.setEmailId(IdGenerator.genUniqueId(20));
 		email.setToRoleId(toRoleId);

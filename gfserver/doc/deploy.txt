@@ -6,7 +6,7 @@ Mysql环境配置
 # mysql -u root
 # use mysql
 # delete from user where User="";
-# update user set password=PASSWORD("hechuan1215") where User="root";
+# update user set password=PASSWORD("123456") where User="root";
 # flush privileges;
 # mysql -u root -p
 # source init_table.sql
