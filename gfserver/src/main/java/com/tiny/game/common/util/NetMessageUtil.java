@@ -37,6 +37,7 @@ import game.protocol.protobuf.GameProtocol.RoleOwnItem;
 import game.protocol.protobuf.GameProtocol.S_AllianceEvent;
 import game.protocol.protobuf.GameProtocol.S_BatchEmail;
 import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
+import game.protocol.protobuf.GameProtocol.S_EmailNotification;
 import game.protocol.protobuf.GameProtocol.S_Exception;
 import game.protocol.protobuf.GameProtocol.S_RoleData;
 import game.protocol.protobuf.GameProtocol.StringKeyParameter;
@@ -260,6 +261,14 @@ public class NetMessageUtil {
 				nb.setCount(ea.getCount());
 				builder.addAttachment(nb.build());
 			}
+		}
+		return builder.build();
+	}
+	
+	public static S_EmailNotification buildDeleteEmailNotification(String... emailIds) {
+		S_EmailNotification.Builder builder = S_EmailNotification.newBuilder();
+		for(String id : emailIds) {
+			builder.addDeleteEmail(id);
 		}
 		return builder.build();
 	}

@@ -42,13 +42,16 @@ import com.tiny.game.common.util.NetMessageUtil;
 
 import game.protocol.protobuf.GameProtocol.I_RouteMessage;
 import game.protocol.protobuf.GameProtocol.OwnItemNotification;
+import game.protocol.protobuf.GameProtocol.S_AskAsFriend;
 import game.protocol.protobuf.GameProtocol.S_BatchEmail;
 import game.protocol.protobuf.GameProtocol.S_BatchOwnItemNotification;
+import game.protocol.protobuf.GameProtocol.C_AgreeToBeFriend;
 import game.protocol.protobuf.GameProtocol.C_AskAsFriend;
 import game.protocol.protobuf.GameProtocol.C_ChangeSetting;
 import game.protocol.protobuf.GameProtocol.C_GetPlayerBaseCityInfo;
 import game.protocol.protobuf.GameProtocol.C_GetPlayerMoreInfo;
-import game.protocol.protobuf.GameProtocol.C_MakeAsFriend;
+import game.protocol.protobuf.GameProtocol.C_RejectToBeFriend;
+import game.protocol.protobuf.GameProtocol.C_RemoveFriend;
 import game.protocol.protobuf.GameProtocol.C_RoleLogin;
 import game.protocol.protobuf.GameProtocol.I_KickoutRole;
 import game.protocol.protobuf.GameProtocol.S_ErrorInfo;
@@ -399,28 +402,129 @@ public class RoleService {
 	
 	public static void askAsFriend(Role role, NetSession session, C_AskAsFriend req) {
 		logger.info("Role: askAsFriend " +role.getRoleId() + req);
+		
+		List<String> applyList = role.getApplyToBeFriendList();
+		if(applyList!=null && applyList.contains(req.getTargetFriendRoleId())) {
+			logger.warn("Role: askAsFriend " +role.getRoleId() + " has already applied to be friend: " + req.getTargetFriendRoleId());
+			return ;
+		}
+		
 		Role targetRole = DaoFactory.getInstance().getUserDao().getRole(req.getTargetFriendRoleId());
 		if(targetRole == null) {
 			throw new InvalidParameterException("Not exist role: " + req.getTargetFriendRoleId() +" to be friend");
 		}
 		
-//		OwnItem targetRole.getOwnItem(ItemId.myFriends);
+		List<String> friends = role.getMyFriends();
+		if(friends!=null && friends.contains(req.getTargetFriendRoleId())) {
+			throw new InvalidParameterException("Role: " +role.getRoleId() + " is already friend: " + req.getTargetFriendRoleId());
+		}
 		
-		Email email = EmailFactory.buildApplyFriendEmail(targetRole.getRoleId(), role.getRoleId());
+		if(friends!=null && friends.size() > GameConst.USER_MAX_FRIENDS) {
+			throw new InvalidParameterException("Role: " +role.getRoleId() + " has max friends, can't apply new friend: " + req.getTargetFriendRoleId());
+		}
+		
+		if(applyList!=null && applyList.size() > GameConst.USER_MAX_APPLY_FRIEND_LIST) {
+			role.deleteApplyToBeFriendRequest(req.getTargetFriendRoleId());
+		} else {
+			role.addApplyToBeFriendRequest(req.getTargetFriendRoleId());
+		}
+		role.setLastUpdateTime(Calendar.getInstance().getTime());
+		DaoFactory.getInstance().getUserDao().updateRole(role);
+		
+		Email email = EmailFactory.buildApplyFriendEmail(targetRole.getRoleId(), role.getRoleId(), req.getAskDescription());
 		DaoFactory.getInstance().getEmailDao().createEmail(email);
+		
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, S_AskAsFriend.newBuilder().setTargetFriendRoleId(req.getTargetFriendRoleId()).build());
 		RouterService.routeToRole(targetRole.getRoleId(), NetMessageUtil.convert(email));
 	}
 	
-	public static void makeAsFriend(Role role, NetSession session, C_MakeAsFriend req) {
-		logger.info("Role: makeAsFriend " +role.getRoleId() + req);
-		Role targetRole = DaoFactory.getInstance().getUserDao().getRole(req.getTargetFriendRoleId());
-		if(targetRole == null) {
-			throw new InvalidParameterException("Not exist role: " + req.getTargetFriendRoleId() +" to make as friend");
+	public static void agreeToBeFriend(Role role, NetSession session, C_AgreeToBeFriend req) {
+		logger.info("Role: agreeToBeFriend " +role.getRoleId() + req);
+		Email email = DaoFactory.getInstance().getEmailDao().getEmail(req.getApplyToBeFriendEmailId());
+		if(email == null) {
+			throw new InvalidParameterException("Apply friend request expired: " + req.getApplyToBeFriendEmailId());
 		}
 		
-		Email email = EmailFactory.buildApplyFriendEmail(targetRole.getRoleId(), role.getRoleId());
-		DaoFactory.getInstance().getEmailDao().createEmail(email);
-		RouterService.routeToRole(targetRole.getRoleId(), NetMessageUtil.convert(email));
+		if(email.getTitleId() != GameConst.EMAIL_TITLE_ID_ASK_AS_FRIEND) {
+			throw new InvalidParameterException("Role: " +role.getRoleId() + " email is not EMAIL_TITLE_ID_ASK_AS_FRIEND");
+		}
+		
+		DaoFactory.getInstance().getEmailDao().removeEmail(email.getEmailId());
+		List<String> myFriends = role.getMyFriends();
+		if(myFriends!=null && myFriends.size() >= GameConst.USER_MAX_FRIENDS) {
+			throw new InvalidParameterException("Role: " +role.getRoleId() + " exceed max friends");
+		}
+		
+		Role sourceRole = DaoFactory.getInstance().getUserDao().getRole(email.getFromRoleId());
+		if(sourceRole==null) {
+			throw new InvalidParameterException("Role: " +email.getFromRoleId() + " not exist");
+		}
+		
+		List<String> sourceFriends = sourceRole.getMyFriends();
+		if(sourceFriends!=null && sourceFriends.size() >= GameConst.USER_MAX_FRIENDS) {
+			throw new InvalidParameterException("Role: " +sourceRole.getRoleId() + " exceed max friends");
+		}
+		
+		if((sourceFriends!=null && !sourceFriends.contains(role.getRoleId())) || sourceFriends==null) {
+			sourceRole.addFriend(role.getRoleId());
+			sourceRole.setLastUpdateTime(Calendar.getInstance().getTime());
+			DaoFactory.getInstance().getUserDao().updateRole(sourceRole);
+		}
+		
+		if((myFriends!=null && !myFriends.contains(sourceRole.getRoleId())) || myFriends==null) {
+			role.addFriend(sourceRole.getRoleId());
+			role.setLastUpdateTime(Calendar.getInstance().getTime());
+			DaoFactory.getInstance().getUserDao().updateRole(role);
+		}
+		
+		notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.myFriends)));
+		RouterService.routeToRole(sourceRole.getRoleId(), NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, sourceRole.getOwnItem(ItemId.myFriends)));
+		
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, NetMessageUtil.buildDeleteEmailNotification(email.getEmailId()));
+	}
+	
+	public static void rejectToBeFriend(Role role, NetSession session, C_RejectToBeFriend req) {
+		logger.info("Role: rejectToBeFriend " +role.getRoleId() + req);
+		Email email = DaoFactory.getInstance().getEmailDao().getEmail(req.getApplyToBeFriendEmailId());
+		if(email == null) {
+			throw new InvalidParameterException("Reject friend request expired: " + req.getApplyToBeFriendEmailId());
+		}
+		
+		if(email.getTitleId() != GameConst.EMAIL_TITLE_ID_ASK_AS_FRIEND) {
+			throw new InvalidParameterException("Role: " +role.getRoleId() + " email is not EMAIL_TITLE_ID_ASK_AS_FRIEND");
+		}
+		
+		DaoFactory.getInstance().getEmailDao().removeEmail(email.getEmailId());
+		
+		Role sourceRole = DaoFactory.getInstance().getUserDao().getRole(email.getFromRoleId());
+		if(sourceRole==null) {
+			throw new InvalidParameterException("Role: " +email.getFromRoleId() + " not exist");
+		}
+		
+		sourceRole.deleteApplyToBeFriendRequest(role.getRoleId());
+		sourceRole.setLastUpdateTime(Calendar.getInstance().getTime());
+		DaoFactory.getInstance().getUserDao().updateRole(sourceRole);
+		
+		RouterService.routeToRole(sourceRole.getRoleId(), NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, sourceRole.getOwnItem(ItemId.applyToBeFriendList)));
+		
+		NetLayerManager.getInstance().asyncSendOutboundMessage(session, NetMessageUtil.buildDeleteEmailNotification(email.getEmailId()));
+	}
+	
+	public static void removeFriend(Role role, NetSession session, C_RemoveFriend req) {
+		logger.info("Role: removeFriend " +role.getRoleId() + req);
+		
+		role.removeFriend(req.getFriendRoleId());
+		role.setLastUpdateTime(Calendar.getInstance().getTime());
+		DaoFactory.getInstance().getUserDao().updateRole(role);
+		notifyChangedItems(session, NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, role.getOwnItem(ItemId.myFriends)));
+		
+		Role friendRole = DaoFactory.getInstance().getUserDao().getRole(req.getFriendRoleId());
+		if(friendRole!=null) {
+			friendRole.removeFriend(role.getRoleId());
+			friendRole.setLastUpdateTime(Calendar.getInstance().getTime());
+			DaoFactory.getInstance().getUserDao().updateRole(friendRole);
+			RouterService.routeToRole(friendRole.getRoleId(), NetMessageUtil.buildOwnItemNotification(OwnItemNotification.ItemChangeType.Set, friendRole.getOwnItem(ItemId.myFriends)));
+		}
 	}
 	
 }

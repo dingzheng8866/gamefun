@@ -30,8 +30,8 @@ public class EmailFactory {
 		return email;
 	}
 	
-	public static Email buildApplyFriendEmail(String toRoleId, String fromRoleId) {
-		return buildEmail(toRoleId, GameConst.EMAIL_GROUP_FRIEND_APPLY, fromRoleId, GameConst.EMAIL_TITLE_ID_ASK_AS_FRIEND, GameConst.EMAIL_CONTENT_ID_ASK_AS_FRIEND, null, "");
+	public static Email buildApplyFriendEmail(String toRoleId, String fromRoleId, String desc) {
+		return buildEmail(toRoleId, GameConst.EMAIL_GROUP_FRIEND_APPLY, fromRoleId, GameConst.EMAIL_TITLE_ID_ASK_AS_FRIEND, GameConst.EMAIL_CONTENT_ID_ASK_AS_FRIEND, null, desc);
 	}
 	
 	

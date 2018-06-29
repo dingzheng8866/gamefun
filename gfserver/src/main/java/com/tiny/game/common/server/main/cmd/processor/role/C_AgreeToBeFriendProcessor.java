@@ -8,15 +8,15 @@ import com.tiny.game.common.net.netty.NetSession;
 import com.tiny.game.common.server.main.bizlogic.role.RoleService;
 import com.tiny.game.common.server.main.cmd.processor.AbstractPlayerCmdProcessor;
 
-import game.protocol.protobuf.GameProtocol.C_MakeAsFriend;
+import game.protocol.protobuf.GameProtocol.C_AgreeToBeFriend;
 
-@NetCmdAnnimation(cmd = C_MakeAsFriend.class)
-public class C_MakeAsFriendProcessor extends AbstractPlayerCmdProcessor {
+@NetCmdAnnimation(cmd = C_AgreeToBeFriend.class)
+public class C_AgreeToBeFriendProcessor extends AbstractPlayerCmdProcessor {
 
 	@Override
 	public void process(Role role, NetSession session, NetMessage msg) {
-		C_MakeAsFriend req = NetUtils.getNetProtocolObject(C_MakeAsFriend.PARSER, msg);
-		RoleService.makeAsFriend(role, session, req);
+		C_AgreeToBeFriend req = NetUtils.getNetProtocolObject(C_AgreeToBeFriend.PARSER, msg);
+		RoleService.agreeToBeFriend(role, session, req);
 	}
 	
 }

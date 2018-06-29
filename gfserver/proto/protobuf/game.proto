@@ -351,15 +351,27 @@ message C_AskAsFriend {
 	optional string askDescription 		= 2;
 }
 
-message C_MakeAsFriend {  
+message S_AskAsFriend {  
 	required string targetFriendRoleId 	= 1;
 }
 
-message C_FollowRole {  
+message C_AgreeToBeFriend {  
+	required string applyToBeFriendEmailId = 1;
+}
+
+message C_RejectToBeFriend {  
+	required string applyToBeFriendEmailId = 1;
+}
+
+message C_RemoveFriend {  
+	required string friendRoleId = 1;
+}
+
+message C_FollowRole {  // not impl now
 	required string targetRoleId 		= 1;
 }
 
-message C_UnFollowRole {  
+message C_UnFollowRole {  // not impl now
 	required string targetRoleId 		= 1;
 }
 
@@ -392,3 +404,9 @@ message NetEmailAttachment {
 	required int32 itemLevel 	= 2;
 	required int32 count  		= 3;
 }
+
+message S_EmailNotification {  
+	repeated string deleteEmail = 1;
+}
+
+

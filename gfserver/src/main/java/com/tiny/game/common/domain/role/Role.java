@@ -335,12 +335,44 @@ public class Role {
 		}
 	}
 	
+	public List<String> getItemSubExtendAttributeValues(ItemId itemId, String attrName){
+		OwnItem ownItem = getOwnItem(itemId);
+		if(ownItem!=null) {
+			String itemValue = ownItem.getExtendProp(attrName);
+			if(itemValue!=null){
+				List<String> list = GameUtil.splitToStringList(itemValue, ",");
+				return list;
+			}
+		}
+		return null;
+	}
+	
 	public long getReqReinforceTimeInterval(){
 		return GameConst.USER_REQ_REINFORCE_TIME_INTERVAL * 60 * 1000; // TODO: 
 	}
 	
-	public void getMyFriends() {
-		//targetRole.getOwnItem(ItemId.myFriends);
+	public List<String> getMyFriends() {
+		return getItemSubExtendAttributeValues(ItemId.myFriends, ItemId.myFriends.name());
+	}
+	
+	public void addFriend(String targetFriendRoleId) {
+		addItemSubExtendAttributeValue(ItemId.myFriends, ItemId.myFriends.name(), targetFriendRoleId);
+	}
+	
+	public void removeFriend(String targetFriendRoleId) {
+		deleteItemSubExtendAttributeValue(ItemId.myFriends, ItemId.myFriends.name(), targetFriendRoleId);
+	}
+	
+	public List<String> getApplyToBeFriendList() {
+		return getItemSubExtendAttributeValues(ItemId.applyToBeFriendList, ItemId.applyToBeFriendList.name());
+	}
+	
+	public void deleteApplyToBeFriendRequest(String targetFriendRoleId) {
+		deleteItemSubExtendAttributeValue(ItemId.applyToBeFriendList, ItemId.applyToBeFriendList.name(), targetFriendRoleId);
+	}
+	
+	public void addApplyToBeFriendRequest(String targetFriendRoleId) {
+		addItemSubExtendAttributeValue(ItemId.applyToBeFriendList, ItemId.applyToBeFriendList.name(), targetFriendRoleId);
 	}
 	
 }
