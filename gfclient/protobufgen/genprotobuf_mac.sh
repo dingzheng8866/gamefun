@@ -1,2 +1,2 @@
-protoc -I../LuaProtoGen/protocol ../LuaProtoGen/protocol/common.proto ../LuaProtoGen/protocol/hall.proto ../LuaProtoGen/protocol/battle.proto ../LuaProtoGen/protocol/video.proto ../LuaProtoGen/protocol/league.proto -oPackets.bin 
-mono ./clientgen/protogen.exe -i:Packets.bin -o:../Assets/Game/Scripts/CC/Runtime/Services/Packet.cs -ns:CC.Runtime.PB -p:detectMissing
+protoc -I  -oPackets.bin 
+mono ./clientgen/protogen.exe -i:Packets.bin -o:../unityproject/Assets/GEngine/Generated/NetProtocolMessage.cs -ns:GEngine.Net.Proto -p:detectMissing

@@ -191,6 +191,7 @@
             	<artifactId>maven-antrun-plugin</artifactId>
             	<version>1.8</version>
             	<executions>
+            		<!--
             		<execution>
             			<id>gen-item-id</id>
             			<phase>generate-sources</phase>
@@ -205,6 +206,7 @@
             				<goal>run</goal>
             			</goals>
             		</execution>
+            		-->
             		<execution>
             			<id>compile-protoc</id>
             			<phase>generate-sources</phase>

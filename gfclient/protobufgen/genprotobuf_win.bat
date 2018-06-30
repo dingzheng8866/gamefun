@@ -13,4 +13,4 @@ set pfiles=!filelist!
 rem echo %pfiles%
 
 @protoc -I%pdir% %pfiles% -oPackets.bin
-clientgen\protogen.exe -i:Packets.bin -o:../unityproject/Packet.cs -ns:CC.Runtime.PB -p:detectMissing
+clientgen\protogen.exe -i:Packets.bin -o:../unityproject/Assets/GEngine/Generated/NetProtocolMessage.cs -ns:GEngine.Net.Proto -p:detectMissing
