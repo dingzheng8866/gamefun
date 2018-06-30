@@ -18,7 +18,7 @@ rem )
 
 %~d0
 cd %~sdp0
-cd gencs
+cd gencode
 
 python genconst_server.py
 python genitemattr_server.py
