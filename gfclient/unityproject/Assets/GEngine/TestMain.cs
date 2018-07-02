@@ -12,7 +12,7 @@ public class TestMain : MonoBehaviour {
         Debug.Log("main test" + (int)SocketId.Gate);
 
         GameService.Instance.login();
-
+        
 	}
 	
 

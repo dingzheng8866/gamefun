@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 43b05886f9f775248bf026480e4aaf86
-timeCreated: 1529214148
+guid: 907bd21c4e367f54dae4d537e4dfae82
+timeCreated: 1530519380
 licenseType: Pro
 TextureImporter:
   fileIDToRecycleName: {}
@@ -45,7 +45,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 11, y: 8, z: 13, w: 9}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -72,5 +72,5 @@ TextureImporter:
     physicsShape: []
   spritePackingTag: 
   userData: 
-  assetBundleName: testimg/945.0.png.assetbundle
+  assetBundleName: texture/common/gamelogo.png.assetbundle
   assetBundleVariant: 

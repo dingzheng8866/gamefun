@@ -219,11 +219,11 @@ namespace GEngine
 
             });
 
-            yield return new WaitForSeconds(5);
-            GEngine.Language.LanguageTextManager.Instance.SetCurrentLocaleKey(GEngine.Language.LanguageTextManager.LOCALE_EN);
+            //yield return new WaitForSeconds(5);
+            //GEngine.Language.LanguageTextManager.Instance.SetCurrentLocaleKey(GEngine.Language.LanguageTextManager.LOCALE_EN);
 
-            yield return new WaitForSeconds(5);
-            GEngine.Language.LanguageTextManager.Instance.SetCurrentLocaleKey(GEngine.Language.LanguageTextManager.LOCALE_ZH_TW);
+            //yield return new WaitForSeconds(5);
+            //GEngine.Language.LanguageTextManager.Instance.SetCurrentLocaleKey(GEngine.Language.LanguageTextManager.LOCALE_ZH_TW);
 
             /*
             yield return new WaitForSeconds(1.0f);

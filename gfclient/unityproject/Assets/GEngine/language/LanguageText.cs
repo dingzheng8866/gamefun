@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace GEngine.Language
 {
-    public class LanguageText : MonoBehaviour
+    public class LanguageText : UIBehaviour
     {
 
         public string languageKey = "";
@@ -24,6 +25,12 @@ namespace GEngine.Language
                 }
                 return _text;
             }
+        }
+
+        protected override void OnEnable()
+        {
+            //base.OnEnable();
+            //Debug.Log("------------------------------dfadfafddsf");
         }
 
         private void Update()

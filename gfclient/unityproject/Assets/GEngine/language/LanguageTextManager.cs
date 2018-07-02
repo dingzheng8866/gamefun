@@ -9,15 +9,16 @@ namespace GEngine.Language
     public class LanguageTextManager
     {
         public const string LOCALE_ZH_CN = "zh_cn";
-        public const string LOCALE_ZH_TW = "zh_tw";
+        //public const string LOCALE_ZH_TW = "zh_tw";
         public const string LOCALE_EN = "en";
 
         private List<string> supportedLocales = new List<string>();
         private LanguageTextManager()
         {
-            supportedLocales.Add(LOCALE_EN);
-            supportedLocales.Add(LOCALE_ZH_CN);
-            supportedLocales.Add(LOCALE_ZH_TW);
+            LanguageTextLoader instance = LanguageTextLoader.Instance; // make sure to load resources
+            //supportedLocales.Add(LOCALE_EN);
+            //supportedLocales.Add(LOCALE_ZH_CN);
+            //supportedLocales.Add(LOCALE_ZH_TW);
         }
 
 
@@ -29,7 +30,9 @@ namespace GEngine.Language
 
         public void AddLocaleLanguageConf(string locale, Dictionary<string, string> conf)
         {
-            Debuger.Assert(supportedLocales.Contains(locale));
+            Debug.Log("AddLocaleLanguageConf: " +locale);
+            supportedLocales.Add(locale);
+            //Debuger.Assert(supportedLocales.Contains(locale));
             localeDict[locale] = conf;
         }
 
@@ -78,6 +81,7 @@ namespace GEngine.Language
             {
                 value = string.Empty;
             }
+            //value = "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。\n适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。";
 
             return value;
         }

@@ -9,6 +9,18 @@ namespace GEngine.Util
     public class GameUtil
     {
 
+        public static T SingletonInstance<T>() where T : Component
+        {
+            GameObject go = GameObject.Find("SingletoGOManager");
+            if (go == null) go = new GameObject("SingletoGOManager");
+            //GameObject.DontDestroyOnLoad(go);
+
+            T instance = go.GetComponent<T>();
+            if (instance == null) instance = go.AddComponent<T>();
+            return instance;
+        }
+
+
         public static string GetGameLoginDeviceID()
         {
             // TODO: apple use gamecenter id
