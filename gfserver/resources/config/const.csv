@@ -10,7 +10,13 @@ Error_Alliance_Not_Exist;;100005;;
 Error_Alliance_Not_Allow_To_Join;;100006;;
 MaxJoinInBattleArmy;;5;;最大上阵军队配置数目
 TestConstFloatValue;1.0;;;
-TestConstStringValue;;;abc123#!ydf;
+TestConstStringValue;;;abc123#!ydf1;
+UI_Panel_Name_Error;;;ErrorPanel;
+UI_Panel_Path_Error;;;prefabs/common/ErrorPanel.prefab;
+UI_Panel_Name_GamePreLoad;;;GamePreLoadPanel;
+UI_Panel_Path_GamePreLoad;;;prefabs/enter/GamePreLoadPanel.prefab;
+UI_Panel_Name_GameLoad;;;GameLoadPanel;
+UI_Panel_Path_GameLoad;;;prefabs/enter/GameLoadPanel.prefab;
 ALLIANCE_EVENT_CREATE_ALLIANCE;;1;
 ALLIANCE_EVENT_JOIN_IN_ALLIANCE;;2;
 ALLIANCE_EVENT_JOIN_OUT_ALLIANCE;;3;

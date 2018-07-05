@@ -68,6 +68,9 @@ namespace GEngine.Language
             }
         }
 
+        private static string lineNeedToReplaceString = "\\n";
+        private static string lineReplaceToString = "\n";
+
         public string GetText(string key)
         {
             string value = string.Empty;
@@ -76,12 +79,15 @@ namespace GEngine.Language
             if(map!=null)
             {
                 map.TryGetValue(key, out value);
+                if (value!=null && value.Length >0)
+                {
+                    value = value.Replace(lineNeedToReplaceString, lineReplaceToString);
+                }
             }
             else
             {
                 value = string.Empty;
             }
-            //value = "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。\n适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。";
 
             return value;
         }

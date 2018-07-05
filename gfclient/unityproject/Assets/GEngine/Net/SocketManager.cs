@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GEngine.Util;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,25 +11,8 @@ namespace GEngine.Net
 {
     public class SocketManager : MonoBehaviour
     {
-
         private static SocketManager _Instance;
-        public static SocketManager Instance
-        {
-            get
-            {
-                if (_Instance == null)
-                {
-                    GameObject go = GameObject.Find("GameManagers");
-                    if (go == null) go = new GameObject("GameManagers");
-                    GameObject.DontDestroyOnLoad(go);
-
-                    _Instance = go.GetComponent<SocketManager>();
-                    if (_Instance == null) _Instance = go.AddComponent<SocketManager>();
-                }
-                return _Instance;
-            }
-        }
-
+        public static SocketManager Instance { get { if (_Instance == null) { _Instance = GameUtil.SingletonInstance<SocketManager>(); } return _Instance; } }
 
         public bool hasEnterGameServerBefore = false;
 

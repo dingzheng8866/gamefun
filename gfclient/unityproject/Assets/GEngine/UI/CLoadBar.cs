@@ -10,9 +10,14 @@ namespace GEngine.UI
     public class CLoadBar : MonoBehaviour
     {
         private Slider totalSlider;
-        private Text totalText;
+        private Text loadDescText;
 
-        private float totalProgress;
+        public float totalProgress;
+
+        public void SetLoadBarDescription(string desc)
+        {
+            loadDescText.text = desc;
+        }
 
         public void SetProgress(float v)
         {
@@ -27,7 +32,7 @@ namespace GEngine.UI
         void Awake()
         {
             totalSlider = transform.Find("Slider").GetComponent<Slider>();
-            totalText = transform.Find("Text").GetComponent<Text>();
+            loadDescText = transform.Find("Text").GetComponent<Text>();
         }
 
         void Update()
@@ -41,7 +46,7 @@ namespace GEngine.UI
                 totalSlider.value = Mathf.Lerp(totalSlider.value, totalProgress, Time.deltaTime * 10F);
             }
 
-            totalText.text = Mathf.RoundToInt(totalSlider.value * 100) + "%";
+            //totalText.text = Mathf.RoundToInt(totalSlider.value * 100) + "%";
         }
 
     }

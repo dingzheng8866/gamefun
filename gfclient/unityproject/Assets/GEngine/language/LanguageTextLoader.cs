@@ -18,6 +18,7 @@ namespace GEngine.Language
 
         private void Awake()
         {
+            _Instance = this;
             StartCoroutine(Load());
         }
 
