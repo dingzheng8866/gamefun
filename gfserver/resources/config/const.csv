@@ -13,6 +13,8 @@ TestConstFloatValue;1.0;;;
 TestConstStringValue;;;abc123#!ydf1;
 UI_Panel_Name_Error;;;ErrorPanel;
 UI_Panel_Path_Error;;;prefabs/common/ErrorPanel.prefab;
+UI_Panel_Name_Exception;;;ExceptionPanel;
+UI_Panel_Path_Exception;;;prefabs/common/ExceptionPanel.prefab;
 UI_Panel_Name_GamePreLoad;;;GamePreLoadPanel;
 UI_Panel_Path_GamePreLoad;;;prefabs/enter/GamePreLoadPanel.prefab;
 UI_Panel_Name_GameLoad;;;GameLoadPanel;

@@ -34,7 +34,7 @@ namespace GEngine.Service
         {
             _Instance = this;
             Debug.Log("GameService awake");
-            NetClientManager.instance.AddCallback<S_Exception>(S_Exception);
+            NetClientManager.instance.AddCallback<S_Exception>(HandleS_Exception);
             SocketManager.Instance.AddConnectedCallback((int)SocketId.Gate, OnSocketConnectToGateServer);
         }
 
@@ -57,7 +57,8 @@ namespace GEngine.Service
                     // TODO: open error panel
                     PanelManager.closePanel(GEngine.GameConst.UI_Panel_Name_GamePreLoad);
 
-                    PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Error, GEngine.GameConst.UI_Panel_Path_Error, SetErrorPanelInfo);
+                    popExceptionPanel("1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n");
+                    //PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Error, GEngine.GameConst.UI_Panel_Path_Error, SetErrorPanelInfo);
                 }
             }
 
@@ -75,11 +76,27 @@ namespace GEngine.Service
             }
         }
 
-        private void S_Exception(S_Exception msg)
+        private void SetExceptionPanelInfo(GameObject panelObject)
+        {
+            Debug.Log("SetErrorPanelInfo");
+            ExceptionPanelController ctl = panelObject.GetComponent<ExceptionPanelController>();
+            if (ctl != null)
+            {
+                ctl.SetException("0000\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n3333\n");
+            }
+        }
+
+        private void popExceptionPanel(string detail)
+        {
+            PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Exception, GEngine.GameConst.UI_Panel_Path_Exception, SetExceptionPanelInfo);
+        }
+
+        private void HandleS_Exception(S_Exception msg)
         {
             //Debug.Log("S_Exception");
             Debug.Log(msg.code + "," + msg.description + " ==>" + msg.trace);
-            PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Error, GEngine.GameConst.UI_Panel_Path_Error, SetErrorPanelInfo);
+            string detail = "Error: " + msg.code + "\n"+msg.description+"\n"+msg.trace;
+            popExceptionPanel(detail);
         }
 
         private string GetGateServerIp()
