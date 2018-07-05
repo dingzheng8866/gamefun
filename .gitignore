@@ -29,5 +29,5 @@ gfclient/unityproject/Assets/StreamingAssets/Bundles.meta
 gfclient/unityproject/Assets/StreamingAssets/Setting
 gfclient/unityproject/Assets/StreamingAssets/Setting.meta
 gfclient/Product
-gfclient/unityproject/Assets/GEngine/Generated
+#gfclient/unityproject/Assets/GEngine/Generated/*
 
