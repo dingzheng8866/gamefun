@@ -23,7 +23,7 @@ namespace GEngine.Asset
             LoaderDelgate newCallback = null;
             if (callback != null)
             {
-                newCallback = (useUrl, obj) => callback(useUrl, obj as AssetBundle);
+                newCallback = (useUrl, obj, arguments) => callback(useUrl, obj as AssetBundle, null);
             }
             var newLoader = AutoNew<AssetBundleLoader>(url, newCallback);
 
@@ -49,7 +49,7 @@ namespace GEngine.Asset
    
         }
 
-        private static void AssetBundleManifestLoadCallback(string url, object resultObject)
+        private static void AssetBundleManifestLoadCallback(string url, object resultObject, object[] arguments = null)
         {
             Debug.Log("AssetBundleManifestLoadCallback: call back " + (resultObject == null ? "object null":" object ready"));
             if (resultObject!=null)

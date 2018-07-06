@@ -1,4 +1,5 @@
 ﻿using GEngine.Language;
+using GEngine.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,9 @@ namespace GEngine.UI.Controller
     {
         public GameObject contentGO = null;
 
-        public GameObject closeButtonGO = null;
-
         private void Awake()
         {
-            closeButtonGO.GetComponent<Button>().onClick.AddListener(delegate () {
-                PanelManager.closeFrontendPanel();
-            });
+            GameUtil.addListenerToCloseFrontendPanel(transform, "bgfullbutton");
         }
 
         public void SetException(string detail)

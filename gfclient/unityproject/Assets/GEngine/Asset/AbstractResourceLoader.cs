@@ -11,13 +11,14 @@ namespace GEngine.Asset
     {
         private static readonly Dictionary<Type, Dictionary<string, AbstractResourceLoader>> _loadersPool = new Dictionary<Type, Dictionary<string, AbstractResourceLoader>>();
 
-        public delegate void LoaderDelgate(string url, object resultObject);
+        public delegate void LoaderDelgate(string url, object resultObject, object[] arguments=null);
 
         private readonly List<LoaderDelgate> _afterFinishedCallbacks = new List<LoaderDelgate>();
 
         public object ResultObject;
         public bool IsCompleted;
         public string Url;
+        public object[] arguments;
 
         [System.NonSerialized]
         public float InitTiming = -1;
@@ -114,6 +115,7 @@ namespace GEngine.Asset
             IsCompleted = false;
 
             Url = url.Replace('\\', '/');
+            arguments = args;
         }
 
         protected virtual void OnFinish(object resultObj)
@@ -156,7 +158,7 @@ namespace GEngine.Asset
                 {
                     if (ResultObject == null)
                         Debug.LogWarningFormat("Null ResultAsset {0}", Url);
-                    callback(Url, ResultObject);
+                    callback(Url, ResultObject, null);
                 }
                 else
                     _afterFinishedCallbacks.Add(callback);
@@ -168,7 +170,7 @@ namespace GEngine.Asset
             Action justDo = () =>
             {
                 foreach (var callback in _afterFinishedCallbacks)
-                    callback(Url, resultObj);
+                    callback(Url, resultObj, arguments);
                 _afterFinishedCallbacks.Clear();
             };
 

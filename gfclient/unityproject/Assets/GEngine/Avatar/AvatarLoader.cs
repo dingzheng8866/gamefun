@@ -37,7 +37,7 @@ namespace GEngine.Avatar
         }
 
 
-        private static void LoadCallback(string url, object resultObject)
+        private static void LoadCallback(string url, object resultObject, object[] arguments = null)
         {
             if (resultObject != null)
             {

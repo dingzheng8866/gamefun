@@ -9,7 +9,7 @@ namespace GEngine.UI
 {
     public class PanelManager
     {
-        public delegate void openPanelCallback(GameObject panelObject);
+        public delegate void openPanelCallback(GameObject panelObject, params object[] initArgs);
 
         public static void CloseAllPopPanel()
         {
@@ -63,10 +63,10 @@ namespace GEngine.UI
             }
         }
 
-        public static void openPanel(string panelName, string panelAssetKey, openPanelCallback callback=null)
+        public static void openPanel(string panelName, string panelAssetKey, openPanelCallback callback=null, params object[] initArgs)
         {
             // TODO: check it in pool or not
-            AssetLoader.Load(panelAssetKey, (loadUrl, obj) =>
+            AssetLoader.Load(panelAssetKey, (loadUrl, obj, arguments) =>
             {
                 if (obj != null)
                 {
@@ -88,10 +88,10 @@ namespace GEngine.UI
                     Debug.Log("opened panel: " +panelName+" ==> " + panelAssetKey);
                     if(callback!=null)
                     {
-                        callback(goObj);
+                        callback(goObj, arguments);
                     }
                 }
-            });
+            }, initArgs);
         }
 
 

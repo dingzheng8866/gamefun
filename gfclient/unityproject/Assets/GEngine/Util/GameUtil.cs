@@ -1,8 +1,10 @@
-﻿using System;
+﻿using GEngine.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GEngine.Util
 {
@@ -52,6 +54,13 @@ namespace GEngine.Util
 
                 + "";
             return info;
+        }
+
+        public static void addListenerToCloseFrontendPanel(Transform transform, string buttonPath)
+        {
+            transform.Find(buttonPath).gameObject.GetComponent<Button>().onClick.AddListener(delegate () {
+                PanelManager.closeFrontendPanel();
+            });
         }
 
     }

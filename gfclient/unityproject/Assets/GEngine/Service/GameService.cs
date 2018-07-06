@@ -57,7 +57,7 @@ namespace GEngine.Service
                     // TODO: open error panel
                     PanelManager.closePanel(GEngine.GameConst.UI_Panel_Name_GamePreLoad);
 
-                    popExceptionPanel("1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n");
+                    popExceptionPanel("error: failed to connect to gate server");
                     //PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Error, GEngine.GameConst.UI_Panel_Path_Error, SetErrorPanelInfo);
                 }
             }
@@ -76,19 +76,23 @@ namespace GEngine.Service
             }
         }
 
-        private void SetExceptionPanelInfo(GameObject panelObject)
+        private void openExceptionPanelCallback(GameObject panelObject, params object[] arguments)
         {
-            Debug.Log("SetErrorPanelInfo");
+            Debug.Log("openExceptionPanelCallback");
             ExceptionPanelController ctl = panelObject.GetComponent<ExceptionPanelController>();
             if (ctl != null)
             {
-                ctl.SetException("0000\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n2222\n1111\n3333\n");
+                if (arguments!=null && arguments.Length > 0)
+                {
+                    Debug.Log("openExceptionPanelCallback call back arguments: " + arguments.Length);
+                    ctl.SetException((string)arguments[0]);
+                }
             }
         }
 
         private void popExceptionPanel(string detail)
         {
-            PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Exception, GEngine.GameConst.UI_Panel_Path_Exception, SetExceptionPanelInfo);
+            PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Exception, GEngine.GameConst.UI_Panel_Path_Exception, openExceptionPanelCallback, detail);
         }
 
         private void HandleS_Exception(S_Exception msg)

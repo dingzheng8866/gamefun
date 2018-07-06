@@ -14,8 +14,6 @@ namespace GEngine.UI.Controller
         public GameObject descGO = null;
         public GameObject buttonGO = null;
 
-        public GameObject closeButtonGO = null;
-
         public int titleId = 0;
         public int descId = 0;
         public int buttonId = 0;
@@ -29,10 +27,19 @@ namespace GEngine.UI.Controller
             ltTitle = titleGO.GetComponent<LanguageText>();
             ltDesc = descGO.GetComponent<LanguageText>();
             ltButton = buttonGO.GetComponent<LanguageText>();
-            closeButtonGO.GetComponent<Button>().onClick.AddListener(delegate () {
+
+            transform.Find("bg").gameObject.GetComponent<Button>().onClick.AddListener(delegate () {
                 //this.gameObject.SetActive(false);
+                Debug.Log("PanelManager.closeFrontendPanel 33");
                 PanelManager.closeFrontendPanel();
             });
+
+            transform.Find("content/button").gameObject.GetComponent<Button>().onClick.AddListener(delegate () {
+                //this.gameObject.SetActive(false);
+                Debug.Log("PanelManager.closeFrontendPanel 22");
+                PanelManager.closeFrontendPanel();
+            });
+
         }
 
         private void Update()

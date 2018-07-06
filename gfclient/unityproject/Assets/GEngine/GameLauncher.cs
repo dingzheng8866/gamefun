@@ -43,32 +43,6 @@ namespace GEngine
 
             //yield return new WaitForSeconds(1.0f);
 
-            AssetLoader.Load("config/locale/app_text_zh_cn.txt", (loadUrl, obj) => {
-                if (obj != null)
-                {
-                    Debug.Log(loadUrl + "===========>" + obj.GetType());
-                    TextAsset ta = obj as TextAsset;
-                    GEngine.Language.LanguageTextConfParser.Parse(loadUrl, ta.text);
-                }
-            });
-
-            AssetLoader.Load("config/locale/app_text_en.txt", (loadUrl, obj) => {
-                if (obj != null)
-                {
-                    Debug.Log(loadUrl + "===========>" + obj.GetType());
-                    TextAsset ta = obj as TextAsset;
-                    GEngine.Language.LanguageTextConfParser.Parse(loadUrl, ta.text);
-                }
-            });
-
-            AssetLoader.Load("config/locale/app_text_zh_tw.txt", (loadUrl, obj) => {
-                if (obj != null)
-                {
-                    Debug.Log(loadUrl + "===========>" + obj.GetType());
-                    TextAsset ta = obj as TextAsset;
-                    GEngine.Language.LanguageTextConfParser.Parse(loadUrl, ta.text);
-                }
-            });
 
             //AssetLoader.Load("config/avatar/avatar_10001.xml", CallBackConfig1);
 
@@ -79,7 +53,7 @@ namespace GEngine
 
 
 
-            AssetLoader.Load("material/map/map_5.mat", (loadUrl, obj) => {
+            AssetLoader.Load("material/map/map_5.mat", (loadUrl, obj, arguments) => {
                 if (obj != null)
                 {
                     Debug.Log(loadUrl + "===========>" + obj.GetType());
@@ -87,7 +61,7 @@ namespace GEngine
                     if (mapGo != null)
                     {
 
-                        AssetLoader.Load("map/texture/home_city.jpg", (loadUrlMap, objMap) => {
+                        AssetLoader.Load("map/texture/home_city.jpg", (loadUrlMap, objMap, args) => {
                             if (objMap != null)
                             {
                                 Debug.Log(loadUrlMap + "===war_map_1========>" + objMap.GetType());
@@ -169,7 +143,7 @@ namespace GEngine
             CreateSoldier(go, "s2", new Vector3(10, 10, 10));
             AssetManager.LogTimeCost("Step4: ", time1);
 
-            AssetLoader.Load("material/soldier_freeze.mat", (loadUrl, obj) => {
+            AssetLoader.Load("material/soldier_freeze.mat", (loadUrl, obj, arguments) => {
                 if (obj != null)
                 {
                     Debug.Log(loadUrl + "===========>" + obj.GetType());
@@ -187,7 +161,7 @@ namespace GEngine
             });
 
 
-            AssetLoader.Load("material/soldier_crazy.mat", (loadUrl, obj) => {
+            AssetLoader.Load("material/soldier_crazy.mat", (loadUrl, obj, arguments) => {
                 if (obj != null)
                 {
                     Debug.Log(loadUrl + "===========>" + obj.GetType());
@@ -204,7 +178,7 @@ namespace GEngine
 
             });
 
-            AssetLoader.Load("prefabs/effect3d/e_skill_bingdong.prefab", (loadUrl, obj) => {
+            AssetLoader.Load("prefabs/effect3d/e_skill_bingdong.prefab", (loadUrl, obj, arguments) => {
                 if (obj != null)
                 {
                     Debug.Log(loadUrl + "===========>" + obj.GetType());
@@ -305,7 +279,7 @@ namespace GEngine
                 {
 
                     AssetLoader.Load("avatar/soldier/kuijiabing_1_1/walk/1/0000.png",
-                        (loadUrl, obj) => {
+                        (loadUrl, obj, arguments) => {
                             Sprite sprite = CreateSprite(obj);
                             if(sprite!=null)
                             {

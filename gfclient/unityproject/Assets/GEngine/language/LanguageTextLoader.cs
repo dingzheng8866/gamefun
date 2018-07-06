@@ -24,7 +24,7 @@ namespace GEngine.Language
 
         private void loadAppLanguageText(string textFile)
         {
-            AssetLoader.Load("config/locale/"+ textFile, (loadUrl, obj) =>
+            AssetLoader.Load("config/locale/"+ textFile, (loadUrl, obj, arguments) =>
             {
                 if (obj != null)
                 {

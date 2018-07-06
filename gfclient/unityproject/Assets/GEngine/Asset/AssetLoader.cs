@@ -21,9 +21,9 @@ namespace GEngine.Asset
 
         private AssetBundleLoader _bundleLoader;
 
-        public static AssetLoader Load(string path, LoaderDelgate callback=null)
+        public static AssetLoader Load(string path, LoaderDelgate callback=null, params object[] initArgs)
         {
-            return AutoNew<AssetLoader>(path, callback);
+            return AutoNew<AssetLoader>(path, callback, initArgs);
         }
 
         protected override void Init(string url, params object[] args)
