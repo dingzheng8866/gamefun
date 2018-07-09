@@ -82,6 +82,24 @@ namespace GEngine.UI
                     if(rootPanel!=null)
                     {
                         goObj.transform.SetParent(rootPanel.transform, false);
+                        //goObj.transform.SetAsLastSibling();
+                    }
+
+                    if(panelName.Equals(GameConst.UI_Panel_Name_GamePreLoad))
+                    {
+                        goObj.transform.SetAsFirstSibling();
+                    }
+                    else if (panelName.Equals(GameConst.UI_Panel_Name_GameLoad))
+                    {
+                        goObj.transform.SetSiblingIndex(2);
+                    }
+                    else if (panelName.Equals(GameConst.UI_Panel_Name_Exception))
+                    {
+                        goObj.transform.SetSiblingIndex(999999);
+                    }
+                    else if (panelName.Equals(GameConst.UI_Panel_Name_Error))
+                    {
+                        goObj.transform.SetSiblingIndex(999998);
                     }
 
                     goObj.SetActive(true);

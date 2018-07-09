@@ -15,7 +15,9 @@ namespace GEngine.Service
     {
         Unknown,
         ConnectingToGateServer,
+        ConnectedToGateServer,
         ConnectingToGameServer,
+        ConnectedToMainServer,
         Online,
         ConnectingToFightServer,
         Fighting,
@@ -35,7 +37,10 @@ namespace GEngine.Service
             _Instance = this;
             Debug.Log("GameService awake");
             NetClientManager.instance.AddCallback<S_Exception>(HandleS_Exception);
-            SocketManager.Instance.AddConnectedCallback((int)SocketId.Gate, OnSocketConnectToGateServer);
+            NetClientManager.instance.AddCallback<S_LoginServerInfo>(handleS_LoginServerInfo);
+            SocketManager.Instance.AddConnectedCallback(SocketId.Gate, OnSocketConnectToServer);
+            SocketManager.Instance.AddConnectedCallback(SocketId.Main, OnSocketConnectToServer);
+            SocketManager.Instance.AddConnectedCallback(SocketId.Battle, OnSocketConnectToServer);
         }
 
         private void Update()
@@ -47,7 +52,7 @@ namespace GEngine.Service
 
             if (roleStatus==RoleStatus.ConnectingToGateServer)
             {
-                if(Time.realtimeSinceStartup - lastActionTime>=2)
+                if(Time.realtimeSinceStartup - lastActionTime>=10)
                 {
                     Debug.LogError("Failed to connect to gate server: " + GetGateServerIp());
                     NetClientManager.instance.Close((int)SocketId.Gate);
@@ -103,6 +108,16 @@ namespace GEngine.Service
             popExceptionPanel(detail);
         }
 
+        private void handleS_LoginServerInfo(S_LoginServerInfo msg)
+        {
+            //Debug.Log("S_Exception");
+            Debug.Log(msg.ipAddress + "," + msg.port);
+            roleStatus = RoleStatus.ConnectingToGameServer;
+            NetClientManager.instance.Connect((int)SocketId.Main, msg.ipAddress, msg.port);
+            //C_GetLoginServerInfo getLoginServerReq = new C_GetLoginServerInfo();
+            //NetClientManager.instance.SendMessage<C_GetLoginServerInfo>((int)SocketId.Gate, getLoginServerReq);
+        }
+
         private string GetGateServerIp()
         {
             return "127.0.0.1";
@@ -116,13 +131,36 @@ namespace GEngine.Service
             NetClientManager.instance.Connect((int)SocketId.Gate, GetGateServerIp(), 17981);
         }
 
-        private void OnSocketConnectToGateServer(SocketId socketId)
+        private void OnSocketConnectToServer(SocketId socketId)
         {
             if (socketId == SocketId.Gate)
             {
                 Debug.Log("Connected to gate server");
+                roleStatus = RoleStatus.ConnectedToGateServer;
                 C_GetLoginServerInfo getLoginServerReq = new C_GetLoginServerInfo();
                 NetClientManager.instance.SendMessage<C_GetLoginServerInfo>((int)SocketId.Gate, getLoginServerReq);
+            }
+            else if (socketId == SocketId.Main)
+            {
+                Debug.Log("Connected to main server");
+                roleStatus = RoleStatus.ConnectedToMainServer;
+                C_RoleLogin req = new C_RoleLogin();
+                req.account = "";
+                req.channel = 1;
+                req.device_id = GameUtil.GetDeviceID();
+                req.device_info = GameUtil.GetSystemInfo();
+                req.login_account_id = GameUtil.GetGameLoginDeviceID();
+                req.platform = GameUtil.GetOS();
+                req.sdk_info = "";
+                req.token = "";
+                req.reserve = "";
+
+                req.device_id = "device123";
+                req.device_info = "xiaomi";
+                req.login_account_id = "device123";
+                req.platform = "android";
+
+                NetClientManager.instance.SendMessage<C_RoleLogin>((int)SocketId.Main, req);
             }
         }
 
