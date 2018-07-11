@@ -22,6 +22,7 @@ gfclient/unityproject/*.sln.DotSettings
 gfclient/unityproject/*.suo
 gfclient/unityproject/*.userprefs
 gfclient/unityproject/.vs
+gfclient/unityproject/*.apk
 gfclient/*.suo
 gfclient/*.csproj.user
 gfclient/unityproject/Assets/StreamingAssets/Bundles

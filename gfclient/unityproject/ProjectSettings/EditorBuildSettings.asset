@@ -6,5 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/BundleResources/scene/UIPrefabEditor.unity
-    guid: 8b020d54ab771204493bc1d333cbacde
+    path: Assets/BundleResources/scene/WorldEditor.unity
+    guid: 28ef4b07bdee8b84ea337b10098ed18a
