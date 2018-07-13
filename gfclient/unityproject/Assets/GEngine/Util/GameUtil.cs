@@ -18,7 +18,11 @@ namespace GEngine.Util
             //GameObject.DontDestroyOnLoad(go);
 
             T instance = go.GetComponent<T>();
-            if (instance == null) instance = go.AddComponent<T>();
+            if (instance == null)
+            {
+                instance = go.AddComponent<T>();
+                Debug.Log("SingletoGOManager AddComponent " + typeof(T).Name);
+            }
             return instance;
         }
 
@@ -62,6 +66,27 @@ namespace GEngine.Util
                 PanelManager.closeFrontendPanel();
             });
         }
+
+        public static List<string> convertToLineStringList(byte[] fileContent)
+        {
+            List<string> list = new List<string>();
+            if (fileContent != null && fileContent.Length > 0)
+            {
+                string[] lines = System.Text.Encoding.UTF8.GetString(fileContent).Split('\n');
+                if (lines != null && lines.Length > 0)
+                {
+                    foreach (string asset in lines)
+                    {
+                        if (asset != null && asset.Trim().Length > 0)
+                        {
+                            list.Add(asset.Replace('\r', ' ').Trim());
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
 
     }
 }

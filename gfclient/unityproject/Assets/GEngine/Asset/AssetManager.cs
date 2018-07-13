@@ -11,8 +11,26 @@ namespace GEngine.Asset
     {
 
         public static AssetManager _Instance = null; //SingletonHelper.SingletonInstance<AssetManager>();
-        public static AssetManager Instance { get { if (_Instance == null) { _Instance = SingletonHelper.SingletonInstance<AssetManager>();} return _Instance; }}
+        public static AssetManager Instance { get { if (_Instance == null) { _Instance = GameUtil.SingletonInstance<AssetManager>(); } return _Instance; }}
 
+        private Dictionary<string, string> assetbundleLoadMap = new Dictionary<string, string>(); // asset --> bundle
+
+        public void SetAssetLoadBundleInfo(string asset, string bundle)
+        {
+            assetbundleLoadMap[asset] = bundle;
+        }
+
+        public string GetAssetLoadBundleInfo(string asset)
+        {
+            if(assetbundleLoadMap.ContainsKey(asset))
+            {
+                return assetbundleLoadMap[asset];
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         public static void LogTimeCost(string action, System.DateTime begin)
         {
@@ -22,6 +40,9 @@ namespace GEngine.Asset
             Debug.LogFormat("[Action] {0}, {1}ms", action, (System.DateTime.Now - begin).TotalMilliseconds);
         }
 
+
+        public static string AssetBundleLoadMapFileName { get { return "assetbundlelist.csv"; } }
+        public static string AssetBundlePreLoadFileName { get { return "assetbundlepreload.csv"; } }
 
         public static string RootPathStreaming
         {
@@ -104,6 +125,7 @@ namespace GEngine.Asset
 
         private void Awake()
         {
+            _Instance = this;
             if (Debug.isDebugBuild)
             {
                 Debug.LogFormat("================================================================================");

@@ -37,27 +37,7 @@ namespace GEngine.Asset
             Object getAsset = null;
 
             {
-                // 添加扩展名
-                string abPath = path;
-                if (!abPath.EndsWith(GEngineDef.AssetBundleExt))
-                {
-                    abPath = abPath + GEngineDef.AssetBundleExt;
-                }
-
-                //if(abPath.StartsWith("avatar"))
-                {
-                    //abPath = "avatar" + GEngineDef.AssetBundleExt;
-                }
-
-                if (abPath.IndexOf("kuijiabing_1_1") > 0)
-                {
-                    abPath = "avatar/soldier/kuijiabing_1_1" + GEngineDef.AssetBundleExt;
-                }
-                else if (abPath.IndexOf("kuijiabing_1_2") > 0)
-                {
-                    abPath = "avatar/soldier/kuijiabing_1_2" + GEngineDef.AssetBundleExt;
-                }
-
+                string abPath = AssetManager.Instance.GetAssetLoadBundleInfo(path);
                 _bundleLoader = AssetBundleLoader.Load(abPath);
 
                 while (!_bundleLoader.IsCompleted)

@@ -76,6 +76,7 @@ GameObject:
   - component: {fileID: 222595092125164316}
   - component: {fileID: 114656462573526172}
   - component: {fileID: 114181750316364946}
+  - component: {fileID: 114054332627042638}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -96,6 +97,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &114054332627042638
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1332216229889592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 1
 --- !u!114 &114181750316364946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -362,7 +375,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -29.144022}
+  m_AnchoredPosition: {x: 0, y: -29.112137}
   m_SizeDelta: {x: -40, y: 0}
   m_Pivot: {x: 0.5, y: 0.95}
 --- !u!224 &224828482623914554

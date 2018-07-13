@@ -18,11 +18,16 @@ namespace GEngine.Util
             if (go == null)
             {
                 go = new GameObject(name);
+                Debug.Log("SingletonInstance: " + name);
                 GameObject.DontDestroyOnLoad(go);
             }
 
             instance = go.GetComponent<T>();
-            if (instance == null) instance = go.AddComponent<T>();
+            if (instance == null)
+            {
+                instance = go.AddComponent<T>();
+                Debug.Log("SingletonInstance: AddComponent " + name);
+            }
             //instance.enabled = true;
 
             return instance;

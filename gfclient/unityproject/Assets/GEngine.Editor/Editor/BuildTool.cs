@@ -11,15 +11,25 @@ namespace GEngine.Asset
     public class BuildTool
     {
 
-        static string ResourcesBuildDir
+        public static string ResourcesRootDir
         {
             get
             {
-                var dir = "Assets/" + GEngineDef.ResourcesBuildDir + "/";
+                var dir = "Assets/" + GEngineDef.ResourcesBuildDir;
                 return dir;
             }
         }
 
+        public static string ResourcesBuildDir
+        {
+            get
+            {
+                var dir = ResourcesRootDir + "/";
+                return dir;
+            }
+        }
+
+        /*
         public static void MakeAssetBundleNames()
         {
             var dir = ResourcesBuildDir;
@@ -79,6 +89,29 @@ namespace GEngine.Asset
             Debug.Log("Make all asset name successs!");
 
         }
+        */
+
+        [MenuItem("GEngine/AssetBundle/Clear AssetBundle Names")]
+        public static void ClearAssetBundleNames()
+        {
+            string[] names = AssetDatabase.GetAllAssetBundleNames();
+
+            int count = names.Length;
+            for (int i = 0; i < count; i++)
+            {
+                if (names[i].IndexOf(GEngineDef.AssetBundleExt) != -1)
+                {
+                    string[] assets = AssetDatabase.GetAssetPathsFromAssetBundle(names[i]);
+                    for (int j = 0; j < assets.Length; j++)
+                    {
+                        AssetImporter importer = AssetImporter.GetAtPath(assets[j]);
+                        importer.assetBundleName = null;
+                    }
+                }
+            }
+            Debug.Log("ClearAssetBundleNames successs!");
+        }
+
 
         [MenuItem("GEngine/AssetBundle/Build All %&z")]
         public static void BuildAllAssetBundles()
@@ -89,16 +122,62 @@ namespace GEngine.Asset
                 return;
             }
             //AssetVersionControl ac = new AssetVersionControl(true);
-            MakeAssetBundleNames();
+            //MakeAssetBundleNames();
+            BuildAssetBundleName.MakeAssetBundleNamesByAutoDependenceTree();
             //ac.Dispose();
             var outputPath = GetExportPath(EditorUserBuildSettings.activeBuildTarget);
             Debug.Log("Asset bundle start build to: "+ outputPath);
             BuildPipeline.BuildAssetBundles(outputPath, BuildAssetBundleOptions.DeterministicAssetBundle, EditorUserBuildSettings.activeBuildTarget);
             AssetDatabase.Refresh();
 
+            GenerateAssetBundleLoadMapFile(outputPath+ AssetManager.AssetBundleLoadMapFileName);
+            GenerateAssetPreLoadFile(outputPath + AssetManager.AssetBundlePreLoadFileName);
+
+            AssetDatabase.Refresh();
+
             SymbolLinkResource();
         }
 
+        private static void GenerateAssetBundleLoadMapFile(string loadMapFile)
+        {
+            Dictionary<string, string> newAssetPathBundleNameMap = BuildAssetBundleName.GetCurrentAssetPathBundleNameMap();
+            string assetLoadMap = "";
+            foreach (var v in newAssetPathBundleNameMap)
+            {
+                assetLoadMap += v.Key.Replace(BuildTool.ResourcesBuildDir, "");
+                assetLoadMap += ",";
+                assetLoadMap += v.Value;
+                assetLoadMap += "\n";
+            }
+            //avatar/soldier/kuijiabing_1_1/walk/6/0000.png ==> avatar/soldier/kuijiabing_1_1.assetbundle
+
+            System.IO.File.WriteAllText(loadMapFile, assetLoadMap, Encoding.UTF8);
+        }
+
+        private static void GenerateAssetPreLoadFile(string fileName)
+        {
+            Dictionary<string, string> newAssetPathBundleNameMap = BuildAssetBundleName.GetCurrentAssetPathBundleNameMap();
+            string content = "";
+            foreach (var v in newAssetPathBundleNameMap)
+            {
+                bool needPreload = false;
+                string assetFile = v.Key.Replace(BuildTool.ResourcesBuildDir, "");
+                if(assetFile.StartsWith("config/")) //prefab
+                {
+                    needPreload = true;
+                }
+                else if (assetFile.EndsWith(".prefab"))
+                {
+                    needPreload = true;
+                }
+                if(needPreload)
+                {
+                    content += assetFile;
+                    content += "\n";
+                }
+            }
+            System.IO.File.WriteAllText(fileName, content, Encoding.UTF8);
+        }
 
         #region symbollink-ab
         public static string GetExportPath(BuildTarget platfrom) //KResourceQuality quality = KResourceQuality.Sd

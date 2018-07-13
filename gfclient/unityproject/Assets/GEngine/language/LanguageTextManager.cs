@@ -15,7 +15,7 @@ namespace GEngine.Language
         private List<string> supportedLocales = new List<string>();
         private LanguageTextManager()
         {
-            LanguageTextLoader instance = LanguageTextLoader.Instance; // make sure to load resources
+            //LanguageTextLoader instance = LanguageTextLoader.Instance; // make sure to load resources
             //supportedLocales.Add(LOCALE_EN);
             //supportedLocales.Add(LOCALE_ZH_CN);
             //supportedLocales.Add(LOCALE_ZH_TW);

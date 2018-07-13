@@ -19,12 +19,12 @@ namespace GEngine.Language
         private void Awake()
         {
             _Instance = this;
-            StartCoroutine(Load());
+            //StartCoroutine(Load());
         }
 
-        private void loadAppLanguageText(string textFile)
+        public void LoadAppLanguageText(string textFile) //"config/locale/"+ textFile
         {
-            AssetLoader.Load("config/locale/"+ textFile, (loadUrl, obj, arguments) =>
+            AssetLoader.Load(textFile, (loadUrl, obj, arguments) =>
             {
                 if (obj != null)
                 {
@@ -35,12 +35,14 @@ namespace GEngine.Language
             });
         }
 
+        /*
         private IEnumerator Load()
         {
-            loadAppLanguageText("app_text_zh_cn.txt");
-            loadAppLanguageText("app_text_en.txt");
-            loadAppLanguageText("app_text_zh_tw.txt");
+            LoadAppLanguageText("app_text_zh_cn.txt");
+            LoadAppLanguageText("app_text_en.txt");
+            LoadAppLanguageText("app_text_zh_tw.txt");
             yield return null;
         }
+        */
     }
 }
