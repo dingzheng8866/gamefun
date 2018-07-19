@@ -11,7 +11,7 @@ import com.tiny.game.common.exception.InternalBugException;
 public class MatchManager {
 
 	private Map<String, MatchRequest> reqs = new ConcurrentHashMap<String, MatchRequest>();
-	private Map<MatchRequestCategory, Map<String, MatchRequest>> categoryReqs = new ConcurrentHashMap<MatchRequestCategory, Map<String, MatchRequest>>();
+	private Map<MatchRequestCategory, List<MatchRequest>> categoryReqs = new ConcurrentHashMap<MatchRequestCategory, List<MatchRequest>>();
 	
 	public void attendMatch(MatchRequest req) {
 		MatchRequestCategory cat = req.getCategory();
@@ -23,12 +23,12 @@ public class MatchManager {
 			handleMatched(cat, req.getMatchRole(), robot);
 		} else {
 			reqs.put(req.getRoleId(), req);
-			Map<String, MatchRequest> map = categoryReqs.get(req.getCategory());
+			List<MatchRequest> map = categoryReqs.get(req.getCategory());
 			if(map==null) {
-				map = new ConcurrentHashMap<String, MatchRequest>();
+				map = new ArrayList<MatchRequest>();
 				categoryReqs.put(req.getCategory(), map);
 			}
-			map.put(req.getRoleId(), req);
+			map.add(req);
 		}
 	}
 	
@@ -39,8 +39,8 @@ public class MatchManager {
 	
 	private void executeMatches() {
 		for(MatchRequestCategory cat : categoryReqs.keySet()) {
-			Map<String, MatchRequest> map = categoryReqs.get(cat);
-			executeMatch(cat, map);
+			List<MatchRequest> list = categoryReqs.get(cat);
+			executeMatch(cat, list);
 		}
 	}
 	
@@ -50,10 +50,11 @@ public class MatchManager {
 		return mr;
 	}
 	
-	private void executeMatch(MatchRequestCategory cat, Map<String, MatchRequest> requests) {
+	private void executeMatch(MatchRequestCategory cat, List<MatchRequest> requests) {
 		
 		List<String> matchedRoles = new ArrayList<String>();
-		for(Map.Entry<String, MatchRequest> entry : requests.entrySet()) {
+		
+		for(MatchRequest req : requests) {
 			if (cat.getMatchType() == GameConst.MatchType_GVE) {
 				
 			} else if (cat.getMatchType() == GameConst.MatchType_PVP) {
