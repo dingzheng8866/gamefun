@@ -8,6 +8,11 @@ Error_InvalidRequestParameter;;100003;;
 Error_NoActiveServer;;100004;;
 Error_Alliance_Not_Exist;;100005;;
 Error_Alliance_Not_Allow_To_Join;;100006;;
+MatchType_Train;;1;;
+MatchType_PVE;;2;;
+MatchType_GVE;;3;;
+MatchType_PVP;;4;;
+MatchType_MIX;;5;;
 MaxJoinInBattleArmy;;5;;最大上阵军队配置数目
 TestConstFloatValue;1.0;;;
 TestConstStringValue;;;abc123#!ydf1;
