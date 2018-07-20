@@ -99,15 +99,18 @@ public class TestMain : MonoBehaviour {
             {
                 TextAsset ta = (TextAsset)resultObject;
 
-                Debug.Log(ta.text.ToString());
+                //Debug.Log(ta.text.ToString());
 
-                if (url.StartsWith("config/locale"))
+                if(url.StartsWith("config/"))
                 {
-                    GEngine.Language.LanguageTextConfParser.Parse(url, ta.text);
-                }
-                else if(url.StartsWith("config/"))
-                {
-
+                    if (url.StartsWith("config/locale"))
+                    {
+                        GEngine.Language.LanguageTextConfParser.Parse(url, ta.text);
+                    }
+                    else if(url.EndsWith(".csv"))
+                    {
+                        GEngine.Config.CsvConfigParser.Instance.ParseCsv(url, ta.text);
+                    }
                 }
 
             }

@@ -69,10 +69,15 @@ namespace GEngine.Util
 
         public static List<string> convertToLineStringList(byte[] fileContent)
         {
+            return convertToLineStringList(System.Text.Encoding.UTF8.GetString(fileContent));
+        }
+
+        public static List<string> convertToLineStringList(string fileContent)
+        {
             List<string> list = new List<string>();
             if (fileContent != null && fileContent.Length > 0)
             {
-                string[] lines = System.Text.Encoding.UTF8.GetString(fileContent).Split('\n');
+                string[] lines = fileContent.Split('\n');
                 if (lines != null && lines.Length > 0)
                 {
                     foreach (string asset in lines)

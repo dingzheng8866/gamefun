@@ -80,7 +80,7 @@ message S_RoleData {
 
 message RoleOwnItem {
 	required int32 itemId = 1;
-	required int32 value = 2; 
+	optional int32 value = 2; 
 	optional int32 level = 3; 
 	repeated StringKeyParameter parameter = 4;
 }
