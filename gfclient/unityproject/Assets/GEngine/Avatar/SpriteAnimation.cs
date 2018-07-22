@@ -21,7 +21,7 @@ namespace GEngine.Avatar
 
         public static float defaultFrameTime = 0.083333f;
 
-        private float frameTime = defaultFrameTime;
+        public float frameTime = defaultFrameTime;
         private int currentFrame = -1;
         private float passTime = 0;
 
