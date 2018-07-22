@@ -69,7 +69,7 @@ public class TestMain : MonoBehaviour {
 
 
         //PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_GameLoad, GEngine.GameConst.UI_Panel_Path_GameLoad);
-        PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Exception, GEngine.GameConst.UI_Panel_Path_Exception);
+        //PanelManager.openPanel(GEngine.GameConst.UI_Panel_Name_Exception, GEngine.GameConst.UI_Panel_Path_Exception);
         //GameService.Instance.init();
     }
 
