@@ -9,18 +9,32 @@ namespace GEngine.Config
     {
         private string fileUrl = "";
         private Dictionary<string, int> itemNamesMap = new Dictionary<string, int>();
+        private Dictionary<int, string> indexMap = new Dictionary<int, string>();
 
         public void ParseHeader(string fileUrl, string[] header)
         {
             this.fileUrl = fileUrl;
-            for(int i=0; i<header.Length; i++)
+            for (int i = 0; i < header.Length; i++)
             {
                 itemNamesMap[header[i]] = i;
+                indexMap[i] = header[i];
             }
         }
 
         virtual public void ParseCsv(string[] csv)
         {
+        }
+
+        protected string getKeyName(int index)
+        {
+            if(indexMap.ContainsKey(index))
+            {
+                return indexMap[index];
+            }
+            else
+            {
+                throw new Exception("Not found key name for index: " + index + " in file: " + fileUrl);
+            }
         }
 
         protected int getKeyIndex(string key)
