@@ -16,6 +16,28 @@ public class MatchRequest {
 		beginMatchTime = System.currentTimeMillis();
 	}
 	
+	public boolean equals(Object o) {
+		if(o==null || !(o instanceof MatchRequest)) {
+			return false;
+		}
+		
+		return roleId == ((MatchRequest)o).roleId;
+	}
+	
+	public String getMatchRoomId() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(category.getMatchType());
+		sb.append("_");
+		sb.append(category.getVsX());
+		sb.append("_");
+		sb.append(category.getVsY());
+		sb.append("_");
+		sb.append(category.getStageId());
+		sb.append("_");
+		sb.append(matchRole.getMatchWeight()/100);
+		return sb.toString();
+	}
+	
 	public boolean isTimeout() {
 		return System.currentTimeMillis() - beginMatchTime >= timeout;
 	}

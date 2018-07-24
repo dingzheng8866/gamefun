@@ -33,35 +33,34 @@ message S_FightMatchCanceled {
 }
 
 message I_CreateFightRoom {
-	repeated string role        = 1;
-	optional int32 matchType    = 2;
-	optional int32 vsX      	= 3;
-	optional int32 vsY 		    = 4;
-	optional int32 stageId      = 5;
-	optional string videoId     = 6;
-	optional string reserved    = 7;
+	required string roomId     		 	 = 1;
+	optional FightEnterData enterData    = 2;
+	optional string videoId     		 = 3;
 }
 
 message S_FightRoomCreateReady {
-	required string roomId     		= 1;
-	repeated FightLegionData legion	= 2;
-	required string serverIp        = 3;
-	required string serverPort      = 4;
-	required int32 stageId      	= 5;
-	required int32 matchType    	= 6;
-	optional int32 vsX      		= 7;
-	optional int32 vsY 		    	= 8;	
-	optional string reserved        = 9;
+	required string roomId     		 = 1;
+	repeated FightEnterData enterData= 2;
+	required string serverIp         = 3;
+	required string serverPort       = 4;
+}
+
+message FightEnterData {
+	required int32 stageId      	= 1;
+	required int32 matchType    	= 2;
+	optional int32 vsX      		= 3;
+	optional int32 vsY 		    	= 4;
+	optional string reserved        = 5;
+	repeated FightLegionData legion	= 6;
 }
 
 message FightLegionData {
 	required string roleId     		= 1;
 	required string roleName 	   	= 2;
-	required string legionId        = 3;
-	required string groupId      	= 4;
-	required bool isRobot      		= 5;
-	optional int32 robotAi 			= 6;
-	repeated RoleOwnItem item 		= 7;
+	required int32 legionId         = 3;
+	required int32 groupId      	= 4;
+	optional int32 robotId 			= 5;
+	repeated RoleOwnItem item 		= 6;
 }
 
 message C_FightLoadProgress {
@@ -96,7 +95,11 @@ message WarFightObjectData {
 
 message FightObjectParameter {
 	required int32					key 		= 1;
-	required string					value 		= 2;
+	optional string					stringValue = 2;
+	optional int32					intValue 	= 3;
+	optional bool					booleanValue= 4;
+	optional float					floatValue  = 5;
+	optional int64					longValue   = 6;
 }
 
 message S_FightEnd {

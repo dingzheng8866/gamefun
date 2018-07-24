@@ -23,6 +23,7 @@ cd gencode
 python genconst_server.py
 python genitemattr_server.py
 python genitemid_server.py
+python genfightprotocolavp_server.py
 
 python genconst_client.py
 python genitemattr_client.py
