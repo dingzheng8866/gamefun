@@ -45,6 +45,10 @@ public class FightRoom {
 		return roomId;
 	}
 	
+	public FightRoomState getRoomState(){
+		return state;
+	}
+	
 	public List<FightRole> getPlayers(){
 		return playerList;
 	}

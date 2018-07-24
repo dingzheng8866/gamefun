@@ -74,7 +74,7 @@ message S_FightLoadProgress {
 }
 
 message ProtoLoadProgress {
-	required int32 roleId = 1;
+	required string roleId  = 1;
 	required int32 progress = 2;
 }
 
@@ -102,6 +102,9 @@ message FightObjectParameter {
 	optional int64					longValue   = 6;
 }
 
+message S_FightStart {
+}
+
 message S_FightEnd {
 	required int32 stageId      			= 1;
 	required int32 matchType    			= 2;
@@ -111,7 +114,7 @@ message S_FightEnd {
 
 message RoleFightResult {
 	required string roleId 					= 1;
-	required int32 endType 					= 2;  // 0.失败  1.小败  2.平局  3.小胜   4.胜利   
+	required int32 endType 					= 2;  // 0.失败  1.小败  2.平局  3.小胜   4.胜利
 	repeated FightObjectParameter parameter = 3;
 	
 	//optional int32 star = 3;

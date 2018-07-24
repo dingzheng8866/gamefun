@@ -3,7 +3,14 @@ package com.tiny.game.common.server.fight.room;
 public interface FightRoomState {
 
 	enum State {
-		Waiting, Preparing, Fighting, Ending, Ended
+		Waiting(0), Preparing(1), Fighting(2), Ending(3), Ended(4);
+		private int value = 0;
+		private State(int v) {
+			this.value = v;
+		}
+		public int getValue() {
+			return value;
+		}
 	}
 	
 	public State getState();
