@@ -86,4 +86,8 @@ public class FightRole {
 		this.session = session;
 	}
 	
+	public boolean isNeedToSyncFightData() {
+		return !isRobot() && (getStatus() != FightRoleStatus.OFFLINE);
+	}
+	
 }

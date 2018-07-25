@@ -102,6 +102,10 @@ message FightObjectParameter {
 	optional int64					longValue   = 6;
 }
 
+message S_FightLeave {
+	required string roleId = 1;
+}
+
 message S_FightStart {
 }
 

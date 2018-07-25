@@ -1,20 +1,23 @@
 package com.tiny.game.common.server.fight.bizlogic;
 
 public class WarTime {
-	public long time;
-	public float deltaTime;
-	public long systemTime; // do not use this one
-	public int frameCount;
-	public long beginTime;
+	private long passedTime;
+	private float deltaTime;
+	private long systemTime; // do not use this one
+	private int frameCount;
+	private long beginTime;
+	
+	private long timeMax = 120;
 
 	private float timeScale = 1f;
 	
-	public WarTime() {
+	public WarTime(long timeMax) {
 		systemTime = System.currentTimeMillis();
 		beginTime = systemTime;
 		deltaTime = 0;
-		time = 0;
+		passedTime = 0;
 		frameCount = 0;
+		this.timeMax = timeMax;
 	}
 
 	public void setTimeScale(float scale) {
@@ -29,13 +32,13 @@ public class WarTime {
 		
 		deltaTime*=timeScale;
 		
-		time+=deltaTime*1000f;
+		passedTime+=deltaTime*1000f;
 		
 		frameCount += 1* timeScale;
 	}
 
 	public long getWarPassedTime() {
-		return time;
+		return passedTime;
 	}
 
 //	public long getSystemTime() {
@@ -45,4 +48,13 @@ public class WarTime {
 	public float getDeltaTime() {
 		return deltaTime;
 	}
+	
+	public int getTimeleft() {
+		int timeLeft = (int) (timeMax - getWarPassedTime() / 1000);
+		if (timeLeft <= 0) {
+			timeLeft = 0;
+		}
+		return timeLeft;
+	}
+	
 }

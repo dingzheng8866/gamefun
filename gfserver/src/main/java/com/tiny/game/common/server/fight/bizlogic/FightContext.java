@@ -10,34 +10,41 @@ import game.protocol.protobuf.FightProtocol.FightEnterData;
 
 public class FightContext {
 
-	private int matchType;
-	private int vsX;
-	private int vsY;
-	private int stageId;
-	
 	private int replayVideoId;
 	private int currentVideoWatchRoleId;
 	
 	private FightEnterData enterData = null;
 	
+	private boolean hasPlayerDisconnected = false;
+	
 	private WarRandom random = null;
 	
-	public FightContext(long seed) {
+	public FightContext(FightEnterData enterData, long seed) {
+		this.enterData = enterData;
 		random = new WarRandom(seed); // make the seed fixed for one battle
 	}
 	
 	public boolean isNewUserGuide() {
-		return matchType == GameConst.MatchType_Train;
+		return enterData.getMatchType() == GameConst.MatchType_Train;
 	}
 	
 	public boolean isPVE() {
-		return matchType == GameConst.MatchType_PVE;
+		return enterData.getMatchType() == GameConst.MatchType_PVE;
 	}
 
 	public boolean isGVE() {
-		return matchType == GameConst.MatchType_GVE;
+		return enterData.getMatchType() == GameConst.MatchType_GVE;
 	}
 	public WarRandom getWarRandom() {
 		return random;
 	}
+
+	public boolean isHasPlayerDisconnected() {
+		return hasPlayerDisconnected;
+	}
+
+	public void setHasPlayerDisconnected(boolean hasPlayerDisconnected) {
+		this.hasPlayerDisconnected = hasPlayerDisconnected;
+	}
+	
 }

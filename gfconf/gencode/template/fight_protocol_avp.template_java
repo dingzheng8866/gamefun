@@ -8,7 +8,7 @@ import com.tiny.game.common.exception.InternalBugException;
 
 public class IFight {
 
-	static enum AVPType {
+	public static enum AVPType {
 	    T_int(1),
 	    T_long(2),
 	    T_boolean(3),
@@ -25,7 +25,7 @@ public class IFight {
 		}
 	}
 	
-	static class AVP {
+	public static class AVP {
 		static Map<Integer, AVPType> avpTypes = new HashMap<Integer, AVPType>();
 		
 		public static void init() {
@@ -35,15 +35,19 @@ public class IFight {
 		}
 		
 		public static AVPType getAVPType(Para p) {
-			AVPType type = avpTypes.get(p.getValue());
+			return getAVPType(p.getValue());
+		}
+		
+		public static AVPType getAVPType(Integer v) {
+			AVPType type = avpTypes.get(v);
 			if(type == null) {
-				throw new InternalBugException("Not found avp: " + p);
+				throw new InternalBugException("Not found avp: " + Para.valueOf(v));
 			}
 			return type;
 		}
 	}
 	
-	static enum Para {
+	public static enum Para {
 	
 #ENUM_VAR
 	    

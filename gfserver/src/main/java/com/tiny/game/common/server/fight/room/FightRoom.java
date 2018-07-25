@@ -16,9 +16,12 @@ import com.tiny.game.common.server.fight.bizlogic.FightContext;
 import com.tiny.game.common.server.fight.bizlogic.FightRole;
 import com.tiny.game.common.server.fight.bizlogic.FightRoleStatus;
 import com.tiny.game.common.server.fight.bizlogic.FightStage;
+import com.tiny.game.common.server.fight.bizlogic.RandUtil;
 import com.tiny.game.common.server.fight.bizlogic.SurrenderGroup;
+import com.tiny.game.common.server.fight.domain.FightScene;
 
 import game.protocol.protobuf.FightProtocol.C_WarFightAction;
+import game.protocol.protobuf.FightProtocol.FightEnterData;
 
 public class FightRoom {
 
@@ -29,20 +32,31 @@ public class FightRoom {
 	private List<FightRole> playerList = new ArrayList<FightRole>();
 	private FightContext ctx;
 	
+	private FightScene scene;
+	
 	private FightRoomState state = new FightRoomStateWaiting(this);
 	
-	public FightRoom(int roomId, List<FightRole> fightRoles, FightContext ctx) {
+	public FightRoom(int roomId, List<FightRole> fightRoles, FightEnterData enterData) {
 		this.roomId = roomId;
 		this.playerList = fightRoles;
-		this.ctx = ctx;
+		this.ctx = new FightContext(enterData, RandUtil.nextLong());
 		for(FightRole fr : fightRoles) {
 			players.put(fr.getRoleId(), fr);
 		}
-		//war = new FightStage(this);
+		scene = new FightScene(this);
+		scene.init();
 	}
 	
 	public int getRoomId() {
 		return roomId;
+	}
+	
+	public FightScene getFightScene() {
+		return scene;
+	}
+	
+	public FightContext getContext() {
+		return ctx;
 	}
 	
 	public FightRoomState getRoomState(){
@@ -87,9 +101,13 @@ public class FightRoom {
 		state.onPlayerReconnect(roleId);
 	}
 	
+	public synchronized void onPlayerSyncFullData(String roleId) {
+		state.onPlayerSyncFullData(roleId);
+	}
+	
 	public void broadcastMessage(GeneratedMessage msg) {
 		for (FightRole player : playerList) {
-			if (!player.isRobot() && (player.getStatus() != FightRoleStatus.OFFLINE)) {
+			if (player.isNeedToSyncFightData()) {
 				if (logger.isInfoEnabled()) {
 					logger.info("Room {} broadcast message {} to roleId={}", roomId, msg.getClass().getSimpleName(), player.getRoleId());
 				}

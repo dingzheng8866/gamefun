@@ -3,13 +3,10 @@ package com.tiny.game.common.server.fight.room;
 import com.tiny.game.common.server.fight.bizlogic.FightRole;
 import com.tiny.game.common.server.fight.bizlogic.FightRoleStatus;
 
-import game.protocol.protobuf.FightProtocol.S_FightRoomCreateReady;
 import game.protocol.protobuf.FightProtocol.S_FightStart;
 
 public class FightRoomStatePreparing extends AbstractFightRoomState {
 
-	private long beginTime = System.currentTimeMillis();
-	
 	public FightRoomStatePreparing(FightRoom room) {
 		super(room);
 	}
@@ -20,7 +17,7 @@ public class FightRoomStatePreparing extends AbstractFightRoomState {
 	
 	@Override
 	public boolean update() {
-		if(System.currentTimeMillis() - beginTime >= 20000) {
+		if(isStateTimeout(20000)) {
 			changeToFightingState(true);
 		}
 		return false;
@@ -52,19 +49,5 @@ public class FightRoomStatePreparing extends AbstractFightRoomState {
 		room.changeState(new FightRoomStateFighting(room));
 		room.broadcastMessage(S_FightStart.newBuilder().build());
 	}
-	
-	@Override
-	public void onPlayerReconnect(String roleId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPlayerDisconnect(String roleId) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 	
 }

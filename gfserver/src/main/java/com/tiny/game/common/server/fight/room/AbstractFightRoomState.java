@@ -3,18 +3,24 @@ package com.tiny.game.common.server.fight.room;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tiny.game.common.net.NetLayerManager;
+import com.tiny.game.common.server.fight.bizlogic.BattleRoomStatus;
 import com.tiny.game.common.server.fight.bizlogic.FightRole;
 import com.tiny.game.common.server.fight.bizlogic.FightRoleStatus;
 import com.tiny.game.common.server.fight.bizlogic.RandUtil;
 
+import game.protocol.protobuf.FightProtocol.C_WarFightAction;
 import game.protocol.protobuf.FightProtocol.ProtoLoadProgress;
+import game.protocol.protobuf.FightProtocol.S_FightLeave;
 import game.protocol.protobuf.FightProtocol.S_FightLoadProgress;
+import game.protocol.protobuf.FightProtocol.S_WarFightUpdateData;
 
 public abstract class AbstractFightRoomState implements FightRoomState {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractFightRoomState.class);
 	
 	protected FightRoom room;
+	protected long beginTime = System.currentTimeMillis();
 	
 	public AbstractFightRoomState(FightRoom room) {
 		this.room = room;
@@ -23,6 +29,10 @@ public abstract class AbstractFightRoomState implements FightRoomState {
 	@Override
 	public void onPlayerEnter(String roleId) {
 		room.getPlayer(roleId).setStatus(FightRoleStatus.ONLINE);
+	}
+	
+	protected boolean isStateTimeout(int timeout) {
+		return System.currentTimeMillis() - beginTime >= timeout;
 	}
 	
 	@Override
@@ -86,17 +96,37 @@ public abstract class AbstractFightRoomState implements FightRoomState {
 		return builder.build();
 	}
 	
-//
-//	@Override
-//	public void onPlayerReconnect(String roleId) {
-//		// TODO Auto-generated method stub
-//		
+//	protected boolean isNeedToSyncFightDataToPlayer(FightRole player) {
+//		return getState() == State.Fighting && !player.isRobot() &&(
+//				//(player.getLoadProgress() >= 100 && player.getStatus() == FightRoleStatus.INBATTLE)
+//				(player.getStatus() != FightRoleStatus.OFFLINE)
+//				|| player.isNeedFullSyncFlag()
+//				);
 //	}
-//
-//	@Override
-//	public void onPlayerDisconnect(String roleId) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	
+	@Override
+	public void onPlayerDisconnect(String roleId) {
+		FightRole player = room.getPlayer(roleId);
+		player.setStatus(FightRoleStatus.OFFLINE);
+		player.setLoadProgress(0);
+		room.getContext().setHasPlayerDisconnected(true);
+	}
+	
+	@Override
+	public void onPlayerReconnect(String roleId) {
+		FightRole player = room.getPlayer(roleId);
+		player.setStatus(FightRoleStatus.ONLINE);
+		player.setNeedFullSyncFlag(true);
+	}
 
+	@Override
+	public void onPlayerSyncFullData(String roleId) {
+		S_WarFightUpdateData data = null; // TODO: build full data
+		NetLayerManager.getInstance().asyncSendOutboundMessage(room.getPlayer(roleId).getSession(), data);
+	}
+
+	@Override
+	public void onPlayerOperAction(C_WarFightAction action) {
+	}
+	
 }

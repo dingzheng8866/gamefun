@@ -1,5 +1,7 @@
 package com.tiny.game.common.server.fight.room;
 
+import game.protocol.protobuf.FightProtocol.C_WarFightAction;
+
 public interface FightRoomState {
 
 	enum State {
@@ -25,4 +27,8 @@ public interface FightRoomState {
 	
 	public void onPlayerReconnect(String roleId);
 
+	public void onPlayerSyncFullData(String roleId);
+	
+	public void onPlayerOperAction(C_WarFightAction action);
+	
 }
